@@ -199,24 +199,24 @@ public class LudoTest {
 		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
 		
 		for (int move=0; move<11; move++) {
-			skipBlue(ludo);
+			skipPlayer(ludo);							// Skip blue player
 			ludo.throwDice(5);
 			assertTrue(ludo.movePiece(Ludo.RED, 1+move*5, 1+(move+1)*5));
 		}
 		assertEquals(56, ludo.getPosition(Ludo.RED, 0), 0);	// RED has 3 more to go before home
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		assertEquals(Ludo.RED, ludo.activePlayer(), 0);		// Should be RED players turn
 		ludo.throwDice(5);									// RED can not move 5
 		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		ludo.throwDice(4);									// RED can not move 4
 		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-		skipBlue(ludo);
+		skipPlayer(ludo);									// Skip blue player
 		ludo.throwDice(3);									// RED CAN move 3
 		assertTrue(ludo.movePiece(Ludo.RED, 56, 59));		// This piece is now finished
 		assertEquals("Started", ludo.getStatus());
 		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		
 		// Move two more pieces
 		for (int piece=1; piece<3; piece++) {
@@ -225,31 +225,31 @@ public class LudoTest {
 			assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
 			
 			for (int move=0; move<11; move++) {
-				skipBlue(ludo);
+				skipPlayer(ludo);							// Skip blue plaYer
 				ludo.throwDice(5);
 				assertTrue(ludo.movePiece(Ludo.RED, 1+move*5, 1+(move+1)*5));
 			}
 			assertEquals(56, ludo.getPosition(Ludo.RED, piece), 0);	// RED has 3 more to go before home
-			skipBlue(ludo);
+			skipPlayer(ludo);
 			assertEquals(Ludo.RED, ludo.activePlayer(), 0);		// Should be RED players turn
 			ludo.throwDice(5);									// RED can not move 5
 			assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-			skipBlue(ludo);
+			skipPlayer(ludo);
 			ludo.throwDice(4);									// RED can not move 4
 			assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-			skipBlue(ludo);
+			skipPlayer(ludo);
 			ludo.throwDice(3);									// RED CAN move 3
 			assertTrue(ludo.movePiece(Ludo.RED, 56, 59));		// This piece is now finished
 			assertEquals("Started", ludo.getStatus());
 
 			assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-			skipBlue(ludo);			
+			skipPlayer(ludo);			
 		}
 		
 		// Red now has one more piece to move to finish
 		ludo.throwDice(6);
 		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		// We will now try to throw several sixes in a row
 		assertEquals(6, ludo.throwDice(6), 0);
 		assertTrue(ludo.movePiece(Ludo.RED, 1, 7));
@@ -257,7 +257,7 @@ public class LudoTest {
 		assertTrue(ludo.movePiece(Ludo.RED, 7, 13));
 		assertEquals(6, ludo.throwDice(6), 0);
 		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// Should be BLUE players turn
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		assertEquals(6, ludo.throwDice(6), 0);
 		assertTrue(ludo.movePiece(Ludo.RED, 13, 19));
 		assertEquals(6, ludo.throwDice(6), 0);
@@ -265,11 +265,11 @@ public class LudoTest {
 		assertEquals(5, ludo.throwDice(5), 0);
 		assertEquals(Ludo.RED, ludo.activePlayer(), 0);		// Two sixes and then a five is ok
 		assertTrue(ludo.movePiece(Ludo.RED, 25, 30));
-		skipBlue(ludo);
+		skipPlayer(ludo);
 		for (int move=0; move<5; move++) {
 			assertEquals(5, ludo.throwDice(5), 0);
 			assertTrue(ludo.movePiece(Ludo.RED, 30+move*5, 35+move*5));
-			skipBlue(ludo);
+			skipPlayer(ludo);
 		}
 		// Last RED piece on position 55, need a four to get to finish
 		ludo.throwDice(4);
@@ -292,36 +292,86 @@ public class LudoTest {
 		// The order of the players are RED, BLUE, YELLOW and GREEN
 		
 		// For user position 0 we return the first Ludo board grid, then we know we can add one, two and three
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 0), 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 0), 4);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 0), 8);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 0), 12);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 0), 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.BLUE, 0), 4);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.YELLOW, 0), 8);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.GREEN, 0), 12);
 
 		// Player grid 1 for RED should be 14 for GREEN, 27 for YELLOW and 40 for BLUE
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.GREEN, 14), 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.YELLOW, 27), 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.BLUE, 40), 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 1), ludo.userGridToLudoBoardGrid(Ludo.GREEN, 14), 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 1), ludo.userGridToLudoBoardGrid(Ludo.YELLOW, 27), 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 1), ludo.userGridToLudoBoardGrid(Ludo.BLUE, 40), 0);
 		
 		// Last field that the piece can interfere with other players (53) should be 16, 29, 42 and 55
 		// This should also be the starting positions for the players
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), 16, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 1), 29, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 1), 42, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 1), 55, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 1), 16, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.BLUE, 1), 29, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.YELLOW, 1), 42, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.GREEN, 1), 55, 0);
 		
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 53), 16, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 53), 29, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 53), 42, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 53), 55, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 53), 16, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.BLUE, 53), 29, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.YELLOW, 53), 42, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.GREEN, 53), 55, 0);
 		
 		// First field of the "home stretch" (player position 54) should be 68, 74, 80 and 86
-		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 54), 68, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 54), 74, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 54), 80, 0);
-		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 54), 86, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.RED, 54), 68, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.BLUE, 54), 74, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.YELLOW, 54), 80, 0);
+		assertEquals(ludo.userGridToLudoBoardGrid(Ludo.GREEN, 54), 86, 0);
 	}
 	
-	private void skipBlue(Ludo ludo) {
+	/**
+	 * When a player lands on top of an opponents piece that opponents piece should be put back to start.
+	 * 
+	 */
+	@Test
+	public void landingOnTopSendsPlayerBack() {
+		Ludo ludo = new Ludo("Player1", "Player2", null, null);
+		
+		ludo.throwDice(6);							// Lucky red, threw a six
+		ludo.movePiece(Ludo.RED, 0, 1);				// Board position 16
+		ludo.throwDice(6);							// Lucky blue as well, threw a six
+		ludo.movePiece(Ludo.BLUE, 0, 1);			// Board position 29
+		
+		assertEquals(1, ludo.getPosition(Ludo.BLUE, 0)); 	// BLUEs first piece is in play
+		
+		ludo.throwDice(6);							// One more six
+		ludo.movePiece(Ludo.RED, 1, 7);				// Board position 22
+		ludo.throwDice(6);							// One more six
+		ludo.movePiece(Ludo.RED, 7, 13);			// Board position 28
+		ludo.throwDice(1);
+		ludo.movePiece(Ludo.RED, 13, 14);			// Red ended up on top of blue
+		
+		// NOTE, one variant of the rules says that you are safe standing on this field
+		// For now, we do not implement this rule
+		
+		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);	// It should be blue players turn
+		assertEquals(0, ludo.getPosition(Ludo.BLUE, 0)); 	// This piece should be sent back to home field
+		
+		skipPlayer(ludo);							// Skip blue player for now
+		ludo.throwDice(1);
+		ludo.movePiece(Ludo.RED, 14, 15);			// Board position 30
+		ludo.throwDice(6);
+		ludo.movePiece(Ludo.BLUE, 0, 1);			// Board position 29
+		ludo.throwDice(1);
+		ludo.movePiece(Ludo.RED, 15, 16);			// Board position 31
+		assertEquals(16, ludo.getPosition(Ludo.RED, 0));
+		
+		ludo.throwDice(2);
+		ludo.movePiece(Ludo.BLUE, 1, 3);			// Board position 31, this should send the red piece back to start
+
+		// RED player got "hit" by BLUE player and should be sent back to start
+		assertEquals(0, ludo.getPosition(Ludo.RED, 0));
+	}
+	
+	/**
+	 * Use to throw three ones for a player, i.e. if this player has all the pieces in home position
+	 * it will effectively skip this player.
+	 * 
+	 * @param ludo the object holding this game
+	 */
+	private void skipPlayer(Ludo ludo) {
 		for (int noBlue=0; noBlue<3; noBlue++) {			// We will be moving the red players pieces only
 			ludo.throwDice(1);								// So blue only throws ones
 		}
