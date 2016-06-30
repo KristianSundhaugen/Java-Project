@@ -278,6 +278,49 @@ public class LudoTest {
 		assertEquals(Ludo.RED, ludo.getWinner(), 0);
 	}
 
+	/**
+	 * To be able to detect when pieces from different players end up on the same playing field
+	 * and to place pieces on the Ludo board we need to be able to convert between player locations
+	 * and board locations. 
+	 * Here we test these conversions. 
+	 * 
+	 * @param ludo
+	 */
+	@Test
+	public void checkPlayerLocationToBoardLocationConversion() {
+		Ludo ludo = new Ludo();
+		// The order of the players are RED, BLUE, YELLOW and GREEN
+		
+		// For user position 0 we return the first Ludo board grid, then we know we can add one, two and three
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 0), 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 0), 4);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 0), 8);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 0), 12);
+
+		// Player grid 1 for RED should be 14 for GREEN, 27 for YELLOW and 40 for BLUE
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.GREEN, 14), 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.YELLOW, 27), 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), ludo.userGridToPlayGrid(Ludo.BLUE, 40), 0);
+		
+		// Last field that the piece can interfere with other players (53) should be 16, 29, 42 and 55
+		// This should also be the starting positions for the players
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 1), 16, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 1), 29, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 1), 42, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 1), 55, 0);
+		
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 53), 16, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 53), 29, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 53), 42, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 53), 55, 0);
+		
+		// First field of the "home stretch" (player position 54) should be 68, 74, 80 and 86
+		assertEquals(ludo.userGridToPlayGrid(Ludo.RED, 54), 68, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.BLUE, 54), 74, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.YELLOW, 54), 80, 0);
+		assertEquals(ludo.userGridToPlayGrid(Ludo.GREEN, 54), 86, 0);
+	}
+	
 	private void skipBlue(Ludo ludo) {
 		for (int noBlue=0; noBlue<3; noBlue++) {			// We will be moving the red players pieces only
 			ludo.throwDice(1);								// So blue only throws ones
