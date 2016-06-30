@@ -366,6 +366,75 @@ public class LudoTest {
 	}
 	
 	/**
+	 * When a player has two or more pieces on top of each other no other player can move past this "tower"
+	 */
+	@Test
+	public void towersBlocksOpponents() {
+		Ludo ludo = new Ludo("Player1", "Player1", null, null);
+			
+		ludo.throwDice(6); 								// RED is in play
+		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
+		skipPlayer(ludo);
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.RED, 1, 7));
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.RED, 7, 13));
+		ludo.throwDice(3);
+		assertTrue(ludo.movePiece(Ludo.RED, 13, 16));	// Board position 31
+		skipPlayer(ludo);
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));		// RED put another piece in play
+		skipPlayer(ludo);
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.RED, 1, 7));
+		ludo.throwDice(5);
+		assertTrue(ludo.movePiece(Ludo.RED, 7, 12));	// Board position 27
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.BLUE, 0, 1));	// Board position 29
+		ludo.throwDice(4);
+		assertTrue(ludo.movePiece(Ludo.RED, 12, 16));	// RED now have two pieces on 31
+
+		assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);
+		
+		ludo.throwDice(5);								// Blue have one piece in play, but can not move past REDs tower
+
+		// Since BLUE can not move, the move goes on to RED
+		assertEquals(Ludo.RED, ludo.activePlayer(), 0);
+		
+		ludo.throwDice(6);
+		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));		// RED still has two pieces on 31
+		
+		ludo.throwDice(2);								// Can not move on top of a tower
+		
+		// BLUE can still not move, the move goes on to RED
+		assertEquals(Ludo.RED, ludo.activePlayer(), 0);
+		ludo.throwDice(2);
+		assertTrue(ludo.movePiece(Ludo.RED, 1, 3));		// RED still has two pieces on 31
+		
+		ludo.throwDice(1);								
+		assertTrue(ludo.movePiece(Ludo.BLUE, 1, 2));	// BLUE CAN move 1 (one) place forward
+		
+		ludo.throwDice(2);
+		assertTrue(ludo.movePiece(Ludo.RED, 16, 18));
+		ludo.throwDice(3);
+		assertTrue(ludo.movePiece(Ludo.BLUE, 2, 5));	// BLUE will jump over one of REDs pieces and land on another
+		
+		int piece0Location = ludo.getPosition(Ludo.RED, 0);
+		int piece1Location = ludo.getPosition(Ludo.RED, 1);
+		if (piece0Location<piece1Location) {			// Either piece 0 or piece 1 should be back to home
+			assertEquals(0, piece0Location, 0);
+			assertEquals(16, piece1Location, 0);
+		} else {
+			assertEquals(16, piece0Location, 0);
+			assertEquals(0, piece1Location, 0);
+		}
+		assertEquals(3, ludo.getPosition(Ludo.RED, 2), 0);	// Moved on line 405 and 412
+		assertEquals(0, ludo.getPosition(Ludo.RED, 3), 0);
+
+		assertEquals(5, ludo.getPosition(Ludo.BLUE, 0));
+	}
+	
+	/**
 	 * Use to throw three ones for a player, i.e. if this player has all the pieces in home position
 	 * it will effectively skip this player.
 	 * 
