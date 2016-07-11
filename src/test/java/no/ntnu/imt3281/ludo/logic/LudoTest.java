@@ -7,6 +7,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.mockito.InOrder;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author okolloen
@@ -370,7 +373,7 @@ public class LudoTest {
 	 */
 	@Test
 	public void towersBlocksOpponents() {
-		Ludo ludo = new Ludo("Player1", "Player1", null, null);
+		Ludo ludo = new Ludo("Player1", "Player2", null, null);
 			
 		ludo.throwDice(6); 								// RED is in play
 		assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
@@ -445,5 +448,79 @@ public class LudoTest {
 			ludo.throwDice(1);								// So blue only throws ones
 		}
 	}
+	
+	/*===============================================================================================
+	 * Below are tests for event listeners that should be implementet in the Ludo logic class.
+	 * These will help when the Ludo logic is used both on the server and on the client.
+	 */
+	
+	/**
+	 * Check that correct listener gets called when a dice is thrown.
+	 * When a dice is thrown then diceThrown should be called on all DiceListeners,
+	 * with the player and value of the dice in the eventObject.
+	 */
+	@Test
+	public void diceThrownEventTest() {
+		Ludo ludo = new Ludo("Player1", "Player2", null, null);
+		
+		// Create a mock DiceListener
+		DiceListener diceListener = mock(DiceListener.class);
+		ludo.addDiceListener(diceListener);				// Add the dice listener
+		ludo.throwDice(6); 								// RED is in play
+		ludo.movePiece(Ludo.RED, 0, 1);
+		ludo.throwDice(3);								// BLUE is in play
 
+		// Now check that the event has happened in the correct order
+		InOrder order = inOrder(diceListener);
+		
+		DiceEvent diceEvent = new DiceEvent(ludo, Ludo.RED, 6);		// First RED threw a six
+		// NOTE!! Requires that DiceEvent implements the equals method from Object !!
+		order.verify(diceListener).diceThrown(diceEvent);
+
+		DiceEvent diceEvent1 = new DiceEvent(ludo, Ludo.BLUE, 3);	// Then blue thre a three
+		order.verify(diceListener).diceThrown(diceEvent1);
+	}
+	
+	/**
+	 * Check that correct movement of pieces event is sent.
+	 * I.e. when a piece is moved, both the piece that is moved and any pieces that is affected by that move
+	 * should receive separate pieceMoved messages through the registered PieceListener's.
+	 */
+	@Test
+	public void pieceMovedEventTest() {
+		Ludo ludo = new Ludo("Player1", "Player2", null, null);
+
+		// Create a mock PieceListener
+		PieceListener pieceListener = mock(PieceListener.class);
+		ludo.addPieceListener(pieceListener);
+		ludo.throwDice(6);							// Lucky red, threw a six
+		ludo.movePiece(Ludo.RED, 0, 1);				// Board position 16
+		ludo.throwDice(6);							// Lucky blue as well, threw a six
+		ludo.movePiece(Ludo.BLUE, 0, 1);			// Board position 29
+		
+		assertEquals(1, ludo.getPosition(Ludo.BLUE, 0)); 	// BLUEs first piece is in play
+		
+		ludo.throwDice(6);							// One more six
+		ludo.movePiece(Ludo.RED, 1, 7);				// Board position 22
+		ludo.throwDice(6);							// One more six
+		ludo.movePiece(Ludo.RED, 7, 13);			// Board position 28
+		ludo.throwDice(1);
+		ludo.movePiece(Ludo.RED, 13, 14);			// Red ended up on top of blue
+		
+		// Now check that the event has happened in the correct order
+		InOrder order = inOrder(pieceListener);
+		PieceEvent pe;
+		pe = new PieceEvent(ludo, Ludo.RED, 0, 0, 1);	// Red moved piece 0 out from start
+		order.verify(pieceListener).pieceMoved(pe);
+		pe = new PieceEvent(ludo, Ludo.BLUE, 0, 0, 1);
+		order.verify(pieceListener).pieceMoved(pe);
+		pe = new PieceEvent(ludo, Ludo.RED, 0, 1, 7);
+		order.verify(pieceListener).pieceMoved(pe);
+		pe = new PieceEvent(ludo, Ludo.RED, 0, 7, 13);
+		order.verify(pieceListener).pieceMoved(pe);
+		pe = new PieceEvent(ludo, Ludo.RED, 0, 13, 14);
+		order.verify(pieceListener).pieceMoved(pe);
+		pe = new PieceEvent(ludo, Ludo.BLUE, 0, 1, 0);
+		order.verify(pieceListener).pieceMoved(pe);
+	}
 }
