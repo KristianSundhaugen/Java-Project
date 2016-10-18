@@ -462,9 +462,9 @@ public class LudoTest {
 
     /*
      * =========================================================================
-     * ====================== Below are tests for event listeners that should be
-     * implementet in the Ludo logic class. These will help when the Ludo logic
-     * is used both on the server and on the client.
+     * Below are tests for event listeners that should be implementet in the
+     * Ludo logic class. These will help when the Ludo logic is used both on the
+     * server and on the client.
      */
 
     /**
