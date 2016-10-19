@@ -8,4 +8,6 @@ Du er nå klar til å begynne på prosjektet :-).
 
 [Beskrivelse av prosjektet](https://bitbucket.org/okolloen/imt3281-project2-2016/wiki/Home)
 
+[Trelloboard fra utviklingen av løsningsforslaget](https://trello.com/b/rRweyGja/ludo-2016)
+
 All testkode skal passere for å få bestått prosjektet, koden som ligger i src/main/java er gitt som et utgangspunkt, dere kan enten bygge videre på den eller starte fra scratch.
