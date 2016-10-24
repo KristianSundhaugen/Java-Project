@@ -1,23 +1,32 @@
 package no.ntnu.imt3281.ludo.logic;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Ludo {
 
 	public static int RED;
 	public static int BLUE;
 	public static int YELLOW;
 	public static int GREEN;
-	
+	ArrayList<String> players = new ArrayList<>();
+
 	public Ludo() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Ludo(String string, String string2, String string3, Object object) {
-		// TODO Auto-generated constructor stub
+	public Ludo(String player1, String player2, String player3, String player4) {
+		addPlayer(player1);
+		addPlayer(player2);
+		addPlayer(player3);
+		addPlayer(player4);
+		if(nrOfPlayers() < 2) 
+			throw NotEnoughPlayersException;
 	}
 	
 	public int nrOfPlayers() {
 		// TODO Auto-generated method stub
-		return 0;
+		return players.size();
 	}
 
 	public Object getPlayerName(int player) {
@@ -25,8 +34,9 @@ public class Ludo {
 		return null;
 	}
 
-	public void addPlayer(String string) {
-		// TODO Auto-generated method stub
+	public void addPlayer(String name) {
+		if (name != null)
+			players.add(name);
 		
 	}
 
