@@ -17,7 +17,7 @@ public class Ludo {
 	
 	public int nrOfPlayers() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 
 	public Object getPlayerName(int player) {
