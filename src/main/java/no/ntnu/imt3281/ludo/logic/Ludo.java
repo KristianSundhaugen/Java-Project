@@ -76,9 +76,7 @@ public class Ludo {
 	}
 	
 	public int throwDice() {
-		// TODO Auto-generated method stub
-		int dice = (int)(Math.random()*6) + 1;
-		return dice;
+		return (int)(Math.random()*6) + 1;		
 	}
 
 	public String getStatus() {
