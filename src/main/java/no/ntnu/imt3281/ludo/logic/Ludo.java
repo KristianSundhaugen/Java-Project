@@ -112,6 +112,29 @@ public class Ludo {
 		// TODO Auto-generated method stub
 		
 	}
-
+	int[][] getUserToPlayGrid() {
+	    return null;		
+	}
+	boolean allHome() {
+		return true;
+	}
+	void nextPlayer() {
+		
+	}
+    boolean canMove() {
+    	return true;
+    }
+    boolean blocked(int noe, int noeAnnet, int endaNoeAnnet) {
+    	return true;
+    }
+    boolean checkBlockAt(int noe, int noeAnnet, int endaNoeAnnet) {
+    	return true;
+    }
+    void checkUnfortionateOpponents(int noe, int noeAnnet) {
+    	
+    }
+    void checkWinner() {
+    	
+    }
 
 }
