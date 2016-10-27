@@ -11,7 +11,6 @@ import static org.mockito.Mockito.mock;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-
 /**
  * @author okolloen
  *
