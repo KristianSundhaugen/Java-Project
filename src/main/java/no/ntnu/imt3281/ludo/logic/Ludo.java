@@ -2,6 +2,8 @@ package no.ntnu.imt3281.ludo.logic;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Vector;
 
 public class Ludo {
 
@@ -9,28 +11,40 @@ public class Ludo {
 	public static int BLUE;
 	public static int YELLOW;
 	public static int GREEN;
-	ArrayList<String> players = new ArrayList<>();
-
+	Vector<String> players = new Vector<>();
+	int activePlayer;
+	int dice;
+	Random randomGenerator;
+	int[][] playerPieces;
+	int[][] userGridToPlayerGrid;
+	Vector<DiceListener> diceListenerers = new Vector<>();
+	Vector<PieceListener> pieceListenerers = new Vector<>();
+	Vector<PlayerListener> playerListenerers = new Vector<>();
+    
+	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
+		addPlayer(player1);
+		addPlayer(player2);
+		addPlayer(player3);
+		addPlayer(player4);
+		if(nrOfPlayers() < 2) 
+			throw new NotEnoughPlayersException("Not Enough Players");
+	}
 	public Ludo() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
-		try {
-			addPlayer(player1);
-			addPlayer(player2);
-			addPlayer(player3);
-			addPlayer(player4);
-		} catch (NoRoomForMorePlayersException e) {
-			e.printStackTrace();
-		}
-		if(nrOfPlayers() < 2) 
-			throw new NotEnoughPlayersException("Not Enough Players");
+	public int userGridToLudoBoardGrid(int noe, int noeAnnet) {
+		return noeAnnet;
 	}
 	
 	public int nrOfPlayers() {
 		// TODO Auto-generated method stub
 		return players.size();
+	}
+	
+	public int activePlayers() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	public Object getPlayerName(int player) {
@@ -38,9 +52,9 @@ public class Ludo {
 		return null;
 	}
 
-	public void addPlayer(String name) throws NoRoomForMorePlayersException{
+	public void addPlayer(String name) {
 		if (nrOfPlayers() > 3)
-			throw new NoRoomForMorePlayersException("No Room For More Players");
+	//		throw new NoRoomForMorePlayersException("No Room For More Players");
 		if (name != null)
 			players.add(name);
 	}
@@ -48,11 +62,6 @@ public class Ludo {
 	public void removePlayer(String string) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public int activePlayers() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	public int getPosition(int player, int piece) {
@@ -64,21 +73,19 @@ public class Ludo {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	public boolean movePiece(int bLUE2, int i, int j) {
+	public int throwDice() {
 		// TODO Auto-generated method stub
-		return false;
+		int dice = (int)(Math.random()*6) + 1;
+		return dice;
 	}
-	
 	public int throwDice(int i) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
-	public int throwDice() {
+	public boolean movePiece(int bLUE2, int i, int j) {
 		// TODO Auto-generated method stub
-		int dice = (int)(Math.random()*6) + 1;
-		return dice;
+		return false;
 	}
 
 	public String getStatus() {
@@ -87,11 +94,6 @@ public class Ludo {
 	}
 
 	public int getWinner() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public int userGridToLudoBoardGrid(int rED2, int i) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
