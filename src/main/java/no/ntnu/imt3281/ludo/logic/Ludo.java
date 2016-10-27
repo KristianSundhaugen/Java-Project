@@ -15,13 +15,13 @@ public class Ludo {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Ludo(String player1, String player2, String player3, String player4) {
+	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
 		addPlayer(player1);
 		addPlayer(player2);
 		addPlayer(player3);
 		addPlayer(player4);
 		if(nrOfPlayers() < 2) 
-			throw NotEnoughPlayersException;
+			throw new NotEnoughPlayersException("Not Enough Players");
 	}
 	
 	public int nrOfPlayers() {
@@ -34,11 +34,11 @@ public class Ludo {
 		return null;
 	}
 
-	public void addPlayer(String name){
-		if (name != null && nrOfPlayers() < 4){
+	public void addPlayer(String name) {
+		if (nrOfPlayers() > 3)
+			throw new NoRoomForMorePlayersException("No Room For More Players");
+		if (name != null)
 			players.add(name);
-		}else{
-		}
 	}
 
 	public void removePlayer(String string) {

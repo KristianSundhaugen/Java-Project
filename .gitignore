@@ -2,3 +2,5 @@
 .metadata/
 .project
 bin/
+/target/
+.settings/
