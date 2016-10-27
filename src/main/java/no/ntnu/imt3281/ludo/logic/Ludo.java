@@ -83,14 +83,9 @@ public class Ludo {
 		return 0;
 	}
 	
-<<<<<<< HEAD
-	public int throwDice() {
-		return (int)(Math.random()*6) + 1;		
-=======
 	public boolean movePiece(int bLUE2, int i, int j) {
 		// TODO Auto-generated method stub
 		return false;
->>>>>>> cc12b3a879a70811bad0d798e4e6ea8db5555bcc
 	}
 
 	public String getStatus() {
