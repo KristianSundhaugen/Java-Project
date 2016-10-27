@@ -34,10 +34,11 @@ public class Ludo {
 		return null;
 	}
 
-	public void addPlayer(String name) {
-		if (name != null)
+	public void addPlayer(String name){
+		if (name != null && nrOfPlayers() < 4){
 			players.add(name);
-		
+		}else{
+		}
 	}
 
 	public void removePlayer(String string) {
@@ -72,7 +73,8 @@ public class Ludo {
 	
 	public int throwDice() {
 		// TODO Auto-generated method stub
-		return 0;
+		int dice = (int)(Math.random()*6) + 1;
+		return dice;
 	}
 
 	public String getStatus() {
