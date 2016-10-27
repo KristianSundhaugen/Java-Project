@@ -99,18 +99,15 @@ public class Ludo {
 	}
 
 	public void addDiceListener(DiceListener diceListener) {
-		// TODO Auto-generated method stub
-		
+		diceListenerers.add(diceListener);
 	}
 
 	public void addPieceListener(PieceListener pieceListener) {
-		// TODO Auto-generated method stub
-		
+		pieceListenerers.add(pieceListener);
 	}
 
 	public void addPlayerListener(PlayerListener playerListener) {
-		// TODO Auto-generated method stub
-		
+		playerListenerers.add(playerListener);
 	}
 	int[][] getUserToPlayGrid() {
 	    return null;		
