@@ -16,10 +16,14 @@ public class Ludo {
 	}
 	
 	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
-		addPlayer(player1);
-		addPlayer(player2);
-		addPlayer(player3);
-		addPlayer(player4);
+		try {
+			addPlayer(player1);
+			addPlayer(player2);
+			addPlayer(player3);
+			addPlayer(player4);
+		} catch (NoRoomForMorePlayersException e) {
+			e.printStackTrace();
+		}
 		if(nrOfPlayers() < 2) 
 			throw new NotEnoughPlayersException("Not Enough Players");
 	}
@@ -34,12 +38,11 @@ public class Ludo {
 		return null;
 	}
 
-	public void addPlayer(String name) {
+	public void addPlayer(String name) throws NoRoomForMorePlayersException{
 		if (nrOfPlayers() > 3)
 			throw new NoRoomForMorePlayersException("No Room For More Players");
 		if (name != null)
 			players.add(name);
-		
 	}
 
 	public void removePlayer(String string) {
@@ -74,7 +77,8 @@ public class Ludo {
 	
 	public int throwDice() {
 		// TODO Auto-generated method stub
-		return 0;
+		int dice = (int)(Math.random()*6) + 1;
+		return dice;
 	}
 
 	public String getStatus() {
