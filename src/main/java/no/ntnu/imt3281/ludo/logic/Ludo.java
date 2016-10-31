@@ -99,19 +99,39 @@ public class Ludo {
 	}
 
 	public void addDiceListener(DiceListener diceListener) {
-		// TODO Auto-generated method stub
-		
+		diceListenerers.add(diceListener);
 	}
 
 	public void addPieceListener(PieceListener pieceListener) {
-		// TODO Auto-generated method stub
-		
+		pieceListenerers.add(pieceListener);
 	}
 
 	public void addPlayerListener(PlayerListener playerListener) {
-		// TODO Auto-generated method stub
+		playerListenerers.add(playerListener);
+	}
+	int[][] getUserToPlayGrid() {
+	    return null;		
+	}
+	boolean allHome() {
+		return true;
+	}
+	void nextPlayer() {
 		
 	}
-
+    boolean canMove() {
+    	return true;
+    }
+    boolean blocked(int noe, int noeAnnet, int endaNoeAnnet) {
+    	return true;
+    }
+    boolean checkBlockAt(int noe, int noeAnnet, int endaNoeAnnet) {
+    	return true;
+    }
+    void checkUnfortionateOpponents(int noe, int noeAnnet) {
+    	
+    }
+    void checkWinner() {
+    	
+    }
 
 }
