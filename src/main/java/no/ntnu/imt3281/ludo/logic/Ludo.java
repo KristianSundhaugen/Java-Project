@@ -1,27 +1,54 @@
+/**
+ * hva er userGridToPlayerGrid
+ * hva inneholder getUserToPlayGrid
+ * hva gjør getStatus
+ * 
+ * 
+ * - userGridToLudoBoardGrid
+ */
+
+
 package no.ntnu.imt3281.ludo.logic;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
 public class Ludo {
 
-	public static int RED;
-	public static int BLUE;
-	public static int YELLOW;
-	public static int GREEN;
-	Vector<String> players = new Vector<>();
-	int activePlayer;
-	int dice;
-	Random randomGenerator;
-	int[][] playerPieces;
-	int[][] userGridToPlayerGrid;
-	Vector<DiceListener> diceListenerers = new Vector<>();
-	Vector<PieceListener> pieceListenerers = new Vector<>();
-	Vector<PlayerListener> playerListenerers = new Vector<>();
-    
+	public static int RED = 0;
+	public static int BLUE = 1;
+	public static int YELLOW = 2;
+	public static int GREEN = 3;
+	private Vector<String> players = new Vector<>();
+	private int activePlayer;
+	private int dice;
+	private Random randomGenerator;
+	private int[][] playerPieces;
+	private int[][] userGridToPlayerGrid;
+	private Vector<DiceListener> diceListenerers = new Vector<>();
+	private Vector<PieceListener> pieceListenerers = new Vector<>();
+	private Vector<PlayerListener> playerListenerers = new Vector<>();
+    public void debug(){
+    	System.out.println("userGridToPlayerGrid");
+		for ( int player = 0; player < 4; player++){
+			System.out.println("");
+			for ( int position = 0; position < 92; position++)
+    			System.out.print(userGridToPlayerGrid[player][position]);
+
+		}
+    }
 	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
+		playerPieces = new int[4][60];
+		userGridToPlayerGrid = new int[4][92];
+		for ( int player = 0; player < 4; player++){
+			playerPieces[player][0] = 4;
+			for ( int position = 0; position < 16; position++)
+				userGridToPlayerGrid[position/4][position] = 1;
+		}
+		
+			
+		
 		addPlayer(player1);
 		addPlayer(player2);
 		addPlayer(player3);
@@ -30,26 +57,30 @@ public class Ludo {
 			throw new NotEnoughPlayersException("Not Enough Players");
 	}
 	public Ludo() {
-		// TODO Auto-generated constructor stub
+		playerPieces = new int[4][60];
+		userGridToPlayerGrid = new int[4][92];
+		for ( int player = 0; player < 4; player++){
+			playerPieces[player][0] = 4;
+			for ( int position = 0; position < 16; position++)
+				userGridToPlayerGrid[position/4][position] = 1;
+		}
 	}
 	
-	public int userGridToLudoBoardGrid(int noe, int noeAnnet) {
-		return noeAnnet;
+	public int userGridToLudoBoardGrid(int player, int possition) {
+		int newPos = possition - 22 - 15 + player*13;
+		if (possition > 53)
+			newPos +=  (52 - 1 - 7 * player);
+	    else if (newPos - 16 < 0)
+	    	newPos += 52;
+		return newPos;
 	}
 	
 	public int nrOfPlayers() {
-		// TODO Auto-generated method stub
 		return players.size();
-	}
-	
-	public int activePlayers() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	public Object getPlayerName(int player) {
-		// TODO Auto-generated method stub
-		return null;
+		return players.get(player);
 	}
 
 	public void addPlayer(String name) {
@@ -59,32 +90,31 @@ public class Ludo {
 			players.add(name);
 	}
 
-	public void removePlayer(String string) {
-		// TODO Auto-generated method stub
-		
+	public void removePlayer(String playerName) {
+		players.remove(playerName);		
 	}
 
 	public int getPosition(int player, int piece) {
-		// TODO Auto-generated method stub
-		return 0;
+		int newPos = piece - 22 - 15 + player*13;
+		if (piece > 53)
+			newPos +=  (52 - 1 - 7 * player);
+	    else if (newPos - 16 < 0)
+	    	newPos += 52;
+		return newPos;
 	}
 
 	public int activePlayer() {
-		// TODO Auto-generated method stub
-		return 0;
+		return activePlayer;
 	}
 	public int throwDice() {
-		// TODO Auto-generated method stub
 		int dice = (int)(Math.random()*6) + 1;
 		return dice;
 	}
 	public int throwDice(int i) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	
-	public boolean movePiece(int bLUE2, int i, int j) {
-		// TODO Auto-generated method stub
+	public boolean movePiece(int player, int piece, int diceValue) {
 		return false;
 	}
 
@@ -116,15 +146,18 @@ public class Ludo {
 		return true;
 	}
 	void nextPlayer() {
+		activePlayer++;
+		if (activePlayer > 3)
+			activePlayer = 0;
 		
 	}
     boolean canMove() {
     	return true;
     }
-    boolean blocked(int noe, int noeAnnet, int endaNoeAnnet) {
+    boolean blocked(int possition, int height, int spiller) {
     	return true;
     }
-    boolean checkBlockAt(int noe, int noeAnnet, int endaNoeAnnet) {
+    boolean checkBlockAt(int possition, int height, int spiler) {
     	return true;
     }
     void checkUnfortionateOpponents(int noe, int noeAnnet) {
