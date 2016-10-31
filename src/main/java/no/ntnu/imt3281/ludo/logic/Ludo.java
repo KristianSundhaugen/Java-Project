@@ -44,7 +44,7 @@ public class Ludo {
 	
 	public int activePlayers() {
 		// TODO Auto-generated method stub
-		return 0;
+		return activePlayer;
 	}
 
 	public Object getPlayerName(int player) {
@@ -60,9 +60,8 @@ public class Ludo {
 	}
 
 	public void removePlayer(String string) {
-		// TODO Auto-generated method stub
-		
-	}
+		string.replace(string, null);
+	}//NoSuchPlayerException skal legges til
 
 	public int getPosition(int player, int piece) {
 		// TODO Auto-generated method stub
