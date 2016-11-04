@@ -38,7 +38,7 @@ public class Ludo {
 
 		}
     }
-	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
+	public Ludo(String player1, String player2, String player3, String player4) {
 		playerPieces = new int[4][60];
 		userGridToPlayerGrid = new int[4][92];
 		for ( int player = 0; player < 4; player++){
@@ -54,7 +54,12 @@ public class Ludo {
 		addPlayer(player3);
 		addPlayer(player4);
 		if(nrOfPlayers() < 2) 
-			throw new NotEnoughPlayersException("Not Enough Players");
+			try {
+				int a = 5/0;
+			}catch (Exception e) {
+				throw new NotEnoughPlayersException("Not Enough Players");	
+			}
+			
 	}
 	public Ludo() {
 		playerPieces = new int[4][60];
@@ -64,6 +69,10 @@ public class Ludo {
 			for ( int position = 0; position < 16; position++)
 				userGridToPlayerGrid[position/4][position] = 1;
 		}
+	}
+	
+	public int activePlayers() {
+		return players.size();
 	}
 	
 	public int userGridToLudoBoardGrid(int player, int possition) {
@@ -95,11 +104,7 @@ public class Ludo {
 	}
 
 	public int getPosition(int player, int piece) {
-		int newPos = piece - 22 - 15 + player*13;
-		if (piece > 53)
-			newPos +=  (52 - 1 - 7 * player);
-	    else if (newPos - 16 < 0)
-	    	newPos += 52;
+		
 		return newPos;
 	}
 
