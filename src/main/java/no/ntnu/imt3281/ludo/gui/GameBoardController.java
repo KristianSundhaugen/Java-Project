@@ -1,5 +1,8 @@
 package no.ntnu.imt3281.ludo.gui;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
 /**
  * Sample Skeleton for 'GameBoard.fxml' Controller Class
  */
@@ -10,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import no.ntnu.imt3281.ludo.logic.Ludo;
 
 public class GameBoardController {
 
@@ -51,5 +55,26 @@ public class GameBoardController {
 
     @FXML
     private Button sendTextButton;
+    
+    Ludo ludo;
+    
+    public GameBoardController(){
+
+    	ludo = new Ludo();
+    	throwTheDice = new Button("Throw dice");
+    	throwTheDice();
+    }
+    
+    public void throwTheDice(){
+    	
+    	throwTheDice.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				System.out.println("Throw dice");
+			}
+    		
+    	});
+    }
 
 }

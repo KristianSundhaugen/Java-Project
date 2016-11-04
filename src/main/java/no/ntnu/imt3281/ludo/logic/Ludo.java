@@ -104,7 +104,7 @@ public class Ludo {
 	}
 
 	public int getPosition(int player, int piece) {
-		
+		int newPos = 1;
 		return newPos;
 	}
 
