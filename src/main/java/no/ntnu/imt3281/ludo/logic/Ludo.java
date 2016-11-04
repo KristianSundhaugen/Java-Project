@@ -99,6 +99,7 @@ public class Ludo {
 			players.add(name);
 	}
 
+
 	public void removePlayer(String playerName) {
 		players.remove(playerName);		
 	}
