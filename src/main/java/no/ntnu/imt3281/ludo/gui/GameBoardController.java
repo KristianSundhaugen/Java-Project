@@ -16,7 +16,7 @@ import javafx.scene.image.ImageView;
 import no.ntnu.imt3281.ludo.logic.Ludo;
 
 public class GameBoardController {
-
+	
     @FXML
     private Label player1Name;
 
@@ -56,25 +56,18 @@ public class GameBoardController {
     @FXML
     private Button sendTextButton;
     
-    Ludo ludo;
+	Ludo ludo = new Ludo();
     
     public GameBoardController(){
+    	throwTheDice = new Button();
+       	throwTheDice.setOnAction(new EventHandler<ActionEvent>(){
 
-    	ludo = new Ludo();
-    	throwTheDice = new Button("Throw dice");
-    	throwTheDice();
+    			@Override
+    			public void handle(ActionEvent event) {
+    				System.out.println("Throw dice");
+    			}
+        		
+        	});
     }
     
-    public void throwTheDice(){
-    	
-    	throwTheDice.setOnAction(new EventHandler<ActionEvent>(){
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				System.out.println("Throw dice");
-			}
-    		
-    	});
-    }
-
 }
