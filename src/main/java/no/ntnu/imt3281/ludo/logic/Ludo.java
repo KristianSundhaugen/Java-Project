@@ -72,7 +72,13 @@ public class Ludo {
 	}
 	
 	public int activePlayers() {
-		return players.size();
+		int currentActivePlayers = 0;
+		for(int i = 0; i < players.size(); i++){
+			if(!players.get(i).startsWith("Inactive: ")){
+				currentActivePlayers++;
+			}
+		}
+		return currentActivePlayers;
 	}
 	
 	public int userGridToLudoBoardGrid(int player, int possition) {
@@ -89,7 +95,11 @@ public class Ludo {
 	}
 
 	public Object getPlayerName(int player) {
-		return players.get(player);
+		if(players.get(player).startsWith("Inactive: ")){
+			return "Inactive: " + players.get(player);
+		}else{
+			return players.get(player);			
+		}
 	}
 
 	public void addPlayer(String name) {
@@ -101,7 +111,8 @@ public class Ludo {
 
 
 	public void removePlayer(String playerName) {
-		players.remove(playerName);		
+		playerName = "Inactive: " + playerName;
+		//players.remove(playerName);		
 	}
 
 	public int getPosition(int player, int piece) {
