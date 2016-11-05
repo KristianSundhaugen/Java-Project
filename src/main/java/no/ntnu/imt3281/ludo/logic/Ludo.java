@@ -112,26 +112,61 @@ public class Ludo {
 	public int activePlayer() {
 		return activePlayer;
 	}
+	/**
+	 * Used on the server when a user throws
+	 * a dice and generate a dice value between 1 and 6
+	 * @return dice valu to client
+	 */
 	public int throwDice() {
 		int dice = (int)(Math.random()*6) + 1;
 		return dice;
 	}
+	/**
+	 * @param The value generated from throwDice()
+	 * @return Dice value of throwDice()?
+	 */
 	public int throwDice(int i) {
-		return 0;
+		i = dice;
+		return dice;
 	}
 	
 	public boolean movePiece(int player, int piece, int diceValue) {
 		return false;
 	}
-
+/**
+ * Meant to return the current status of the game.
+ * @return "Created" until a player is added to game.
+ * @return "Initiated" until a dice is thrown in game.
+ * @return "Started" until a player has won the game.
+ * @return "Finished" when a player has won the game.
+ */
 	public String getStatus() {
-		// TODO Auto-generated method stub
-		return null;
+		if (players.size()<0)
+		return "Created";
+		
+		else if(players.size()>0)
+		return "Initiated";
+		
+		else if(players.size()>0 && dice > 0)
+		return "Started";
+		
+		for (int i = 0; i < 4; i++){
+		if(playerPieces[i][59] == 4)
+		return "Finished";
+		}
+		return "No game created";
 	}
-
+/**
+ * Returns who has won (-1 is returned until 
+ * a player has won). When a player has won
+ * @return RED,BLUE,YELLOW or GREEN depending on who won
+ */
 	public int getWinner() {
-		// TODO Auto-generated method stub
-		return 0;
+		for (int i = 0; i < 4; i++){
+		if(playerPieces[i][59] == 4)
+		return i;
+		}
+		return -1;
 	}
 
 	public void addDiceListener(DiceListener diceListener) {
@@ -146,7 +181,7 @@ public class Ludo {
 		playerListenerers.add(playerListener);
 	}
 	int[][] getUserToPlayGrid() {
-	    return null;		
+	    return userGridToPlayerGrid;		
 	}
 	boolean allHome() {
 		return true;
