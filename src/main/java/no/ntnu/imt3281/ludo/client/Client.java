@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.ludo.gui.GameBoardController;
 
 
 
@@ -26,7 +27,7 @@ import javafx.stage.Stage;
  *
  */
 public class Client extends Application {
-
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
