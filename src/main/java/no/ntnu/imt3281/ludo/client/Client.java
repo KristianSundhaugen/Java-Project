@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.ludo.server.Message;
 
 
 
@@ -40,25 +41,22 @@ public class Client extends Application {
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		launch(args);
-//		 String serverAddress = "localhost";
-//		        Socket socket = new Socket(serverAddress, 9090);
-//		        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-//		        out.println("test1");
-//		        System.out.println("1");
-//		        out.println("test2");
-//		        System.out.println("2");
-//		        out.println("test3");
-//		        System.out.println("3");
-//		        out.println("test4");
-//		        System.out.println("4");
-//		        out.println("test5");
-//		        System.out.println("5");
-//		        out.println("test6");
-//		        System.out.println("6");
-		        //BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		        //String answer = input.readLine();
-		        //JOptionPane.showMessageDialog(null, answer);
-		        //System.exit(0);
+		//launch(args);
+	/**	 String serverAddress = "localhost";
+		        Socket socket = new Socket(serverAddress, 9090);
+		        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+		        out.println(new Message("chat message 1","CHAT", "1").toString());
+		        out.println(new Message("game message 1","GAME", "4").toString());
+		        out.println(new Message("chat message 2","CHAT", "2").toString());
+		        out.println(new Message("game message 2","GAME", "4").toString());
+		        out.println(new Message("chat message 3","CHAT", "1").toString());
+		        out.println(new Message("game message 3","GAME", "4").toString());
+		        out.println(new Message("chat message 4","CHAT", "4").toString());
+		        out.println(new Message("game message 4","GAME", "4").toString());
+	
+		        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		        String answer = input.readLine();
+		        JOptionPane.showMessageDialog(null, answer);
+		        System.exit(0);*/
 	}
 }

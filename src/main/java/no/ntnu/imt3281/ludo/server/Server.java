@@ -1,13 +1,8 @@
 package no.ntnu.imt3281.ludo.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -20,8 +15,12 @@ import java.util.Vector;
  */
 public class Server  {
 	private Vector<ServerClient> clients;
-    private MessageReader receiver;
+    private MessageReader reader;
     public Server() throws IOException {
+    	this.clients = new Vector<>();
+    	this.reader = new MessageReader(this);
+        new Thread(reader).start();
+
     	ServerSocket listener = new ServerSocket(9090);
     	System.out.println("new socket");
         while(true) {
@@ -29,13 +28,7 @@ public class Server  {
         	clients.add(new ServerClient(socket));
         	System.out.println("new connection");
         }
-    	
 
-        
-        
-        //MessageReceiver rec = new MessageReceiver(this,socket);
-       // new Thread(rec).start();
-       // System.out.println("new MessageReceiver");
     }
 	public static void main(String[] args) {
         try {
@@ -44,6 +37,12 @@ public class Server  {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public Vector<ServerClient> getClients() {
+		return clients;
+	}
+	public void removeClient(ServerClient client) {
+		clients.remove(client);
 	}
 
 }
