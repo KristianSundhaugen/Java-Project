@@ -111,8 +111,9 @@ public class Ludo {
 
 
 	public void removePlayer(String playerName) {
-		playerName = "Inactive: " + playerName;
-		//players.remove(playerName);		
+		int index = players.indexOf(playerName);
+		players.remove(index);
+		players.add(index, "Inactive: " + playerName);
 	}
 
 	public int getPosition(int player, int piece) {
