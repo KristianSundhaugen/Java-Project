@@ -20,7 +20,8 @@ public class LudoController {
     private TabPane tabbedPane;
 
     @FXML
-    public void joinRandomGame(ActionEvent e) {  	
+    public void joinRandomGame(ActionEvent e) { 
+    	System.out.println("KJØRER FUNKSJON");
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("GameBoard.fxml"));
     	loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 

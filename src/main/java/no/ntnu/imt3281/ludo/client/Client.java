@@ -27,7 +27,7 @@ import no.ntnu.imt3281.ludo.server.Message;
  *
  */
 public class Client extends Application {
-
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -41,7 +41,7 @@ public class Client extends Application {
 	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		//launch(args);
+		launch(args);
 	/**	 String serverAddress = "localhost";
 		        Socket socket = new Socket(serverAddress, 9090);
 		        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);

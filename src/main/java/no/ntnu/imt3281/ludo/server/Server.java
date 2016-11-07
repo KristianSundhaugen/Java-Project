@@ -14,10 +14,11 @@ import java.util.Vector;
  *
  */
 public class Server  {
-	private Vector<ServerClient> clients;
+	private Vector<ServerClient> clients  = new Vector<>();
+	private Vector<Game> games = new Vector<>();
+	private Vector<Chat> chats = new Vector<>();
     private MessageReader reader;
     public Server() throws IOException {
-    	this.clients = new Vector<>();
     	this.reader = new MessageReader(this);
         new Thread(reader).start();
 

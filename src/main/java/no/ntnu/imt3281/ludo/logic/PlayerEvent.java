@@ -11,7 +11,7 @@ public class PlayerEvent {
 	private int state;
 	
 	public PlayerEvent(Ludo ludo, int bLUE, Object pLAYING2) {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public PlayerEvent(Object obj){

@@ -4,15 +4,19 @@ package no.ntnu.imt3281.ludo.gui;
  * Sample Skeleton for 'GameBoard.fxml' Controller Class
  */
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import no.ntnu.imt3281.ludo.client.Client;
+import no.ntnu.imt3281.ludo.logic.Ludo;
 
 public class GameBoardController {
-
+	
     @FXML
     private Label player1Name;
 
@@ -51,5 +55,16 @@ public class GameBoardController {
 
     @FXML
     private Button sendTextButton;
+    
+	Ludo ludo = new Ludo();
+	
+    public GameBoardController(){
 
+    }
+    
+    public void throwDiceController(){
+    	int i = ludo.throwDice();
+    	System.out.println("Dice value: " + i);
+    }
+    
 }

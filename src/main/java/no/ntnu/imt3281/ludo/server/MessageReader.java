@@ -27,6 +27,8 @@ public class MessageReader implements Runnable {
 
 		if (message.isDisconnected())
 			server.removeClient(message.getClient());
+		else if (message.isGame())
+			server.findGame
 	}
 			
 }
