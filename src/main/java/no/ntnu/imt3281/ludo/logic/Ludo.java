@@ -96,7 +96,7 @@ public class Ludo {
 
 	public Object getPlayerName(int player) {
 		if(players.get(player).startsWith("Inactive: ")){
-			return "Inactive: " + players.get(player);
+			return players.get(player);
 		}else{
 			return players.get(player);			
 		}
