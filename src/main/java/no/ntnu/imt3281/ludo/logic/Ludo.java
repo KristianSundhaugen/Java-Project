@@ -85,9 +85,9 @@ public class Ludo {
 		return currentActivePlayers;
 	}
 	
-	public int userGridToLudoBoardGrid(int player, int possition) {
-		int newPos = possition - 22 - 15 + player*13;
-		if (possition > 53)
+	public int userGridToLudoBoardGrid(int player, int position) {
+		int newPos = position - 22 - 15 + player*13;
+		if (position > 53)
 			newPos +=  (52 - 1 - 7 * player);
 	    else if (newPos - 16 < 0)
 	    	newPos += 52;
@@ -97,9 +97,12 @@ public class Ludo {
 	public int nrOfPlayers() {
 		return players.size();
 	}
-	
+	/**
+	 * Gets the name of a player
+	 * @param player, which player to get name for
+	 * @return name of player
+	 */
 	public Object getPlayerName(int player) {
-
 		return players.get(player);	
 	}
 
@@ -110,7 +113,11 @@ public class Ludo {
 			players.add(name);
 	}
 
-
+	/**
+	 * Will set Inactive in front of the player name
+	 * Removes a player from the vector and adds it again with Inactive
+	 * @param playerName, which player to remove
+	 */
 	public void removePlayer(String playerName) {
 		int index = players.indexOf(playerName);
 		players.remove(index);
@@ -122,13 +129,17 @@ public class Ludo {
 		return newPos;
 	}
 
+	/**
+	 * Get the active player
+	 * @return active player
+	 */
 	public int activePlayer() {
 		return activePlayer;
 	}
 	/**
 	 * Used on the server when a user throws
 	 * a dice and generate a dice value between 1 and 6
-	 * @return dice valu to client
+	 * @return dice value to client
 	 */
 	public int throwDice() {
 		int dice = (int)(Math.random()*6) + 1;
@@ -143,6 +154,13 @@ public class Ludo {
 		return dice;
 	}
 	
+	/**
+	 * 
+	 * @param player, player to move
+	 * @param position, player position
+	 * @param diceValue, value of the dice
+	 * @return true or false. If a player is not blocked or blocked
+	 */
 	public boolean movePiece(int player, int position, int diceValue) {
 		
 		if(blocked(player, position, diceValue)){
@@ -222,17 +240,33 @@ public class Ludo {
     boolean canMove() {
     	return true;
     }
+    
+    /**
+     * Checks each position, for block, from the current player position 
+     * to the position it is supposed to move
+     * @param player, which player
+     * @param position, player position
+     * @param diceValue, number of steps to move
+     * @return true/false, if block or not blocked
+     */
     boolean blocked(int player, int position, int diceValue) {
     	int height = playerPieces[player][position];
     	
     	for(int i = 0; i <= diceValue; i++){
     		if(checkBlockAt(player, position + i, height)){
-    			
+    			return true;
     		}
     	}
-    	return true;
+    	return false;
     }
     
+    /**
+     * Checks the board position if there are more than two player on it
+     * @param player, which player 
+     * @param position, position to check for block
+     * @param height, number of players on that position
+     * @return true/false, if the field is blocked
+     */
     boolean checkBlockAt(int player, int position, int height) {
     	
     	int[][] board = getUserToPlayGrid();
@@ -244,7 +278,12 @@ public class Ludo {
 		}
     	return false;
     }
-    void checkUnfortionateOpponents(int noe, int noeAnnet) {
+    void checkUnfortionateOpponents(int player, int position) {
+    	int[][] board = getUserToPlayGrid();
+		int pos = userGridToLudoBoardGrid(player, position);
+		for(int i = 0; i < 4; i++){
+			
+		}
     	
     }
     void checkWinner() {
