@@ -71,6 +71,10 @@ public class Ludo {
 		}
 	}
 	
+	/**
+	 * Get number of currently active players
+	 * @return currentActivePlaye
+	 */
 	public int activePlayers() {
 		int currentActivePlayers = 0;
 		for(int i = 0; i < players.size(); i++){
@@ -93,13 +97,10 @@ public class Ludo {
 	public int nrOfPlayers() {
 		return players.size();
 	}
-
+	
 	public Object getPlayerName(int player) {
-		if(players.get(player).startsWith("Inactive: ")){
-			return players.get(player);
-		}else{
-			return players.get(player);			
-		}
+
+		return players.get(player);	
 	}
 
 	public void addPlayer(String name) {
