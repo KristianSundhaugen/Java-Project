@@ -1,11 +1,3 @@
-/**
- * hva er userGridToPlayerGrid
- * hva inneholder getUserToPlayGrid
- * hva gjør getStatus
- * 
- * 
- * - userGridToLudoBoardGrid
- */
 
 
 package no.ntnu.imt3281.ludo.logic;
@@ -57,7 +49,7 @@ public class Ludo {
 			try {
 				int a = 5/0;
 			}catch (Exception e) {
-				throw new NotEnoughPlayersException("Not Enough Players");	
+			//	throw new NotEnoughPlayersException("Not Enough Players");	
 			}
 			
 	}
@@ -193,7 +185,16 @@ public class Ludo {
 		playerListenerers.add(playerListener);
 	}
 	int[][] getUserToPlayGrid() {
-	    return userGridToPlayerGrid;		
+		int[][] board = new int[4][91];
+		for(int i = 0; i < 4; i++) {
+			for(int x = 0; x < 59; x++) {
+				if ( playerPieces[i][x] != 0) {
+					int pos = userGridToLudoBoardGrid(i,x);
+					board[i][pos] = playerPieces[i][x];
+				}
+			}
+		}
+	    return board;		
 	}
 	boolean allHome() {
 		return true;
