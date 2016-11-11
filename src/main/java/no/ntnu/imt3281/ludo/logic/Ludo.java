@@ -23,13 +23,15 @@ public class Ludo {
 	private Vector<String> players = new Vector<>();
 	private int activePlayer;
 	private int dice;
+	private String status;
 	private Random randomGenerator;
 	private int[][] playerPieces;
 	private int[][] userGridToPlayerGrid;
 	private Vector<DiceListener> diceListenerers = new Vector<>();
 	private Vector<PieceListener> pieceListenerers = new Vector<>();
 	private Vector<PlayerListener> playerListenerers = new Vector<>();
-    public void debug(){
+    
+	public void debug(){
     	System.out.println("userGridToPlayerGrid");
 		for ( int player = 0; player < 4; player++){
 			System.out.println("");
@@ -54,13 +56,14 @@ public class Ludo {
 		addPlayer(player3);
 		addPlayer(player4);
 		if(nrOfPlayers() < 2) 
-			try {
-				int a = 5/0;
-			}catch (Exception e) {
-				throw new NotEnoughPlayersException("Not Enough Players");	
+		{
+			//try {
+				//int a = 5/0;
+			}//catch (Exception e) {
+				//throw new NotEnoughPlayersException("Not Enough Players");	
 			}
 			
-	}
+	
 	public Ludo() {
 		playerPieces = new int[4][60];
 		userGridToPlayerGrid = new int[4][92];
@@ -103,7 +106,7 @@ public class Ludo {
 	}
 
 	public void addPlayer(String name) {
-		if (nrOfPlayers() > 3)
+		//if (nrOfPlayers() > 3)
 	//		throw new NoRoomForMorePlayersException("No Room For More Players");
 		if (name != null)
 			players.add(name);
@@ -115,10 +118,14 @@ public class Ludo {
 		players.remove(index);
 		players.add(index, "Inactive: " + playerName);
 	}
-
-	public int getPosition(int player, int piece) {
-		int newPos = 1;
-		return newPos;
+	/**
+	 * Return a given piece position of a given player
+	 * @param player
+	 * @param piecePosition
+	 * @return playerPieces[player][piecePosition]
+	 */
+	public int getPosition(int player, int piecePosition) {
+		return playerPieces[player][piecePosition];
 	}
 
 	public int activePlayer() {
@@ -138,28 +145,27 @@ public class Ludo {
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int i) {
-		i = dice;
-		return dice;
+		return i;
 	}
 	
 	public boolean movePiece(int player, int piece, int diceValue) {
 		return false;
 	}
-/**
- * Meant to return the current status of the game.
- * @return "Created" until a player is added to game.
- * @return "Initiated" until a dice is thrown in game.
- * @return "Started" until a player has won the game.
- * @return "Finished" when a player has won the game.
- */
+	/**
+	 * Meant to return the current status of the game.
+	 * @return "Created" until a player is added to game.
+	 * @return "Initiated" until a dice is thrown in game.
+	 * @return "Started" until a player has won the game.
+	 * @return "Finished" when a player has won the game.
+	 */
 	public String getStatus() {
-		if (players.size()<0)
+		if (nrOfPlayers() == 0)
 		return "Created";
 		
-		else if(players.size()>0)
+		else if(nrOfPlayers() > 0)
 		return "Initiated";
-		
-		else if(players.size()>0 && dice > 0)
+		//Finne ut hva slags if statement man kan lage som gjør at den oppdaterer status til "Started"
+		else if()
 		return "Started";
 		
 		for (int i = 0; i < 4; i++){
@@ -174,7 +180,7 @@ public class Ludo {
  * @return RED,BLUE,YELLOW or GREEN depending on who won
  */
 	public int getWinner() {
-		for (int i = 0; i < 4; i++){
+		for (int i = 0; i < players.size(); i++){
 		if(playerPieces[i][59] == 4)
 		return i;
 		}
@@ -195,17 +201,41 @@ public class Ludo {
 	int[][] getUserToPlayGrid() {
 	    return userGridToPlayerGrid;		
 	}
+	/**
+	 * A boolen methode that sends back true
+	 * if all active players are at their start position
+	 * @return true || false
+	 */
 	boolean allHome() {
-		return true;
+		
+		for ( int i = 0; i < 4; i++){
+			playerPieces[i][0] = 4;
+			for ( int j = 0; j < 16; j++)
+			{
+				userGridToPlayerGrid[j/4][j] = 1;
+				return true;
+			}
+		}
+		return false;
 	}
+	/**
+	 * Get next player who is throwing dice
+	 * if at max player, go back to first player
+	 */
 	void nextPlayer() {
 		activePlayer++;
 		if (activePlayer > 3)
 			activePlayer = 0;
 		
 	}
+	/**
+	 * Finds out if a piece can move from its position, example
+	 * if it's from the start position or getting into finish
+	 * @return true
+	 */
     boolean canMove() {
-    	return true;
+    	
+    	return false;
     }
     boolean blocked(int possition, int height, int spiller) {
     	return true;
