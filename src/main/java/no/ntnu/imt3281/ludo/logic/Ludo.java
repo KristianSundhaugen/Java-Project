@@ -142,8 +142,13 @@ public class Ludo {
 		return dice;
 	}
 	
-	public boolean movePiece(int player, int piece, int diceValue) {
-		return false;
+	public boolean movePiece(int player, int position, int diceValue) {
+		
+		if(blocked(player, position, diceValue)){
+			return false;
+		}else{
+			return true;			
+		}
 	}
 /**
  * Meant to return the current status of the game.
@@ -207,10 +212,15 @@ public class Ludo {
     boolean canMove() {
     	return true;
     }
-    boolean blocked(int possition, int height, int spiller) {
+    boolean blocked(int player, int position, int diceValue) {
+    	int height = playerPieces[player][position];
+    	for(int i = 0; i <= diceValue; i++){
+    		//if(checkBlockAt(player, get correct position, height))
+    	}
     	return true;
     }
-    boolean checkBlockAt(int possition, int height, int spiler) {
+    boolean checkBlockAt(int player, int position, int height) {
+    	
     	return true;
     }
     void checkUnfortionateOpponents(int noe, int noeAnnet) {
