@@ -198,7 +198,16 @@ public class Ludo {
 		playerListenerers.add(playerListener);
 	}
 	int[][] getUserToPlayGrid() {
-	    return userGridToPlayerGrid;		
+		int[][] board = new int[4][91];
+		for(int player = 0; player < 4; player++) {
+			for(int position = 0; position < 59; position++) {
+				if ( playerPieces[player][position] != 0) {
+					int pos = userGridToLudoBoardGrid(player, position);
+					board[player][pos] = playerPieces[player][position];
+			}
+		}
+	}
+    return board;		
 	}
 	boolean allHome() {
 		return true;
@@ -214,14 +223,25 @@ public class Ludo {
     }
     boolean blocked(int player, int position, int diceValue) {
     	int height = playerPieces[player][position];
+    	
     	for(int i = 0; i <= diceValue; i++){
-    		//if(checkBlockAt(player, get correct position, height))
+    		if(checkBlockAt(player, position + i, height)){
+    			
+    		}
     	}
     	return true;
     }
+    
     boolean checkBlockAt(int player, int position, int height) {
     	
-    	return true;
+    	int[][] board = getUserToPlayGrid();
+		int pos = userGridToLudoBoardGrid(player, position);
+		for(int i = 0; i < 4; i++){
+			if(board[i][pos] >= height){
+				return true;
+			}
+		}
+    	return false;
     }
     void checkUnfortionateOpponents(int noe, int noeAnnet) {
     	
