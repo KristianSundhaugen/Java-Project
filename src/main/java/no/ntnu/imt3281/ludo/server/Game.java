@@ -2,12 +2,15 @@ package no.ntnu.imt3281.ludo.server;
 
 import java.util.Vector;
 
+import no.ntnu.imt3281.ludo.logic.Ludo;
+
 public class Game {
 	private static int idCounter = 0;
 	private Vector<ServerClient> players = new Vector<>(4);
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
 	private String type;
 	private String id;
+	private Ludo ludoGame;
 	
 	/**
 	 * Creating a new game with the default type open
@@ -15,6 +18,7 @@ public class Game {
     public Game() {
     	this.type = "OPEN";
     	this.id = String.valueOf(idCounter++);
+    	ludoGame = new Ludo();
     }
     
     /**
@@ -24,6 +28,7 @@ public class Game {
     public Game(String type) {
     	this.type = type;
     	this.id = String.valueOf(idCounter++);
+    	ludoGame = new Ludo();
     }
     
     /**
@@ -66,5 +71,47 @@ public class Game {
      */
 	public void addPlayer(ServerClient client){
     	players.add(client);
+    	client.sendMessage(new Message("NEW_JOINED_GAME", "GAME", this.id).toString());
+    	sendMessage("PLAYER_JOINED:" + client.toString());
     }
+	
+	/**
+	 * @return the id of the current game
+	 */
+	public String getId(){
+		return id;
+	}
+
+	/**
+	 * Running a game message sent from a client in this game
+	 * @param message the message the client sent
+	 */
+	public void runMessage(GameMessage message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Sending a game message to all players in the game
+	 * @param message the content of the message to send
+	 */
+	public void sendMessage(String message) {
+		for (ServerClient player : players) {
+			player.sendMessage(new Message(message, "GAME", this.id).toString());
+		}
+	}
+	
+	/**
+	 * @return if the game is full
+	 */
+	public boolean isFull() {
+		return players.size() == 4;
+	}
+	
+	/**
+	 * Starting the game
+	 */
+	public void startGame() {
+    	sendMessage("START_GAME:" + 0);
+	}
 }
