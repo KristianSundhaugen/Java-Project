@@ -15,5 +15,17 @@ public class Chat {
     }
     
 
+
+	public void runMessage(Message message) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * @return the id of the current chat
+	 */
+	public String getId(){
+		return id;
+	}
     
 }
