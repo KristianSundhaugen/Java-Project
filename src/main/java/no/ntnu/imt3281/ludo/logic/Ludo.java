@@ -288,11 +288,17 @@ public class Ludo {
 	 */
     boolean canMove() {
     	
+    	/*
+    	get position for active player
+    	get distance from position to goal
+    	check if distance equals diceValue
+    	playerPieces[activePlayer][59]++ 
+    	*/
     	return true;
     }
     
     /**
-     * Checks each position, for block, from the current player position 
+     * Checks each position for block, from the current player position 
      * to the position it is supposed to move
      * @param player, which player
      * @param position, player position
