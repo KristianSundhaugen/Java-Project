@@ -2,10 +2,10 @@ package no.ntnu.imt3281.ludo.server;
 
 import java.util.Vector;
 
-public class MessageReader implements Runnable {
+public class ServerMessageReader implements Runnable {
     private Server server;
 	
-    public MessageReader(Server server) {
+    public ServerMessageReader(Server server) {
 		this.server = server;
 	}
 	
@@ -23,12 +23,12 @@ public class MessageReader implements Runnable {
 		}    	
 	}
 	private void parseMessage(Message message) {
-		System.out.println("Server: New Message -> " + message.toString());
-
-		if (message.isDisconnected())
+		if (message.isDisconnected()) {
 			server.removeClient(message.getClient());
-		else if (message.isGame())
-			server.findGame
+		} else if (message.isGame() || message.isChat()){
+			server.sendMessage(message);		
+		}
+			
 	}
 			
 }
