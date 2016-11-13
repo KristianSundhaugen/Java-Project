@@ -7,11 +7,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ServerClient {
-	private static final int PING_DELAY = 5000;
+	private static final int PING_DELAY = 2000;
 	private Socket socket;
 	private PrintWriter output;
 	private BufferedReader input;
-	private long lastMessageTime = System.currentTimeMillis();
+	private long lastMessageTime = System.currentTimeMillis() + PING_DELAY;
 	private String status = "CONNECTED";
 	public ServerClient(Socket socket) {
 		this.socket = socket;
@@ -35,7 +35,9 @@ public class ServerClient {
 					lastMessageTime = System.currentTimeMillis();
 					return new Message(msg, this);
 				}
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				System.out.println("NOTHING READY");
+			}
 			return null;
 		} else {
 			return new Message("STATUS:" + status, this);
@@ -45,12 +47,17 @@ public class ServerClient {
 	public boolean hasConnection() {
 		if (status == "DISCONNECTED")
 			return false; 
-		
-		if (lastMessageTime < System.currentTimeMillis() - PING_DELAY)
-		    output.println("PING");
+
+		if (lastMessageTime < System.currentTimeMillis() - PING_DELAY){
+			System.out.println("Sending ping");
+			output.println("PING");
+			this.lastMessageTime = System.currentTimeMillis();
+		}
+		   
 
 		if (output.checkError())
 			this.status = "DISCONNECTED";
+			
 		
 		return !output.checkError();
 	}
