@@ -283,14 +283,22 @@ public class Ludo {
 	 * @return true
 	 */
     boolean canMove() {
+
+    	int active = activePlayer();
     	
-    	/*
-    	get position for active player
-    	get distance from position to goal
-    	check if distance equals diceValue
-    	playerPieces[activePlayer][59]++ 
-    	*/
-    	return true;
+    	//check all 4 pieces for the active player. If distance to goal equals dice value you can move to goal
+    	for(int piece = 0; piece < 4; piece++){
+    		int pos = getPosition(active, piece);
+    		int distance = 59 - pos;
+    		if(distance == dice){
+    			return true;
+    		}
+    	}
+    	//can move from start. Must have piece to move, dice must be 6 and position 1 can't be blocked
+    	if(playerPieces[active][0] > 0 && dice == 6 && !blocked(active, 1, 1)){
+			return true;
+		}
+    	return false;
     }
     
     /**
