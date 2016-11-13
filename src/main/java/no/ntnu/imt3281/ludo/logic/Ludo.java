@@ -64,7 +64,7 @@ public class Ludo {
 	
 	/**
 	 * Get number of currently active players
-	 * @return currentActivePlaye
+	 * @return currentActivePlayers
 	 */
 	public int activePlayers() {
 		int currentActivePlayers = 0;
@@ -206,6 +206,7 @@ public class Ludo {
  	* @return RED,BLUE,YELLOW or GREEN depending on who won
  	*/
 	public int getWinner() {
+
 		for (int i = 0; i < players.size(); i++){
 			if(playerPieces[i][59] == 4)
 				return i;
@@ -314,13 +315,23 @@ public class Ludo {
 		}
     	return false;
     }
+    
+    /**
+     * Checks a position for opponent pieces. If there are any
+     * and the player is moving there, the opponent will be returned 
+     * to start
+     * @param player, which player to check
+     * @param position, which position to check
+     */
     void checkUnfortionateOpponents(int player, int position) {
+    	
     	int[][] board = getUserToPlayGrid();
 		int pos = userGridToLudoBoardGrid(player, position);
 		for(int i = 0; i < 4; i++){
-			
+			if(board[i][pos] != 0 && i != activePlayer){
+				playerPieces[i][0]++;
+			}
 		}
-    	
     }
     
     /**
