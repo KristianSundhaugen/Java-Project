@@ -76,6 +76,7 @@ public class Ludo {
 		return currentActivePlayers;
 	}
 	
+	
 	public int userGridToLudoBoardGrid(int player, int position) {
 		int newPos = position - 22 - 15 + player*13;
 		if (position > 53)
@@ -255,16 +256,17 @@ public class Ludo {
 	 * @return true || false
 	 */
 	boolean allHome() {
-		
+		boolean allHome = true;
 		for ( int i = 0; i < 4; i++){
 			playerPieces[i][0] = 4;
-			for ( int j = 0; j < 16; j++)
-			{
-				userGridToPlayerGrid[j/4][j] = 1;
-				return true;
+			for ( int j = 0; j < 16; j++) {
+				if(userGridToPlayerGrid[j/4][j] != 1) {
+					allHome = false;
+				}
+				
 			}
 		}
-		return false;
+		return allHome;
 	}
 	
 	/**
