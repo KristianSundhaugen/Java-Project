@@ -197,20 +197,7 @@ public class Ludo {
 	 * @return "Finished" when a player has won the game.
 	 */
 	public String getStatus() {
-		//if (nrOfPlayers() == 0)
-			//return "Created";
-		
-		//else if(nrOfPlayers() > 0)
-		//	return "Initiated";
-			//Finne ut hva slags if statement man kan lage som gj�r at den oppdaterer status til "Started"
-			//else if()
-			//return "Started";
-		
-		//for (int i = 0; i < 4; i++){
-		//	if(playerPieces[i][59] == 4)
-		//		return "Finished";
-		//}
-			checkWinner();
+		checkWinner();
 		return status;
 	}
 	/**
