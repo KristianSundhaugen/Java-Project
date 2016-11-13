@@ -2,7 +2,6 @@
 
 package no.ntnu.imt3281.ludo.logic;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
@@ -12,13 +11,15 @@ public class Ludo {
 	public static int BLUE = 1;
 	public static int YELLOW = 2;
 	public static int GREEN = 3;
-	private Vector<String> players = new Vector<>();
+	private Vector<String> players;
 	private int activePlayer;
 	private int dice;
-	private String status;
+	private int diceTrows = 0;
+	private String status = "Created";
 	private Random randomGenerator;
 	private int[][] playerPieces;
 	private int[][] userGridToPlayerGrid;
+	
 	private Vector<DiceListener> diceListenerers = new Vector<>();
 	private Vector<PieceListener> pieceListenerers = new Vector<>();
 	private Vector<PlayerListener> playerListenerers = new Vector<>();
@@ -26,13 +27,12 @@ public class Ludo {
 	public void debug(){
     	System.out.println("userGridToPlayerGrid");
 		for ( int player = 0; player < 4; player++){
-			System.out.println("");
 			for ( int position = 0; position < 92; position++)
     			System.out.print(userGridToPlayerGrid[player][position]);
-
 		}
     }
-	public Ludo(String player1, String player2, String player3, String player4) {
+	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
+		players = new Vector<>();
 		playerPieces = new int[4][60];
 		userGridToPlayerGrid = new int[4][92];
 		for ( int player = 0; player < 4; player++){
@@ -40,20 +40,19 @@ public class Ludo {
 			for ( int position = 0; position < 16; position++)
 				userGridToPlayerGrid[position/4][position] = 1;
 		}
-		
 		addPlayer(player1);
 		addPlayer(player2);
 		addPlayer(player3);
 		addPlayer(player4);
+
 		if(nrOfPlayers() < 2) {
-			//try {
-				//int a = 5/0;
-		}//catch (Exception e) {
-				//throw new NotEnoughPlayersException("Not Enough Players");	
+			throw new NotEnoughPlayersException("Not Enough Players");	
+		}
 	}
 			
 	
 	public Ludo() {
+		players = new Vector<>();
 		playerPieces = new int[4][60];
 		userGridToPlayerGrid = new int[4][92];
 		for ( int player = 0; player < 4; player++){
@@ -86,23 +85,38 @@ public class Ludo {
 		return newPos;
 	}
 	
+	/** 
+	 * @return the length of the players vector
+	 */
 	public int nrOfPlayers() {
 		return players.size();
 	}
+	
 	/**
 	 * Gets the name of a player
 	 * @param player, which player to get name for
 	 * @return name of player
 	 */
 	public Object getPlayerName(int player) {
-		return players.get(player);	
+		try {
+			return players.get(player);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
-
-	public void addPlayer(String name) {
-		//if (nrOfPlayers() > 3)
-	//		throw new NoRoomForMorePlayersException("No Room For More Players");
-		if (name != null)
+	
+	/**
+	 * Add a player to the game
+	 * @param name the user name of the player to add
+	 * @throws NoRoomForMorePlayersException when there is no room for more players
+	 */
+	public void addPlayer(String name) throws NoRoomForMorePlayersException {
+		if (nrOfPlayers() > 3)
+			throw new NoRoomForMorePlayersException("No Room For More Players");
+		if (name != null) {
 			players.add(name);
+			this.status = "Initiated";
+		}
 	}
 
 	/**
@@ -115,6 +129,7 @@ public class Ludo {
 		players.remove(index);
 		players.add(index, "Inactive: " + playerName);
 	}
+	
 	/**
 	 * Return a given piece position of a given player
 	 * @param player
@@ -127,11 +142,12 @@ public class Ludo {
 
 	/**
 	 * Get the active player
-	 * @return active player
+	 * @return active player number
 	 */
 	public int activePlayer() {
 		return activePlayer;
 	}
+	
 	/**
 	 * Used on the server when a user throws
 	 * a dice and generate a dice value between 1 and 6
@@ -141,16 +157,20 @@ public class Ludo {
 		int dice = (int)(Math.random()*6) + 1;
 		return dice;
 	}
+	
 	/**
 	 * @param The value generated from throwDice()
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int i) {
+		if (this.status == "Initiated")
+			this.status = "Started";
+		this.dice = i;
+		this.diceTrows++;
 		return i;
 	}
 	
 	/**
-	 * 
 	 * @param player, player to move
 	 * @param position, player position
 	 * @param diceValue, value of the dice
@@ -158,12 +178,16 @@ public class Ludo {
 	 */
 	public boolean movePiece(int player, int position, int diceValue) {
 		
-		if(blocked(player, position, diceValue)){
+		if ( blocked(player, position, diceValue) ){
 			return false;
-		}else{
+		} else {
+			int pieceNumber = playerPieces[player][position];
+			playerPieces[player][position] = 0;
+			playerPieces[player][position + diceValue] = pieceNumber;
 			return true;			
 		}
 	}
+	
 	/**
 	 * Meant to return the current status of the game.
 	 * @return "Created" until a player is added to game.
@@ -172,30 +196,31 @@ public class Ludo {
 	 * @return "Finished" when a player has won the game.
 	 */
 	public String getStatus() {
-		if (nrOfPlayers() == 0)
-		return "Created";
+		//if (nrOfPlayers() == 0)
+			//return "Created";
 		
-		else if(nrOfPlayers() > 0)
-		return "Initiated";
-		//Finne ut hva slags if statement man kan lage som gj�r at den oppdaterer status til "Started"
-		//else if()
-		//return "Started";
+		//else if(nrOfPlayers() > 0)
+		//	return "Initiated";
+			//Finne ut hva slags if statement man kan lage som gj�r at den oppdaterer status til "Started"
+			//else if()
+			//return "Started";
 		
-		for (int i = 0; i < 4; i++){
-		if(playerPieces[i][59] == 4)
-		return "Finished";
-		}
-		return "No game created";
+		//for (int i = 0; i < 4; i++){
+		//	if(playerPieces[i][59] == 4)
+		//		return "Finished";
+		//}
+			checkWinner();
+		return status;
 	}
-/**
- * Returns who has won (-1 is returned until 
- * a player has won). When a player has won
- * @return RED,BLUE,YELLOW or GREEN depending on who won
- */
+	/**
+ 	* Returns who has won (-1 is returned until 
+ 	* a player has won). When a player has won
+ 	* @return RED,BLUE,YELLOW or GREEN depending on who won
+ 	*/
 	public int getWinner() {
 		for (int i = 0; i < players.size(); i++){
-		if(playerPieces[i][59] == 4)
-		return i;
+			if(playerPieces[i][59] == 4)
+				return i;
 		}
 		return -1;
 	}
@@ -218,11 +243,12 @@ public class Ludo {
 				if ( playerPieces[player][position] != 0) {
 					int pos = userGridToLudoBoardGrid(player, position);
 					board[player][pos] = playerPieces[player][position];
+				}
 			}
 		}
+		return board;		
 	}
-    return board;		
-	}
+	
 	/**
 	 * A boolen methode that sends back true
 	 * if all active players are at their start position
@@ -240,6 +266,7 @@ public class Ludo {
 		}
 		return false;
 	}
+	
 	/**
 	 * Get next player who is throwing dice
 	 * if at max player, go back to first player
@@ -250,6 +277,7 @@ public class Ludo {
 			activePlayer = 0;
 		
 	}
+	
 	/**
 	 * Finds out if a piece can move from its position, example
 	 * if it's from the start position or getting into finish
@@ -257,7 +285,7 @@ public class Ludo {
 	 */
     boolean canMove() {
     	
-    	return false;
+    	return true;
     }
     
     /**
@@ -305,8 +333,15 @@ public class Ludo {
 		}
     	
     }
+    
+    /**
+     * Updating status to finished if one of the players has won the game
+     */
     void checkWinner() {
-    	
+    	for (int i = 0; i < 4; i++){
+    		if(playerPieces[i][59] == 4)
+    			this.status = "Finished";
+    	}
     }
 
 }
