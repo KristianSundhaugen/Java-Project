@@ -39,8 +39,6 @@ public class Ludo {
 				userGridToPlayerGrid[position/4][position] = 1;
 		}
 		
-			
-		
 		addPlayer(player1);
 		addPlayer(player2);
 		addPlayer(player3);
