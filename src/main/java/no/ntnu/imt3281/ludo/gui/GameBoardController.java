@@ -1,19 +1,21 @@
+
 package no.ntnu.imt3281.ludo.gui;
+
 
 /**
  * Sample Skeleton for 'GameBoard.fxml' Controller Class
  */
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import no.ntnu.imt3281.ludo.client.Client;
+
 import no.ntnu.imt3281.ludo.logic.Ludo;
+import no.ntnu.imt3281.ludo.server.GameMessage;
+import no.ntnu.imt3281.ludo.server.Message;
 
 public class GameBoardController {
 	
@@ -56,15 +58,71 @@ public class GameBoardController {
     @FXML
     private Button sendTextButton;
     
-	Ludo ludo = new Ludo();
-	
-    public GameBoardController(){
+	private Ludo ludo = new Ludo();
+    
+	private String id;
 
+    public GameBoardController(){
     }
     
+	/**
+	 * Throwing a dice
+	 */
     public void throwDiceController(){
     	int i = ludo.throwDice();
     	System.out.println("Dice value: " + i);
     }
+
+    /**
+     * @return the id of the game
+     */
+	public String getId() {
+		return this.id;
+	}
+	
+	/**
+	 * Getting a new message sent from the server to this game
+	 * @param msg the message
+	 */
+	public void gameMessage(GameMessage msg) {
+		if(msg.isType("NEW_JOINED_GAME")) {
+			
+		} else if (msg.isType("PLAYER_JOINED")){
+			playerJoin(msg.getMessageValue());
+		} else if (msg.isType("START_GAME")){
+			
+		} else if (msg.isType("DICE_THROW")){
+			
+		} else if (msg.isType("PLAYER_MOVE")){
+			
+		} else if (msg.isType("CHANGE_TURN")){
+			
+		} else if (msg.isType("PLAYER_DISCONNECT")){
+			
+		} else if (msg.isType("GAME_FINISHED")){
+			
+		} else if (msg.isType("PLAYER_JOINED")){
+			
+		}
+	}
+	private void playerJoin(String playerName) {
+		ludo.addPlayer(playerName);
+		Label player = player1Name;
+		switch (ludo.nrOfPlayers()) {
+			case 1:player = player1Name;break;
+			case 2:player = player2Name;break;
+			case 3:player = player3Name;break;
+			case 4:player = player4Name;break;
+		}
+		player.setText(playerName);
+	}
+
+	/**
+	 * Setting the id of the game from the server
+	 * @param gameId
+	 */
+	public void setId(String gameId) {
+    	this.id = id;		
+	}
     
 }
