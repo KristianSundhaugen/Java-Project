@@ -133,12 +133,18 @@ public class Ludo {
 	
 	/**
 	 * Return a given piece position of a given player
-	 * @param player
-	 * @param piecePosition
-	 * @return playerPieces[player][piecePosition]
+	 * @param player the player that owns the piece
+	 * @param the piece number
+	 * @return the position on the board where the piece is located
 	 */
-	public int getPosition(int player, int piecePosition) {
-		return playerPieces[player][piecePosition];
+	public int getPosition(int player, int piece) {
+		int pieces = 0;
+		for(int pos = 0; pos < playerPieces[player].length; pos++) {
+			pieces += playerPieces[player][pos];
+			if (pieces >= piece)
+				return pos;
+		}
+		return -1;
 	}
 
 	/**
@@ -184,8 +190,12 @@ public class Ludo {
 		} else {
 			int pieceNumber = playerPieces[player][position];
 			playerPieces[player][position] = 0;
-			playerPieces[player][position + diceValue] = pieceNumber;
-			return true;			
+			try {
+				playerPieces[player][position + diceValue] = pieceNumber;
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
 		}
 	}
 	
@@ -206,7 +216,6 @@ public class Ludo {
  	* @return RED,BLUE,YELLOW or GREEN depending on who won
  	*/
 	public int getWinner() {
-
 		for (int i = 0; i < players.size(); i++){
 			if(playerPieces[i][59] == 4)
 				return i;
@@ -239,7 +248,7 @@ public class Ludo {
 	}
 	
 	/**
-	 * A boolen methode that sends back true
+	 * A boolean function that sends back true
 	 * if all active players are at their start position
 	 * @return true || false
 	 */
