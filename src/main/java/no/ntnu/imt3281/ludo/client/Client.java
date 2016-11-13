@@ -39,6 +39,15 @@ public class Client extends Application {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Called by the application when the JavaFX application is stopped
+	 * Telling the connection to stop listening from requests from the server
+	 */
+	@Override
+	public void stop() {
+		Connection.stopConnection();
+	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		launch(args);
