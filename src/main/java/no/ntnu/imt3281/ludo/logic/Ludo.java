@@ -174,6 +174,11 @@ public class Ludo {
 			this.status = "Started";
 		this.dice = i;
 		this.diceTrows++;
+		System.out.println(i);
+		System.out.println(diceTrows);
+		
+		if ((diceTrows == 3 && (dice != 6 && allHome())) || diceTrows > 3)
+			nextPlayer();
 		return i;
 	}
 	
@@ -184,19 +189,26 @@ public class Ludo {
 	 * @return true or false. If a player is not blocked or blocked
 	 */
 	public boolean movePiece(int player, int position, int diceValue) {
-		
-		if ( blocked(player, position, diceValue) ){
-			return false;
-		} else {
+		boolean moved = false;
+		System.out.println("1");
+		if ( !blocked(player, position, diceValue) ) {
+			System.out.println("2");
 			int pieceNumber = playerPieces[player][position];
+			System.out.println("3");
 			playerPieces[player][position] = 0;
+			System.out.println("4");
 			try {
+				System.out.println("5");
 				playerPieces[player][position + diceValue] = pieceNumber;
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
+				System.out.println("6");
+				moved = true;
+			} catch (Exception e) {}
 		}
+		System.out.println("7");
+		if (dice != 6 )
+			nextPlayer();
+		System.out.println("8");
+		return moved;
 	}
 	
 	/**
@@ -271,6 +283,8 @@ public class Ludo {
 	 * if at max player, go back to first player
 	 */
 	void nextPlayer() {
+		dice = 0;
+		diceTrows = 0;
 		activePlayer++;
 		if (activePlayer > 3)
 			activePlayer = 0;
