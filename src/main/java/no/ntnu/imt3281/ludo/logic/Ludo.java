@@ -24,22 +24,16 @@ public class Ludo {
 	private Vector<PieceListener> pieceListenerers = new Vector<>();
 	private Vector<PlayerListener> playerListenerers = new Vector<>();
     
-	public void debug(){
-    	System.out.println("userGridToPlayerGrid");
-		for ( int player = 0; player < 4; player++){
-			for ( int position = 0; position < 92; position++)
-    			System.out.print(userGridToPlayerGrid[player][position]);
-		}
-    }
+	/**
+	 * Constructor creating new game with players
+	 * @param player1 the user name of the first player, can be null if there is no player
+	 * @param player2 the user name of the second player, can be null if there is no player
+	 * @param player3 the user name of the third player, can be null if there is no player
+	 * @param player4 the user name of the fourth player, can be null if there is no player
+	 * @throws NotEnoughPlayersException throws exception if less than two of the player variables is used
+	 */
 	public Ludo(String player1, String player2, String player3, String player4) throws NotEnoughPlayersException {
-		players = new Vector<>();
-		playerPieces = new int[4][60];
-		userGridToPlayerGrid = new int[4][92];
-		for ( int player = 0; player < 4; player++){
-			playerPieces[player][0] = 4;
-			for ( int position = 0; position < 16; position++)
-				userGridToPlayerGrid[position/4][position] = 1;
-		}
+		setupGame();
 		addPlayer(player1);
 		addPlayer(player2);
 		addPlayer(player3);
@@ -50,8 +44,17 @@ public class Ludo {
 		}
 	}
 			
-	
+	/**
+	 * Constructor that creates new games with no players
+	 */
 	public Ludo() {
+		setupGame();
+	}
+	
+	/**
+	 * Setting up the game, creating players vector, setting up pieces to be in the start positions
+	 */
+	public void setupGame() {
 		players = new Vector<>();
 		playerPieces = new int[4][60];
 		userGridToPlayerGrid = new int[4][92];
@@ -76,7 +79,12 @@ public class Ludo {
 		return currentActivePlayers;
 	}
 	
-	
+	/**
+	 * Converting a player position to a LudoBord position
+	 * @param player the player to convert from
+	 * @param position the position for the player
+	 * @return the position on the LudoBoard
+	 */
 	public int userGridToLudoBoardGrid(int player, int position) {
 		int newPos = position - 22 - 15 + player*13;
 		if (position > 53)
@@ -87,7 +95,7 @@ public class Ludo {
 	}
 	
 	/** 
-	 * @return the length of the players vector
+	 * @return the numbers of players that have been in the game
 	 */
 	public int nrOfPlayers() {
 		return players.size();
@@ -99,6 +107,7 @@ public class Ludo {
 	 * @return name of player
 	 */
 	public Object getPlayerName(int player) {
+		// TODO Videre vil getPlayerName metoden returnere "Inactive: " foran navnet. Metoden kalles med navnet på spilleren som parameter og dersom denne spilleren ikke eksisterer så vil en NoSuchPlayerException bli kastet.
 		try {
 			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -112,6 +121,7 @@ public class Ludo {
 	 * @throws NoRoomForMorePlayersException when there is no room for more players
 	 */
 	public void addPlayer(String name) throws NoRoomForMorePlayersException {
+		// TODO Navnet til en spiller kan ikke starte med fire "*" (stjerner), dersom en forsøker å registrere en spiller som har et navn som starter med "****" så vil det bli kastet en IllegalPlayerNameException.
 		if (nrOfPlayers() > 3)
 			throw new NoRoomForMorePlayersException("No Room For More Players");
 		if (name != null) {
@@ -161,6 +171,17 @@ public class Ludo {
 	 * @return dice value to client
 	 */
 	public int throwDice() {
+		// TODO Metoden throwDice uten parametre skal brukes på serveren når en bruker kaster en terning. 
+		// Metoden vil generere en ny terningverdi (mellom 1 og 6) for aktiv spiller. 
+		// Verdien som returneres fra denne metoden kan så overføres til klientene og 
+		// der kalles metoden throwDice som tar en parameter (den verdien som du fikk på serveren). 
+		// På denne måten kan du være sikker på at ingen jukser. 
+		// Uansett hvilken metode som kalles så vil det bli generert en DiceEvent 
+		// som sendes til alle registrerte DiceListener objekter. 
+		// Denne DiceEvent'en inneholder en referanse til Ludo spillet og 
+		// hvilken spiller som er aktiv og verdien på terningen. 
+		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
+		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		int dice = (int)(Math.random()*6) + 1;
 		return dice;
 	}
@@ -170,6 +191,17 @@ public class Ludo {
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int i) {
+		// TODO Metoden throwDice uten parametre skal brukes på serveren når en bruker kaster en terning. 
+		// Metoden vil generere en ny terningverdi (mellom 1 og 6) for aktiv spiller. 
+		// Verdien som returneres fra denne metoden kan så overføres til klientene og 
+		// der kalles metoden throwDice som tar en parameter (den verdien som du fikk på serveren). 
+		// På denne måten kan du være sikker på at ingen jukser. 
+		// Uansett hvilken metode som kalles så vil det bli generert en DiceEvent 
+		// som sendes til alle registrerte DiceListener objekter. 
+		// Denne DiceEvent'en inneholder en referanse til Ludo spillet og 
+		// hvilken spiller som er aktiv og verdien på terningen. 
+		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
+		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		if (this.status == "Initiated")
 			this.status = "Started";
 		this.dice = i;
@@ -189,25 +221,35 @@ public class Ludo {
 	 * @return true or false. If a player is not blocked or blocked
 	 */
 	public boolean movePiece(int player, int position, int diceValue) {
+		/* TODO
+		Metoden movePiece tar tre parametre, hvilken spiller en skal flytte brikken for, hvor den skal flyttes fra og hvor den skal flyttes til. 
+		NB, hvor den skal flyttes fra og hvor den skal flyttes til er sett fra spillerens synspunkt. 
+		For å finne hvor dette er på spillebrettet se over. Reglene for spillet håndheves i denne metoden. 
+		Metoden returnerer true dersom brikken blir flyttet og false dersom brikken ikke blir flyttet. 
+		Brikken blir ikke flytter dersom det ikke er en brikke på fra posisjonen eller at til-fra ikke er det samme som antall øyne på terningen. 
+
+		Når en brikke flyttes fra start (0) til første spillefelt (1) så må en ha seks øyne på terningen. For å komme i mål (59) 
+		må en ha nøyaktig antall øyne på terningen. Dersom en motspiller står med to eller flere brikker på hverandre mellom fra og til (inklusive) så kan det heller ikke flyttes.
+		Dersom en brikke kan flyttes så vil det bli generert en PieceEvent som forteller hvilken spiller som har flyttet hvilken av sine brikker og hvor den er flyttet fra og til. 
+		Dersom brukeren har vunnet spillet så genereres en PlayerEvent med state lik WON. Dersom brukeren ikke har vunnet og 
+		ikke har kastet en sekser og brikken ikke ble flyttet ut fra start (og dermed brukeren skal få et ekstra kast) 
+		så vil det bli generert to PlayerEvents (som når det kastes en terning) for å bytte aktiv spiller.
+
+		Dersom brikken som ble flyttet havnet på toppen av en enkelt av en motspillers brikker så skal denne brikken sendes tilbake til start. 
+		Dette gjøres ved at det i så tilfelle genereres en PieceEvent hvor player er satt til den spilleren som skal få sin brikke sendt tilbake til start. 
+		piece forteller hvilken brikke det er, og from og to forteller hvor brikken flyttes fra og hvor den flyttes til.
+		*/
 		boolean moved = false;
-		System.out.println("1");
 		if ( !blocked(player, position, diceValue) ) {
-			System.out.println("2");
 			int pieceNumber = playerPieces[player][position];
-			System.out.println("3");
 			playerPieces[player][position] = 0;
-			System.out.println("4");
 			try {
-				System.out.println("5");
 				playerPieces[player][position + diceValue] = pieceNumber;
-				System.out.println("6");
 				moved = true;
 			} catch (Exception e) {}
 		}
-		System.out.println("7");
 		if (dice != 6 )
 			nextPlayer();
-		System.out.println("8");
 		return moved;
 	}
 	
@@ -219,6 +261,11 @@ public class Ludo {
 	 * @return "Finished" when a player has won the game.
 	 */
 	public String getStatus() {
+		// TODO Metoden getStatus returnerer status for selve spillet. status er Created inntil det 
+		// er lagt til spillere i spillet. Når det er lagt til spillere så er status Initiated inntil 
+		// en spiller har kastet en terning.
+		// Når den første terningen er kastet så er status for spillet Started helt frem til en spiller vinner spillet, 
+		// da går status over til å være Finished.
 		checkWinner();
 		return status;
 	}
