@@ -45,20 +45,12 @@ public class Ludo {
 		addPlayer(player2);
 		addPlayer(player3);
 		addPlayer(player4);
-		if(nrOfPlayers() < 2) 
-<<<<<<< HEAD
-			try {
-				int a = 5/0;
-			}catch (Exception e) {
-			//	throw new NotEnoughPlayersException("Not Enough Players");	
-=======
-		{
+		if(nrOfPlayers() < 2) {
 			//try {
 				//int a = 5/0;
-			}//catch (Exception e) {
+		}//catch (Exception e) {
 				//throw new NotEnoughPlayersException("Not Enough Players");	
->>>>>>> 75fa0d9496f7697d01bc71a390c0c5104ef800e1
-			}
+	}
 			
 	
 	public Ludo() {
@@ -185,9 +177,9 @@ public class Ludo {
 		
 		else if(nrOfPlayers() > 0)
 		return "Initiated";
-		//Finne ut hva slags if statement man kan lage som gjør at den oppdaterer status til "Started"
-		else if()
-		return "Started";
+		//Finne ut hva slags if statement man kan lage som gjï¿½r at den oppdaterer status til "Started"
+		//else if()
+		//return "Started";
 		
 		for (int i = 0; i < 4; i++){
 		if(playerPieces[i][59] == 4)
@@ -221,17 +213,6 @@ public class Ludo {
 	}
 	int[][] getUserToPlayGrid() {
 		int[][] board = new int[4][91];
-<<<<<<< HEAD
-		for(int i = 0; i < 4; i++) {
-			for(int x = 0; x < 59; x++) {
-				if ( playerPieces[i][x] != 0) {
-					int pos = userGridToLudoBoardGrid(i,x);
-					board[i][pos] = playerPieces[i][x];
-				}
-			}
-		}
-	    return board;		
-=======
 		for(int player = 0; player < 4; player++) {
 			for(int position = 0; position < 59; position++) {
 				if ( playerPieces[player][position] != 0) {
@@ -241,7 +222,6 @@ public class Ludo {
 		}
 	}
     return board;		
->>>>>>> 75fa0d9496f7697d01bc71a390c0c5104ef800e1
 	}
 	/**
 	 * A boolen methode that sends back true
