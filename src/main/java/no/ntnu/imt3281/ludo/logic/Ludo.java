@@ -286,6 +286,7 @@ public class Ludo {
 
     	int active = activePlayer();
     	
+    	/*
     	//check all 4 pieces for the active player. If distance to goal equals dice value you can move to goal
     	for(int piece = 0; piece < 4; piece++){
     		int pos = getPosition(active, piece);
@@ -297,7 +298,18 @@ public class Ludo {
     	//can move from start. Must have piece to move, dice must be 6 and position 1 can't be blocked
     	if(playerPieces[active][0] > 0 && dice == 6 && !blocked(active, 1, 1)){
 			return true;
-		}
+		}*/
+    	
+    	
+    	//just use dice or get dice value some other way?
+    	for(int piece = 0; piece < 4; piece++){
+    		int pos = getPosition(active, piece);
+    		if(!blocked(active, pos, dice)){
+    			return true;
+    		}
+    	}
+    	
+    	
     	return false;
     }
     
