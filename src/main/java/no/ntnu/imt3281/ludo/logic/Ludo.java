@@ -14,7 +14,7 @@ public class Ludo {
 	private Vector<String> players;
 	private int activePlayer;
 	private int dice;
-	private int diceTrows = 0;
+	private int diceThrows = 0;
 	private String status = "Created";
 	private Random randomGenerator;
 	private int[][] playerPieces;
@@ -187,7 +187,38 @@ public class Ludo {
 		// hvilken spiller som er aktiv og verdien på terningen. 
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		int dice = (int)(Math.random()*6) + 1;
+		
+		Ludo ludo = new Ludo();
+		randomGenerator = new Random();
+		dice = randomGenerator.nextInt(6) + 1;
+		diceThrows++;
+		
+		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, dice);
+		
+		for(int i = 0; i < diceListenerers.size(); i++){
+			diceListenerers.get(i).diceThrown(diceThrow);
+		}
+		
+		//if you can't move any pieces
+		if(!canMove()){
+			nextPlayer();
+		}
+		//when you have thrown three times
+		if(diceThrows > 3){
+			nextPlayer();
+		}
+		//Throw the dice 3 times until you get a six and move a piece out
+		if(dice != 6 && allHome() && diceThrows < 3){
+			nextPlayer();
+		}
+		//a piece can be moved out and you can throw again
+		if(dice == 6 && allHome()){
+			diceThrows = 0;
+		}
+		//you can't throw more than three times, even if you get a six the third time
+		if(diceThrows == 3 && dice == 6){
+			nextPlayer();
+		}
 		return dice;
 	}
 	
@@ -210,11 +241,11 @@ public class Ludo {
 		if (this.status == "Initiated")
 			this.status = "Started";
 		this.dice = i;
-		this.diceTrows++;
+		this.diceThrows++;
 		System.out.println(i);
-		System.out.println(diceTrows);
+		System.out.println(diceThrows);
 		
-		if ((diceTrows == 3 && (dice != 6 && allHome())) || diceTrows > 3)
+		if ((diceThrows == 3 && (dice != 6 && allHome())) || diceThrows > 3)
 			nextPlayer();
 		return i;
 	}
@@ -251,11 +282,7 @@ public class Ludo {
 		ikke har kastet en sekser og brikken ikke ble flyttet ut fra start (og dermed brukeren skal få et ekstra kast) 
 		så vil det bli generert to PlayerEvents (som når det kastes en terning) for å bytte aktiv spiller.
 
-		Dersom brikken som ble flyttet havnet på toppen av en enkelt av en motspillers brikker så skal 
-		denne brikken sendes tilbake til start. 
-		Dette gjøres ved at det i så tilfelle genereres en PieceEvent hvor player er satt til 
-		den spilleren som skal få sin brikke sendt tilbake til start. 
-		piece forteller hvilken brikke det er, og from og to forteller hvor brikken flyttes fra og hvor den flyttes til.
+		
 		*/
 		
 		if (isValidMove(player, fromPos, toPos)) {
@@ -265,8 +292,8 @@ public class Ludo {
 			checkWinner();
 			return true;
 		}
-		return false;
 		
+		return false;
 
 	}
 	
@@ -312,10 +339,17 @@ public class Ludo {
 		/**
 		 * NEED VALUE 6 ON DICE TO MOVE FROM HOME
 		 */
-		//if
+		if (fromPos == 0 && dice != 6)
+			return false;
 		
 		/**
-		 * WHEN 
+		 * WHEN MOVING FROM HOME YOU CAN ONLY MOVE 1
+		 */
+		if (fromPos == 0 && toPos != 1 )
+			return false;
+		
+		/**
+		 * EVERYTHING GOOD
 		 */
 		return true;
 	}
@@ -395,7 +429,7 @@ public class Ludo {
 	 */
 	void nextPlayer() {
 		dice = 0;
-		diceTrows = 0;
+		diceThrows = 0;
 		activePlayer++;
 		if (activePlayer > 3)
 			activePlayer = 0;
@@ -427,15 +461,24 @@ public class Ludo {
     	
     	
     	//just use dice or get dice value some other way?
-    	for(int piece = 0; piece < 4; piece++){
+    	for (int piece = 0; piece < 4; piece++) {
     		int pos = getPosition(active, piece);
-    		if(!blocked(active, pos, dice)){
-    			return true;
+
+    		//if position is 0 dice has to be six. If position is 59 you can't move
+    		if (pos == playerPieces[active][59]) {
+    			return false;
+    		} else if (pos == playerPieces[active][0]) {
+    			if (dice == 6) {
+    				return true;
+    			}
+    		}
+    		if (blocked(active, pos, dice)) {
+    			return false;
     		}
     	}
     	
     	
-    	return false;
+    	return true;
     }
     
     /**
@@ -477,27 +520,65 @@ public class Ludo {
     }
     
     /**
+     * Converts a position on the board to a player position, 
+     * when 1 is returned the position might be both 1 and 53
+     * @param player the player number to convert to
+     * @param pos the board position to convert from
+     * @return the player position
+     */
+    int boardPosToPlayerPos(int player, int pos) {
+    	int diff = pos - 15 - player * 13;
+    	if (diff < 1) 
+    		diff += 52;
+   		return diff;
+    }
+    
+    /**
      * Checks a position for opponent pieces. If there are any
      * and the player is moving there, the opponent will be returned 
      * to start
      * @param player, which player to check
      * @param position, which position to check
      */
-    void checkUnfortionateOpponents(int player, int position) {
-    	
+    private void checkUnfortionateOpponents(int player, int position) {
     	int[][] board = getUserToPlayGrid();
 		int pos = userGridToLudoBoardGrid(player, position);
-		for(int i = 0; i < 4; i++){
-			if(board[i][pos] != 0 && i != activePlayer){
-				playerPieces[i][0]++;
-			}
-		}
+		/**
+		 * Testing each of the players, if they have a piece in the position
+		 * using moveBack if there is a piece there
+		 */
+		for(int playerNum = 0; playerNum < 4; playerNum++)
+			if( playerNum != player && board[playerNum][pos] != 0)
+				moveBack(playerNum, pos);
+    }
+    
+    /**
+     * Moving back a players piece based on the board position
+     * @param playerNum the player to move back
+     * @param boardPos the position on the board
+     */
+    private void moveBack(int playerNum, int boardPos) {
+    	playerPieces[playerNum][0]++;
+		int playerPos = boardPosToPlayerPos(playerNum, boardPos);
+		
+		/** 
+		 * if there is a piece on the position
+		 */
+		if (playerPieces[playerNum][playerPos] != 0)
+			playerPieces[playerNum][playerPos]--;
+		
+		/**
+		 * Case where the position is on the second round 
+		 * and we need to add one round to the array
+		 */
+		else if (playerPieces[playerNum][playerPos + 52] != 0)
+			playerPieces[playerNum][playerPos + 52]--;
     }
     
     /**
      * Updating status to finished if one of the players has won the game
      */
-    void checkWinner() {
+    private void checkWinner() {
     	for (int i = 0; i < 4; i++){
     		if(playerPieces[i][59] == 4)
     			this.status = "Finished";
