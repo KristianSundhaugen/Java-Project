@@ -182,8 +182,18 @@ public class Ludo {
 		// hvilken spiller som er aktiv og verdien på terningen. 
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		int dice = (int)(Math.random()*6) + 1;
-		return dice;
+		
+		Ludo ludo = new Ludo();
+		randomGenerator = new Random();
+		int diceValue = randomGenerator.nextInt(6) + 1;
+		
+		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, diceValue);
+		
+		for(int i = 0; i < diceListenerers.size(); i++){
+			diceListenerers.get(i).diceThrown(diceThrow);
+		}
+		
+		return diceValue;
 	}
 	
 	/**
@@ -365,13 +375,22 @@ public class Ludo {
     	//just use dice or get dice value some other way?
     	for(int piece = 0; piece < 4; piece++){
     		int pos = getPosition(active, piece);
-    		if(!blocked(active, pos, dice)){
-    			return true;
+    		//if position is 0 dice has to be six. If position is 59 you can't move
+    		if(pos == playerPieces[active][59]){
+    			return false;
+    		}
+    		else if(pos == playerPieces[active][0]){
+    			if(dice == 6){
+    				return true;
+    			}
+    		}
+    		if(blocked(active, pos, dice)){
+    			return false;
     		}
     	}
     	
     	
-    	return false;
+    	return true;
     }
     
     /**
