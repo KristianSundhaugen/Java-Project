@@ -183,12 +183,11 @@ public class Ludo {
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		
-		Ludo ludo = new Ludo();
 		randomGenerator = new Random();
 		dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
 		
-		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, dice);
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
 		
 		for(int i = 0; i < diceListenerers.size(); i++){
 			diceListenerers.get(i).diceThrown(diceThrow);
