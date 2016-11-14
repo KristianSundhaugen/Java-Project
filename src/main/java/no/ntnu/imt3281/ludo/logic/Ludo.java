@@ -220,37 +220,99 @@ public class Ludo {
 	 * @param diceValue, value of the dice
 	 * @return true or false. If a player is not blocked or blocked
 	 */
-	public boolean movePiece(int player, int position, int diceValue) {
+	public boolean movePiece(int player, int fromPos, int toPos) {
 		/* TODO
-		Metoden movePiece tar tre parametre, hvilken spiller en skal flytte brikken for, hvor den skal flyttes fra og hvor den skal flyttes til. 
+		Metoden movePiece tar tre parametre, hvilken spiller en skal flytte brikken for, 
+		hvor den skal flyttes fra og hvor den skal flyttes til. 
+		
 		NB, hvor den skal flyttes fra og hvor den skal flyttes til er sett fra spillerens synspunkt. 
+		
+	
 		For å finne hvor dette er på spillebrettet se over. Reglene for spillet håndheves i denne metoden. 
+		
+		
 		Metoden returnerer true dersom brikken blir flyttet og false dersom brikken ikke blir flyttet. 
-		Brikken blir ikke flytter dersom det ikke er en brikke på fra posisjonen eller at til-fra ikke er det samme som antall øyne på terningen. 
+		Brikken blir ikke flytter dersom det ikke er en brikke på fra posisjonen eller at til-fra ikke 
+		er det samme som antall øyne på terningen. 
 
-		Når en brikke flyttes fra start (0) til første spillefelt (1) så må en ha seks øyne på terningen. For å komme i mål (59) 
-		må en ha nøyaktig antall øyne på terningen. Dersom en motspiller står med to eller flere brikker på hverandre mellom fra og til (inklusive) så kan det heller ikke flyttes.
-		Dersom en brikke kan flyttes så vil det bli generert en PieceEvent som forteller hvilken spiller som har flyttet hvilken av sine brikker og hvor den er flyttet fra og til. 
-		Dersom brukeren har vunnet spillet så genereres en PlayerEvent med state lik WON. Dersom brukeren ikke har vunnet og 
+		Når en brikke flyttes fra start (0) til første spillefelt (1) så må en ha seks øyne på terningen. 
+		For å komme i mål (59) 
+		må en ha nøyaktig antall øyne på terningen. Dersom en motspiller står med to eller flere brikker på 
+		hverandre mellom fra og til (inklusive) så kan det heller ikke flyttes.
+		Dersom en brikke kan flyttes så vil det bli generert en PieceEvent som forteller hvilken spiller 
+		som har flyttet hvilken av sine brikker og hvor den er flyttet fra og til. 
+		Dersom brukeren har vunnet spillet så genereres en PlayerEvent med state lik WON. 
+		Dersom brukeren ikke har vunnet og 
 		ikke har kastet en sekser og brikken ikke ble flyttet ut fra start (og dermed brukeren skal få et ekstra kast) 
 		så vil det bli generert to PlayerEvents (som når det kastes en terning) for å bytte aktiv spiller.
 
-		Dersom brikken som ble flyttet havnet på toppen av en enkelt av en motspillers brikker så skal denne brikken sendes tilbake til start. 
-		Dette gjøres ved at det i så tilfelle genereres en PieceEvent hvor player er satt til den spilleren som skal få sin brikke sendt tilbake til start. 
+		Dersom brikken som ble flyttet havnet på toppen av en enkelt av en motspillers brikker så skal 
+		denne brikken sendes tilbake til start. 
+		Dette gjøres ved at det i så tilfelle genereres en PieceEvent hvor player er satt til 
+		den spilleren som skal få sin brikke sendt tilbake til start. 
 		piece forteller hvilken brikke det er, og from og to forteller hvor brikken flyttes fra og hvor den flyttes til.
 		*/
-		boolean moved = false;
-		if ( !blocked(player, position, diceValue) ) {
-			int pieceNumber = playerPieces[player][position];
-			playerPieces[player][position] = 0;
-			try {
-				playerPieces[player][position + diceValue] = pieceNumber;
-				moved = true;
-			} catch (Exception e) {}
+		
+		if (isValidMove(player, fromPos, toPos)) {
+			playerPieces[player][fromPos]--;
+			playerPieces[player][toPos]++;
+			checkUnfortionateOpponents(player, toPos);
+			checkWinner();
+			return true;
 		}
-		if (dice != 6 )
-			nextPlayer();
-		return moved;
+		return false;
+		
+
+	}
+	
+	/**
+	 * Boolean testing if the conditions of a move is valid, need move have to be the same length as the dice value,
+	 * there need to be a piece on the from position and the piece can not be blocked, the positions have to be valid values
+	 * @param player the player that is trying to move
+	 * @param fromPos the position the player is trying to move from
+	 * @param toPos the position the player is trying to move to
+	 * @return boolean telling if the tests passed
+	 */
+	private boolean isValidMove(int player, int fromPos, int toPos) {
+		/**
+		 * IF NO PIECE
+		 */
+		if (playerPieces[player][fromPos] == 0)
+			return false;
+	
+		/**
+		 * IF BLOCKED
+		 */
+		if ( blocked(player, fromPos, toPos - fromPos) )
+			return false;
+		
+		/**
+		 * IF MISMATCH DICE/MOVE LENGTH
+		 */
+		if (toPos - fromPos != dice)
+			return false;
+		
+		/**
+		 * FROM POS NEED TO BE BIGGER THAN TO POS
+		 */
+		if (fromPos <= toPos)
+			return false;
+		
+		/**
+		 * POSITIONS NEED TO BE ON THE BOARD
+		 */
+		if ( fromPos > 59 || toPos > 59)
+			return false;
+		
+		/**
+		 * NEED VALUE 6 ON DICE TO MOVE FROM HOME
+		 */
+		//if
+		
+		/**
+		 * WHEN 
+		 */
+		return true;
 	}
 	
 	/**
