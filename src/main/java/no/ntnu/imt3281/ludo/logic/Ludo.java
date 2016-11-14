@@ -183,6 +183,9 @@ public class Ludo {
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		
+		if (this.status == "Initiated")
+			this.status = "Started";
+		
 		randomGenerator = new Random();
 		dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
@@ -193,34 +196,42 @@ public class Ludo {
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
 		
+		shouldGoToNextPlayer();
+		
+		return dice;
+	}
+	
+	public boolean shouldGoToNextPlayer(){
+		
 		//if you can't move any pieces
 		if(!canMove()){
-			nextPlayer();
+			return true;
 		}
 		//when you have thrown three times
 		if(diceThrows > 3){
-			nextPlayer();
+			return true;
 		}
 		//Throw the dice 3 times until you get a six and move a piece out
 		if(dice != 6 && allHome() && diceThrows < 3){
-			nextPlayer();
+			return true;
 		}
 		//a piece can be moved out and you can throw again
 		if(dice == 6 && allHome()){
 			diceThrows = 0;
+			return false;
 		}
 		//you can't throw more than three times, even if you get a six the third time
 		if(diceThrows == 3 && dice == 6){
-			nextPlayer();
-		}
-		return dice;
+			return true;
+		}		
+		return false;
 	}
 	
 	/**
 	 * @param The value generated from throwDice()
 	 * @return Dice value of throwDice()?
 	 */
-	public int throwDice(int i) {
+	public int throwDice(int diceValue) {
 		// TODO Metoden throwDice uten parametre skal brukes på serveren når en bruker kaster en terning. 
 		// Metoden vil generere en ny terningverdi (mellom 1 og 6) for aktiv spiller. 
 		// Verdien som returneres fra denne metoden kan så overføres til klientene og 
@@ -234,14 +245,18 @@ public class Ludo {
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		if (this.status == "Initiated")
 			this.status = "Started";
-		this.dice = i;
-		this.diceThrows++;
-		System.out.println(i);
-		System.out.println(diceThrows);
 		
-		if ((diceThrows == 3 && (dice != 6 && allHome())) || diceThrows > 3)
-			nextPlayer();
-		return i;
+		this.dice = diceValue;
+		diceThrows++;
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
+		
+		for(int i = 0; i < diceListenerers.size(); i++){
+			diceListenerers.get(i).diceThrown(diceThrow);
+		}
+		
+		shouldGoToNextPlayer();
+		
+		return dice;
 	}
 	
 	/**
@@ -439,25 +454,8 @@ public class Ludo {
 
     	int active = activePlayer();
     	
-    	/*
-    	//check all 4 pieces for the active player. If distance to goal equals dice value you can move to goal
     	for(int piece = 0; piece < 4; piece++){
     		int pos = getPosition(active, piece);
-    		int distance = 59 - pos;
-    		if(distance == dice){
-    			return true;
-    		}
-    	}
-    	//can move from start. Must have piece to move, dice must be 6 and position 1 can't be blocked
-    	if(playerPieces[active][0] > 0 && dice == 6 && !blocked(active, 1, 1)){
-			return true;
-		}*/
-    	
-    	
-    	//just use dice or get dice value some other way?
-    	for(int piece = 0; piece < 4; piece++){
-    		int pos = getPosition(active, piece);
-    		//if position is 0 dice has to be six. If position is 59 you can't move
     		if(pos == playerPieces[active][59]){
     			return false;
     		}
