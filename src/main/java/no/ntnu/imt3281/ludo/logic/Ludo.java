@@ -14,7 +14,7 @@ public class Ludo {
 	private Vector<String> players;
 	private int activePlayer;
 	private int dice;
-	private int diceTrows = 0;
+	private int diceThrows = 0;
 	private String status = "Created";
 	private Random randomGenerator;
 	private int[][] playerPieces;
@@ -182,7 +182,38 @@ public class Ludo {
 		// hvilken spiller som er aktiv og verdien på terningen. 
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		int dice = (int)(Math.random()*6) + 1;
+		
+		Ludo ludo = new Ludo();
+		randomGenerator = new Random();
+		dice = randomGenerator.nextInt(6) + 1;
+		diceThrows++;
+		
+		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, dice);
+		
+		for(int i = 0; i < diceListenerers.size(); i++){
+			diceListenerers.get(i).diceThrown(diceThrow);
+		}
+		
+		//if you can't move any pieces
+		if(!canMove()){
+			nextPlayer();
+		}
+		//when you have thrown three times
+		if(diceThrows > 3){
+			nextPlayer();
+		}
+		//Throw the dice 3 times until you get a six and move a piece out
+		if(dice != 6 && allHome() && diceThrows < 3){
+			nextPlayer();
+		}
+		//a piece can be moved out and you can throw again
+		if(dice == 6 && allHome()){
+			diceThrows = 0;
+		}
+		//you can't throw more than three times, even if you get a six the third time
+		if(diceThrows == 3 && dice == 6){
+			nextPlayer();
+		}
 		return dice;
 	}
 	
@@ -205,11 +236,11 @@ public class Ludo {
 		if (this.status == "Initiated")
 			this.status = "Started";
 		this.dice = i;
-		this.diceTrows++;
+		this.diceThrows++;
 		System.out.println(i);
-		System.out.println(diceTrows);
+		System.out.println(diceThrows);
 		
-		if ((diceTrows == 3 && (dice != 6 && allHome())) || diceTrows > 3)
+		if ((diceThrows == 3 && (dice != 6 && allHome())) || diceThrows > 3)
 			nextPlayer();
 		return i;
 	}
@@ -396,7 +427,7 @@ public class Ludo {
 	 */
 	void nextPlayer() {
 		dice = 0;
-		diceTrows = 0;
+		diceThrows = 0;
 		activePlayer++;
 		if (activePlayer > 3)
 			activePlayer = 0;
@@ -430,13 +461,22 @@ public class Ludo {
     	//just use dice or get dice value some other way?
     	for (int piece = 0; piece < 4; piece++) {
     		int pos = getPosition(active, piece);
-    		if (!blocked(active, pos, dice)) {
-    			return true;
+
+    		//if position is 0 dice has to be six. If position is 59 you can't move
+    		if (pos == playerPieces[active][59]) {
+    			return false;
+    		} else if (pos == playerPieces[active][0]) {
+    			if (dice == 6) {
+    				return true;
+    			}
+    		}
+    		if (blocked(active, pos, dice)) {
+    			return false;
     		}
     	}
     	
     	
-    	return false;
+    	return true;
     }
     
     /**
