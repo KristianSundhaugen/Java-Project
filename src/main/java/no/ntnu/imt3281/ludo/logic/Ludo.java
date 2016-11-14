@@ -584,5 +584,25 @@ public class Ludo {
     			this.status = "Finished";
     	}
     }
+    
+    /**
+     * Is active are returning a true, if a player is not Inactive or not there.
+     * @return true || false
+     */
+    private boolean isActive(int player) throws NoSuchPlayerException
+    {	
+    	
+    	if(players.get(player) == null)
+    	{	
+    		throw new NoSuchPlayerException("No player by this name");
+    	}
+    	
+    	if (players.get(player).startsWith("Inactive: "))
+    	{		
+    		return false;
+    	}
+    	
+    	return true;
+    }
 
 }
