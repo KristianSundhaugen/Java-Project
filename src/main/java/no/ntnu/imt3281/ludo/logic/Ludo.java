@@ -246,11 +246,7 @@ public class Ludo {
 		ikke har kastet en sekser og brikken ikke ble flyttet ut fra start (og dermed brukeren skal få et ekstra kast) 
 		så vil det bli generert to PlayerEvents (som når det kastes en terning) for å bytte aktiv spiller.
 
-		Dersom brikken som ble flyttet havnet på toppen av en enkelt av en motspillers brikker så skal 
-		denne brikken sendes tilbake til start. 
-		Dette gjøres ved at det i så tilfelle genereres en PieceEvent hvor player er satt til 
-		den spilleren som skal få sin brikke sendt tilbake til start. 
-		piece forteller hvilken brikke det er, og from og to forteller hvor brikken flyttes fra og hvor den flyttes til.
+		
 		*/
 		
 		if (isValidMove(player, fromPos, toPos)) {
@@ -260,8 +256,8 @@ public class Ludo {
 			checkWinner();
 			return true;
 		}
-		return false;
 		
+		return false;
 
 	}
 	
@@ -307,10 +303,17 @@ public class Ludo {
 		/**
 		 * NEED VALUE 6 ON DICE TO MOVE FROM HOME
 		 */
-		//if
+		if (fromPos == 0 && dice != 6)
+			return false;
 		
 		/**
-		 * WHEN 
+		 * WHEN MOVING FROM HOME YOU CAN ONLY MOVE 1
+		 */
+		if (fromPos == 0 && toPos != 1 )
+			return false;
+		
+		/**
+		 * EVERYTHING GOOD
 		 */
 		return true;
 	}
@@ -425,9 +428,9 @@ public class Ludo {
     	
     	
     	//just use dice or get dice value some other way?
-    	for(int piece = 0; piece < 4; piece++){
+    	for (int piece = 0; piece < 4; piece++) {
     		int pos = getPosition(active, piece);
-    		if(!blocked(active, pos, dice)){
+    		if (!blocked(active, pos, dice)) {
     			return true;
     		}
     	}
@@ -475,27 +478,65 @@ public class Ludo {
     }
     
     /**
+     * Converts a position on the board to a player position, 
+     * when 1 is returned the position might be both 1 and 53
+     * @param player the player number to convert to
+     * @param pos the board position to convert from
+     * @return the player position
+     */
+    int boardPosToPlayerPos(int player, int pos) {
+    	int diff = pos - 15 - player * 13;
+    	if (diff < 1) 
+    		diff += 52;
+   		return diff;
+    }
+    
+    /**
      * Checks a position for opponent pieces. If there are any
      * and the player is moving there, the opponent will be returned 
      * to start
      * @param player, which player to check
      * @param position, which position to check
      */
-    void checkUnfortionateOpponents(int player, int position) {
-    	
+    private void checkUnfortionateOpponents(int player, int position) {
     	int[][] board = getUserToPlayGrid();
 		int pos = userGridToLudoBoardGrid(player, position);
-		for(int i = 0; i < 4; i++){
-			if(board[i][pos] != 0 && i != activePlayer){
-				playerPieces[i][0]++;
-			}
-		}
+		/**
+		 * Testing each of the players, if they have a piece in the position
+		 * using moveBack if there is a piece there
+		 */
+		for(int playerNum = 0; playerNum < 4; playerNum++)
+			if( playerNum != player && board[playerNum][pos] != 0)
+				moveBack(playerNum, pos);
+    }
+    
+    /**
+     * Moving back a players piece based on the board position
+     * @param playerNum the player to move back
+     * @param boardPos the position on the board
+     */
+    private void moveBack(int playerNum, int boardPos) {
+    	playerPieces[playerNum][0]++;
+		int playerPos = boardPosToPlayerPos(playerNum, boardPos);
+		
+		/** 
+		 * if there is a piece on the position
+		 */
+		if (playerPieces[playerNum][playerPos] != 0)
+			playerPieces[playerNum][playerPos]--;
+		
+		/**
+		 * Case where the position is on the second round 
+		 * and we need to add one round to the array
+		 */
+		else if (playerPieces[playerNum][playerPos + 52] != 0)
+			playerPieces[playerNum][playerPos + 52]--;
     }
     
     /**
      * Updating status to finished if one of the players has won the game
      */
-    void checkWinner() {
+    private void checkWinner() {
     	for (int i = 0; i < 4; i++){
     		if(playerPieces[i][59] == 4)
     			this.status = "Finished";
