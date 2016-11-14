@@ -14,7 +14,7 @@ public class Ludo {
 	private Vector<String> players;
 	private int activePlayer;
 	private int dice;
-	private int diceTrows = 0;
+	private int diceThrows = 0;
 	private String status = "Created";
 	private Random randomGenerator;
 	private int[][] playerPieces;
@@ -185,15 +185,36 @@ public class Ludo {
 		
 		Ludo ludo = new Ludo();
 		randomGenerator = new Random();
-		int diceValue = randomGenerator.nextInt(6) + 1;
+		dice = randomGenerator.nextInt(6) + 1;
+		diceThrows++;
 		
-		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, diceValue);
+		DiceEvent diceThrow = new DiceEvent(ludo, activePlayer, dice);
 		
 		for(int i = 0; i < diceListenerers.size(); i++){
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
 		
-		return diceValue;
+		//if you can't move any pieces
+		if(!canMove()){
+			nextPlayer();
+		}
+		//when you have thrown three times
+		if(diceThrows > 3){
+			nextPlayer();
+		}
+		//Throw the dice 3 times until you get a six and move a piece out
+		if(dice != 6 && allHome() && diceThrows < 3){
+			nextPlayer();
+		}
+		//a piece can be moved out and you can throw again
+		if(dice == 6 && allHome()){
+			diceThrows = 0;
+		}
+		//you can't throw more than three times, even if you get a six the third time
+		if(diceThrows == 3 && dice == 6){
+			nextPlayer();
+		}
+		return dice;
 	}
 	
 	/**
@@ -215,11 +236,11 @@ public class Ludo {
 		if (this.status == "Initiated")
 			this.status = "Started";
 		this.dice = i;
-		this.diceTrows++;
+		this.diceThrows++;
 		System.out.println(i);
-		System.out.println(diceTrows);
+		System.out.println(diceThrows);
 		
-		if ((diceTrows == 3 && (dice != 6 && allHome())) || diceTrows > 3)
+		if ((diceThrows == 3 && (dice != 6 && allHome())) || diceThrows > 3)
 			nextPlayer();
 		return i;
 	}
@@ -341,7 +362,7 @@ public class Ludo {
 	 */
 	void nextPlayer() {
 		dice = 0;
-		diceTrows = 0;
+		diceThrows = 0;
 		activePlayer++;
 		if (activePlayer > 3)
 			activePlayer = 0;
