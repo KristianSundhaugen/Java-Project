@@ -11,8 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import no.ntnu.imt3281.ludo.logic.Ludo;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
@@ -125,4 +127,24 @@ public class GameBoardController {
     	this.id = id;		
 	}
     
+	/**
+	 * Loads the image for the pieces
+	 * Adds a rectangle on each piece and fill it with the  correct image
+	 */
+	public void setUpPieces(){
+		
+		Rectangle[][] piecePosition = new Rectangle[4][4];
+		Image[] pieceImages = new Image[4];
+		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		
+		for(int player = 0; player < 4; player++){
+			for(int piece = 0; piece < 4; piece++){
+				piecePosition[player][piece] = new Rectangle(48, 48);
+				piecePosition[player][piece].setFill(new ImagePattern(pieceImages[player]));
+			}
+		}
+	}
 }

@@ -192,7 +192,7 @@ public class Ludo {
 			this.status = "Started";
 		
 		randomGenerator = new Random();
-		dice = randomGenerator.nextInt(6) + 1;
+		this.dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
 		
 		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
@@ -206,6 +206,10 @@ public class Ludo {
 		return dice;
 	}
 	
+	/**
+	 * Checks if the turn should be passed to the next player
+	 * @return true/false, if nextPlayer should be called
+	 */
 	public boolean shouldGoToNextPlayer(){
 		
 		//if you can't move any pieces
@@ -453,7 +457,7 @@ public class Ludo {
 	/**
 	 * Finds out if a piece can move from its position, example
 	 * if it's from the start position or getting into finish
-	 * @return true
+	 * @return true/false, if the player can move
 	 */
     boolean canMove() {
 
@@ -472,8 +476,6 @@ public class Ludo {
     			return false;
     		}
     	}
-    	
-    	
     	return true;
     }
     
