@@ -106,10 +106,13 @@ public class Ludo {
 	 * @param player, which player to get name for
 	 * @return name of player
 	 */
-	public Object getPlayerName(int player) {
+	public Object getPlayerName(int player) throws NoSuchPlayerException {
 		// TODO Videre vil getPlayerName metoden returnere "Inactive: " foran navnet. Metoden kalles med navnet på spilleren som parameter og dersom denne spilleren ikke eksisterer så vil en NoSuchPlayerException bli kastet.
 		try {
-			return players.get(player);
+			if (players.get(player) == null)
+				throw new NoSuchPlayerException("No player by this name");
+			else
+				return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
@@ -120,10 +123,12 @@ public class Ludo {
 	 * @param name the user name of the player to add
 	 * @throws NoRoomForMorePlayersException when there is no room for more players
 	 */
-	public void addPlayer(String name) throws NoRoomForMorePlayersException {
+	public void addPlayer(String name) throws NoRoomForMorePlayersException, IllegalPlayerNameException {
 		// TODO Navnet til en spiller kan ikke starte med fire "*" (stjerner), dersom en forsøker å registrere en spiller som har et navn som starter med "****" så vil det bli kastet en IllegalPlayerNameException.
 		if (nrOfPlayers() > 3)
 			throw new NoRoomForMorePlayersException("No Room For More Players");
+		if (name == "****")
+			throw new IllegalPlayerNameException("Illegal Player Name");
 		if (name != null) {
 			players.add(name);
 			this.status = "Initiated";
@@ -315,6 +320,11 @@ public class Ludo {
 		return true;
 	}
 	
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+	
 	/**
 	 * Meant to return the current status of the game.
 	 * @return "Created" until a player is added to game.
@@ -322,7 +332,8 @@ public class Ludo {
 	 * @return "Started" until a player has won the game.
 	 * @return "Finished" when a player has won the game.
 	 */
-	public String getStatus() {
+	public String getStatus() 
+	{
 		// TODO Metoden getStatus returnerer status for selve spillet. status er Created inntil det 
 		// er lagt til spillere i spillet. Når det er lagt til spillere så er status Initiated inntil 
 		// en spiller har kastet en terning.
@@ -374,17 +385,8 @@ public class Ludo {
 	 * @return true || false
 	 */
 	boolean allHome() {
-		boolean allHome = true;
-		for ( int i = 0; i < 4; i++){
-			playerPieces[i][0] = 4;
-			for ( int j = 0; j < 16; j++) {
-				if(userGridToPlayerGrid[j/4][j] != 1) {
-					allHome = false;
-				}
-				
-			}
-		}
-		return allHome;
+		return (playerPieces[activePlayer()][0] + playerPieces[activePlayer()][59] == 4 );
+		
 	}
 	
 	/**
