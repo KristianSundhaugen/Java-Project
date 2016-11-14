@@ -1,23 +1,24 @@
 package no.ntnu.imt3281.ludo.logic;
 
 public class PieceEvent {
-
+	Ludo ludo;
 	int player;
 	int piece;
 	int from;
 	int to;
-	
-	public PieceEvent(Ludo ludo, int rED, int i, int j, int k) {
-		// TODO Auto-generated constructor stub
+
+	public PieceEvent(Ludo ludo, int player, int piece, int fromPos, int toPos) {
+		this.ludo = ludo;
+		this.player = player;
+		this.piece = piece;
+		this.from = fromPos;
+		this.to = toPos;
 	}
 	
 	public PieceEvent(Object obj){
 		
 	}
-	
-	public PieceEvent(Object obj, int i, int j, int k){
-		
-	}
+
 
 	public int getPlayer(){
 		return player;
