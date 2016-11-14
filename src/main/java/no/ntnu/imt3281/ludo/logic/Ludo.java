@@ -285,12 +285,21 @@ public class Ludo {
 			playerPieces[player][toPos]++;
 			checkUnfortionateOpponents(player, toPos);
 			checkWinner();
+			
+			PieceEvent pieceMove = new PieceEvent(this, activePlayer, fromPos, fromPos, toPos);
+			for(int i = 0; i < pieceListenerers.size(); i++){
+				pieceListenerers.get(i).pieceMoved(pieceMove);
+			}
+			
+			if(status == "Finished" && dice != 6 && fromPos != 1)
+				nextPlayer();
 			return true;
 		}
 		
 		return false;
 
 	}
+
 	
 	/**
 	 * Boolean testing if the conditions of a move is valid, need move have to be the same length as the dice value,
@@ -426,12 +435,27 @@ public class Ludo {
 	 * if at max player, go back to first player
 	 */
 	void nextPlayer() {
+		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.WAITING);
+		for(int i = 0; i < playerListenerers.size(); i++){
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
+		
+		
 		dice = 0;
 		diceThrows = 0;
 		activePlayer++;
-		if (activePlayer > 3)
-			activePlayer = 0;
+		while (!isActive(activePlayer)) {
+			activePlayer++;
+			if (activePlayer > 3)
+				activePlayer = 0;
+		}
 		
+		
+		
+		playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.PLAYING);
+		for(int i = 0; i < playerListenerers.size(); i++){
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
 	}
 	
 	/**
