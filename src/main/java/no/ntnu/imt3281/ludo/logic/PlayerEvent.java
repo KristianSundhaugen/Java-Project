@@ -9,16 +9,15 @@ public class PlayerEvent {
 	
 	private int activePlayer;
 	private int state;
+	private Ludo ludo;
 	
-	public PlayerEvent(Ludo ludo, int bLUE, Object pLAYING2) {
-		
+	public PlayerEvent(Ludo ludo, int player, int state) {
+		this.ludo = ludo;
+		this.activePlayer = player;
+		this.state = state;	
 	}
 	
 	public PlayerEvent(Object obj){
-		
-	}
-	
-	public PlayerEvent(Object obj, int i, int j){
 		
 	}
 	
