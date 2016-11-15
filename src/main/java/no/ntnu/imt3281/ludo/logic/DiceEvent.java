@@ -2,20 +2,24 @@ package no.ntnu.imt3281.ludo.logic;
 
 public class DiceEvent {
 
-	int player;
-	int dice;
+	private int player;
+	private int dice;
+	private Ludo ludo;
 	
-	public DiceEvent(Ludo ludo, int rED, int i) {
-		// TODO Auto-generated constructor stub
+	public DiceEvent(Ludo ludo, int player, int dice) {
+		this.dice = dice;
+		this.player = player;
+		this.ludo = ludo;
 	}
 	
 	public DiceEvent(Object obj){
 		
 	}
-	
-	//new names for parameters
-	public DiceEvent(Object obj, int i, int j){
-		
+	@Override
+	public boolean equals(Object obj){
+		DiceEvent event = (DiceEvent)obj;
+		return (event.getPlayer() == this.player && 
+				event.getDice() == this.dice);
 	}
 	
 	public int getPlayer(){
@@ -33,5 +37,6 @@ public class DiceEvent {
 	public void setDice(int dice){
 		this.dice = dice;
 	}
+	
 
 }

@@ -161,12 +161,16 @@ public class LudoTest {
         assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);
         ludo.throwDice(5);
         assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);
+
         ludo.throwDice(6);
         assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);
+
         assertTrue(ludo.movePiece(Ludo.BLUE, 0, 1)); // Move players piece from start(0) to square 1
+
         assertEquals(1, ludo.getPosition(Ludo.BLUE, 0));
 
         // Since player moved out of start, the next player should get his/her turn(s)
+
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
         ludo.throwDice(4); // RED has not left start
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
@@ -205,7 +209,6 @@ public class LudoTest {
         ludo.throwDice(6);
         assertEquals("Started", ludo.getStatus()); // A game where the dice has been thrown is started
         assertTrue(ludo.movePiece(Ludo.RED, 0, 1));
-
         for (int move = 0; move < 11; move++) {
             skipPlayer(ludo); // Skip blue player
             ludo.throwDice(5);
@@ -353,14 +356,13 @@ public class LudoTest {
         ludo.throwDice(6); // One more six
         ludo.movePiece(Ludo.RED, 7, 13); // Board position 28
         ludo.throwDice(1);
+
         ludo.movePiece(Ludo.RED, 13, 14); // Red ended up on top of blue
 
         // NOTE, one variant of the rules says that you are safe standing on this field
         // For now, we do not implement this rule
-
         assertEquals(Ludo.BLUE, ludo.activePlayer(), 0); // It should be blue players turn
         assertEquals(0, ludo.getPosition(Ludo.BLUE, 0)); // This piece should be sent back to home field
-
         skipPlayer(ludo); // Skip blue player for now
         ludo.throwDice(1);
         ludo.movePiece(Ludo.RED, 14, 15); // Board position 30
@@ -410,7 +412,6 @@ public class LudoTest {
         assertEquals(Ludo.BLUE, ludo.activePlayer(), 0);
 
         ludo.throwDice(5); // Blue have one piece in play, but can not move past REDs tower
-
         // Since BLUE can not move, the move goes on to RED
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
 
@@ -424,12 +425,17 @@ public class LudoTest {
         ludo.throwDice(2);
         assertTrue(ludo.movePiece(Ludo.RED, 1, 3)); // RED still has two pieces on 31
 
+
+
         ludo.throwDice(1);
+
         assertTrue(ludo.movePiece(Ludo.BLUE, 1, 2)); // BLUE CAN move 1 (one) place forward
 
         ludo.throwDice(2);
         assertTrue(ludo.movePiece(Ludo.RED, 16, 18));
+
         ludo.throwDice(3);
+
         assertTrue(ludo.movePiece(Ludo.BLUE, 2, 5)); // BLUE will jump over one of REDs pieces and land on another
 
         int piece0Location = ludo.getPosition(Ludo.RED, 0);
@@ -522,7 +528,6 @@ public class LudoTest {
         ludo.movePiece(Ludo.RED, 7, 13); // Board position 28
         ludo.throwDice(1);
         ludo.movePiece(Ludo.RED, 13, 14); // Red ended up on top of blue
-
         // Now check that the event has happened in the correct order
         InOrder order = inOrder(pieceListener);
         PieceEvent pe;
@@ -586,7 +591,7 @@ public class LudoTest {
 
         // Red and blue moving on (***MOVE3***)
         for (int i = 0; i < 3; i++) {
-            ludo.throwDice(6);
+        	ludo.throwDice(6);
             ludo.movePiece(Ludo.RED, (17 * i) + 8, (17 * i) + 14);
             ludo.throwDice(6);
             ludo.movePiece(Ludo.RED, (17 * i) + 14, (17 * i) + 20);
@@ -685,13 +690,17 @@ public class LudoTest {
         ludo.movePiece(Ludo.RED, 41, 47);
         ludo.throwDice(5);
         ludo.movePiece(Ludo.RED, 47, 52);
+        System.out.println(ludo.activePlayer());
         ludo.throwDice(1);
         ludo.movePiece(Ludo.BLUE, 1, 2);
-
+        System.out.println(ludo.activePlayer());
         // Move red final piece to finish, red wins (***MOVE14***)
         ludo.throwDice(6);
+        System.out.println("RED " +ludo.activePlayer());
         ludo.movePiece(Ludo.RED, 52, 58);
+        System.out.println(ludo.activePlayer());
         ludo.throwDice(1);
+        System.out.println(ludo.activePlayer());
         ludo.movePiece(Ludo.RED, 58, 59); // Red wins!
 
         // *************************************************************************
