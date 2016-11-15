@@ -2,6 +2,9 @@
 package no.ntnu.imt3281.ludo.gui;
 
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+
 /**
  * Sample Skeleton for 'GameBoard.fxml' Controller Class
  */
@@ -13,6 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import no.ntnu.imt3281.ludo.logic.Ludo;
@@ -133,7 +137,7 @@ public class GameBoardController {
 	 */
 	public void setUpPieces(){
 		
-		Rectangle[][] piecePosition = new Rectangle[4][4];
+		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
 		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
@@ -142,8 +146,15 @@ public class GameBoardController {
 		
 		for(int player = 0; player < 4; player++){
 			for(int piece = 0; piece < 4; piece++){
-				piecePosition[player][piece] = new Rectangle(48, 48);
-				piecePosition[player][piece].setFill(new ImagePattern(pieceImages[player]));
+				pieces[player][piece] = new Rectangle(48, 48);
+				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
+				pieces[player][piece].setOnMouseClicked(new EventHandler<MouseEvent>() {
+					
+					@Override
+					public void handle(MouseEvent event) {
+						
+					}
+				});
 			}
 		}
 	}
