@@ -20,10 +20,11 @@ public class PlayerEvent {
 	public PlayerEvent(Object obj){
 		
 	}
-	
-	public boolean Equals(Object obj){
-		
-		return true;
+	@Override
+	public boolean equals(Object obj){
+		PlayerEvent event = (PlayerEvent)obj;
+		return (event.getActivePLayer() == this.activePlayer && 
+				event.getState() == this.state);
 	}
 	
 	public int getActivePLayer(){

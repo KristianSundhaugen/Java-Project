@@ -1,11 +1,11 @@
 package no.ntnu.imt3281.ludo.logic;
 
 public class PieceEvent {
-	Ludo ludo;
-	int player;
-	int piece;
-	int from;
-	int to;
+	private Ludo ludo;
+	private int player;
+	private int piece;
+	private int from;
+	private int to;
 
 	public PieceEvent(Ludo ludo, int player, int piece, int fromPos, int toPos) {
 		this.ludo = ludo;
@@ -18,7 +18,15 @@ public class PieceEvent {
 	public PieceEvent(Object obj){
 		
 	}
-
+	
+	@Override
+	public boolean equals(Object obj){
+		PieceEvent event = (PieceEvent)obj;
+		return (event.getPlayer() == this.player && 
+				event.getFrom() == this.from && 
+				event.getTo() == this.to && 
+				event.getPiece() == this.piece);
+	}
 
 	public int getPlayer(){
 		return player;
