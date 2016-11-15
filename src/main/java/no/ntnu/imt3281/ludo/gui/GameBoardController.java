@@ -134,15 +134,17 @@ public class GameBoardController {
 	/**
 	 * Loads the image for the pieces
 	 * Adds a rectangle on each piece and fill it with the  correct image
+	 * 
+	 * Setting the position for each piece is not yet implemented
 	 */
 	public void setUpPieces(){
 		
 		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
-		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
-		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
-		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/bluePiece.png"));
+		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
+		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
 		
 		for(int player = 0; player < 4; player++){
 			for(int piece = 0; piece < 4; piece++){
@@ -152,7 +154,7 @@ public class GameBoardController {
 					
 					@Override
 					public void handle(MouseEvent event) {
-						
+						//here we should tell the server that a piece has been pressed
 					}
 				});
 			}
