@@ -138,12 +138,18 @@ public class Ludo {
 	public void addPlayer(String name) throws NoRoomForMorePlayersException, IllegalPlayerNameException {
 		if (nrOfPlayers() > 3)
 			throw new NoRoomForMorePlayersException("No Room For More Players");
-		if (name == "****")
-			throw new IllegalPlayerNameException("Illegal Player Name");
 		if (name != null) {
+			if (name.startsWith("****"))
+				throw new IllegalPlayerNameException("Illegal Player Name");
+		
 			players.add(name);
-			this.status = "Initiated";
+			setStatus("Initiated");
+			PlayerEvent playerChange = new PlayerEvent(this, players.indexOf(name), PlayerEvent.PLAYING);
+			for (int i = 0; i < playerListenerers.size(); i++) {
+				playerListenerers.get(i).playerStateChanged(playerChange);
+			}
 		}
+
 	}
 
 	/**
@@ -155,6 +161,13 @@ public class Ludo {
 		int index = players.indexOf(playerName);
 		players.remove(index);
 		players.add(index, "Inactive: " + playerName);
+		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
+		for (int i = 0; i < playerListenerers.size(); i++) {
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
+		
+		if( activePlayer() == index)
+			nextPlayer();
 	}
 	
 	/**
@@ -195,20 +208,19 @@ public class Ludo {
 	 * @return dice value to client
 	 */
 	public int throwDice() {
-		if (this.status == "Initiated")
-			this.status = "Started";
+		if (getStatus() == "Initiated")
+			setStatus("Started");
 		
 		randomGenerator = new Random();
 		dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
 		
-		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
-		
-		for(int i = 0; i < diceListenerers.size(); i++){
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), dice);
+		for (int i = 0; i < diceListenerers.size(); i++) {
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
 		
-		if(shouldGoToNextPlayer())
+		if (shouldGoToNextPlayer() || (!canMove() && !allHome()))
 			nextPlayer();
 		
 		return dice;
@@ -220,17 +232,17 @@ public class Ludo {
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int diceValue) {
-		if (this.status == "Initiated")
-			this.status = "Started";
+		if (getStatus() == "Initiated")
+			setStatus("Started");
 		
 		this.dice = diceValue;
 		diceThrows++;
-		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
 		
-		for(int i = 0; i < diceListenerers.size(); i++){
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), diceValue);
+		for (int i = 0; i < diceListenerers.size(); i++) {
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
-		if(shouldGoToNextPlayer())
+		if (shouldGoToNextPlayer() || (!canMove() && !allHome()))
 			nextPlayer();
 		
 		return diceValue;
@@ -247,13 +259,6 @@ public class Ludo {
 		 */
 		if ( this.status == "Finished"){
 			return false;
-		}
-		
-		/**
-		 * If you can't move any pieces
-		 */
-		if (!canMove() && !allHome()){
-			return true;
 		}
 			
 		/**
@@ -291,21 +296,17 @@ public class Ludo {
 		int piece = getPiece(player, fromPos);
 		if (isValidMove(player, fromPos, toPos)) {
 			playerPieces[player][piece] = toPos;
-			
-			checkUnfortionateOpponents(player, toPos);
-			checkWinner();
-			
+						
 			PieceEvent pieceMove = new PieceEvent(this, activePlayer, piece, fromPos, toPos);
 			for(int i = 0; i < pieceListenerers.size(); i++){
 				pieceListenerers.get(i).pieceMoved(pieceMove);
 			}
 			
-			if(shouldGoToNextPlayer())
+			checkUnfortionateOpponents(player, toPos);
+			checkWinner();
+			if(shouldGoToNextPlayer() || fromPos == 0 || dice != 6)
 				nextPlayer();
-			else if (dice == 6 && fromPos == 0) 
-				nextPlayer();
-			else if (dice != 6) 
-				nextPlayer();
+
 			return true;
 		}
 		
@@ -391,13 +392,7 @@ public class Ludo {
 	 * @return "Started" until a player has won the game.
 	 * @return "Finished" when a player has won the game.
 	 */
-	public String getStatus() 
-	{
-		// TODO Metoden getStatus returnerer status for selve spillet. status er Created inntil det 
-		// er lagt til spillere i spillet. Når det er lagt til spillere så er status Initiated inntil 
-		// en spiller har kastet en terning.
-		// Når den første terningen er kastet så er status for spillet Started helt frem til en spiller vinner spillet, 
-		// da går status over til å være Finished.
+	public String getStatus() {
 		checkWinner();
 		return status;
 	}
@@ -487,7 +482,6 @@ public class Ludo {
 	 */
     boolean canMove() {
     	for (int piece = 0; piece < 4; piece++) {
-    		int pos = getPosition(activePlayer(), piece);
     		if (pieceCanMove(activePlayer(), piece))
     			return true;
     	}
@@ -595,8 +589,14 @@ public class Ludo {
 			piece = getPiece(player, position + 52);
 
 		if (piece != -1)
-			if (userGridToLudoBoardGrid(player, playerPieces[player][piece]) == position)
+			if (userGridToLudoBoardGrid(player, playerPieces[player][piece]) == position) {
+				PieceEvent pieceMove = new PieceEvent(this, player, piece, playerPieces[player][piece], 0);
+				for (int i = 0; i < pieceListenerers.size(); i++) {
+					pieceListenerers.get(i).pieceMoved(pieceMove);
+				}
 				playerPieces[player][piece] = 0;
+			
+			}
     }
     
     /**
@@ -609,10 +609,14 @@ public class Ludo {
         		if(playerPieces[player][piece] == 59)
         			pieces++;
         	}
-        	if (pieces == 4)
-        		this.status = "Finished";
+        	if (pieces == 4) {
+        		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.WON);
+    			for (int i = 0; i < playerListenerers.size(); i++) {
+    				playerListenerers.get(i).playerStateChanged(playerChange);
+    			}
+    			setStatus("Finished");;
+        	}
     	}
-        
     }
     
     /**

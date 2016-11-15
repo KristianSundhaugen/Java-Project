@@ -528,7 +528,6 @@ public class LudoTest {
         ludo.movePiece(Ludo.RED, 7, 13); // Board position 28
         ludo.throwDice(1);
         ludo.movePiece(Ludo.RED, 13, 14); // Red ended up on top of blue
-
         // Now check that the event has happened in the correct order
         InOrder order = inOrder(pieceListener);
         PieceEvent pe;
@@ -592,7 +591,7 @@ public class LudoTest {
 
         // Red and blue moving on (***MOVE3***)
         for (int i = 0; i < 3; i++) {
-            ludo.throwDice(6);
+        	ludo.throwDice(6);
             ludo.movePiece(Ludo.RED, (17 * i) + 8, (17 * i) + 14);
             ludo.throwDice(6);
             ludo.movePiece(Ludo.RED, (17 * i) + 14, (17 * i) + 20);
@@ -691,13 +690,17 @@ public class LudoTest {
         ludo.movePiece(Ludo.RED, 41, 47);
         ludo.throwDice(5);
         ludo.movePiece(Ludo.RED, 47, 52);
+        System.out.println(ludo.activePlayer());
         ludo.throwDice(1);
         ludo.movePiece(Ludo.BLUE, 1, 2);
-
+        System.out.println(ludo.activePlayer());
         // Move red final piece to finish, red wins (***MOVE14***)
         ludo.throwDice(6);
+        System.out.println("RED " +ludo.activePlayer());
         ludo.movePiece(Ludo.RED, 52, 58);
+        System.out.println(ludo.activePlayer());
         ludo.throwDice(1);
+        System.out.println(ludo.activePlayer());
         ludo.movePiece(Ludo.RED, 58, 59); // Red wins!
 
         // *************************************************************************
