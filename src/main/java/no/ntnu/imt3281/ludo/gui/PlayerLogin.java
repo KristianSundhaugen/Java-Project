@@ -17,10 +17,6 @@ public class PlayerLogin extends JFrame {
 	JPasswordField password;
 	
 	public PlayerLogin(){
-		loginButton = new JButton("Login");
-		user = new JLabel("Username: ");
-		pass = new JLabel("Password: ");
-		username = new JTextField();
-		password = new JPasswordField();
+		
 	}
 }
