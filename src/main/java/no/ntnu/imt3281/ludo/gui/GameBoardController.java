@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
@@ -138,12 +139,15 @@ public class GameBoardController {
     
 	/**
 	 * Loads the image for the pieces
-	 * Adds a rectangle on each piece and fill it with the  correct image
+	 * Adds a rectangle on each piece and fill it with the correct image
 	 * 
-	 * Setting the position for each piece is not yet implemented
 	 */
-	public void setUpPieces(){
+	public void setUpPieces(int diceValue){
 		
+		int[][] piecePositions = new int[91][2];
+		//piecePosition[13.5][2.5]
+		//create a class
+		//function that takes player and piece position and returns rectangle
 		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
@@ -151,17 +155,15 @@ public class GameBoardController {
 		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
 		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
 		
-		for(int player = 0; player < 4; player++){
-			for(int piece = 0; piece < 4; piece++){
-				pieces[player][piece] = new Rectangle(48, 48);
-				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
-				pieces[player][piece].setOnMouseClicked(new EventHandler<MouseEvent>() {
-					
-					@Override
-					public void handle(MouseEvent event) {
-						//here we should tell the server that a piece has been pressed
-					}
-				});
+		for(int i = 0; i < 4; i++){
+			for(int j = 0; j < 4; j++){
+				pieces[i][j] = new Rectangle(48, 48);
+				pieces[i][j].setFill(new ImagePattern(pieceImages[i]));
+				pieces[i][j].setX(0);
+				pieces[i][j].setY(0);
+				
+				
+				
 			}
 		}
 	}
