@@ -2,6 +2,9 @@
 package no.ntnu.imt3281.ludo.gui;
 
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+
 /**
  * Sample Skeleton for 'GameBoard.fxml' Controller Class
  */
@@ -11,8 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import no.ntnu.imt3281.ludo.logic.Ludo;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
@@ -128,4 +134,33 @@ public class GameBoardController {
     	this.id = id;		
 	}
     
+	/**
+	 * Loads the image for the pieces
+	 * Adds a rectangle on each piece and fill it with the  correct image
+	 * 
+	 * Setting the position for each piece is not yet implemented
+	 */
+	public void setUpPieces(){
+		
+		Rectangle[][] pieces = new Rectangle[4][4];
+		Image[] pieceImages = new Image[4];
+		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
+		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/bluePiece.png"));
+		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
+		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
+		
+		for(int player = 0; player < 4; player++){
+			for(int piece = 0; piece < 4; piece++){
+				pieces[player][piece] = new Rectangle(48, 48);
+				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
+				pieces[player][piece].setOnMouseClicked(new EventHandler<MouseEvent>() {
+					
+					@Override
+					public void handle(MouseEvent event) {
+						//here we should tell the server that a piece has been pressed
+					}
+				});
+			}
+		}
+	}
 }

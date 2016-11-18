@@ -17,13 +17,24 @@ public class Ludo {
 	private int diceThrows = 0;
 	private String status = "Created";
 	private Random randomGenerator;
-	private int[][] playerPieces;
+	public int[][] playerPieces;
 	private int[][] userGridToPlayerGrid;
 	
 	private Vector<DiceListener> diceListenerers = new Vector<>();
 	private Vector<PieceListener> pieceListenerers = new Vector<>();
 	private Vector<PlayerListener> playerListenerers = new Vector<>();
-    
+	public void debug(){
+    	System.out.println("userGridToPlayerGrid");
+    	int[][] board = playerPieces;
+    	//int[][] board = getUserToPlayGrid();
+		for ( int player = 0; player < 4; player++){
+			for ( int position = 0; position < board[0].length; position++)
+    			System.out.print(board[player][position] + " : ");
+			System.out.println("");
+		}
+		System.out.println("");
+
+    }
 	/**
 	 * Constructor creating new game with players
 	 * @param player1 the user name of the first player, can be null if there is no player
@@ -56,10 +67,9 @@ public class Ludo {
 	 */
 	public void setupGame() {
 		players = new Vector<>();
-		playerPieces = new int[4][60];
+		playerPieces = new int[4][4];
 		userGridToPlayerGrid = new int[4][92];
 		for ( int player = 0; player < 4; player++){
-			playerPieces[player][0] = 4;
 			for ( int position = 0; position < 16; position++)
 				userGridToPlayerGrid[position/4][position] = 1;
 		}
@@ -86,6 +96,9 @@ public class Ludo {
 	 * @return the position on the LudoBoard
 	 */
 	public int userGridToLudoBoardGrid(int player, int position) {
+		if (position == 0)
+			return player*4;
+		
 		int newPos = position - 22 - 15 + player*13;
 		if (position > 53)
 			newPos +=  (52 - 1 - 7 * player);
@@ -107,7 +120,6 @@ public class Ludo {
 	 * @return name of player
 	 */
 	public Object getPlayerName(int player) throws NoSuchPlayerException {
-		// TODO Videre vil getPlayerName metoden returnere "Inactive: " foran navnet. Metoden kalles med navnet på spilleren som parameter og dersom denne spilleren ikke eksisterer så vil en NoSuchPlayerException bli kastet.
 		try {
 			if (players.get(player) == null)
 				throw new NoSuchPlayerException("No player by this name");
@@ -124,15 +136,21 @@ public class Ludo {
 	 * @throws NoRoomForMorePlayersException when there is no room for more players
 	 */
 	public void addPlayer(String name) throws NoRoomForMorePlayersException, IllegalPlayerNameException {
-		// TODO Navnet til en spiller kan ikke starte med fire "*" (stjerner), dersom en forsøker å registrere en spiller som har et navn som starter med "****" så vil det bli kastet en IllegalPlayerNameException.
 		if (nrOfPlayers() > 3)
 			throw new NoRoomForMorePlayersException("No Room For More Players");
-		if (name == "****")
-			throw new IllegalPlayerNameException("Illegal Player Name");
 		if (name != null) {
+			if (name.startsWith("****"))
+				throw new IllegalPlayerNameException("Illegal Player Name");
+		
 			players.add(name);
 			setStatus("Initiated");
+
+			PlayerEvent playerChange = new PlayerEvent(this, players.indexOf(name), PlayerEvent.PLAYING);
+			for (int i = 0; i < playerListenerers.size(); i++) {
+				playerListenerers.get(i).playerStateChanged(playerChange);
+			}
 		}
+
 	}
 
 	/**
@@ -144,6 +162,13 @@ public class Ludo {
 		int index = players.indexOf(playerName);
 		players.remove(index);
 		players.add(index, "Inactive: " + playerName);
+		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
+		for (int i = 0; i < playerListenerers.size(); i++) {
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
+		
+		if( activePlayer() == index)
+			nextPlayer();
 	}
 	
 	/**
@@ -153,11 +178,19 @@ public class Ludo {
 	 * @return the position on the board where the piece is located
 	 */
 	public int getPosition(int player, int piece) {
-		int pieces = 0;
-		for(int pos = 0; pos < playerPieces[player].length; pos++) {
-			pieces += playerPieces[player][pos];
-			if (pieces >= piece)
-				return pos;
+		return playerPieces[player][piece];
+	}
+	
+	/**
+	 * Finding out what piece is on the requested position
+	 * @param player the player that owns the piece
+	 * @param position the position that is requested
+	 * @return the piece on the position
+	 */
+	public int getPiece(int player, int position) {
+		for (int i = 0; i < 4; i++) {
+			if (playerPieces[player][i] == position) 
+				return i;
 		}
 		return -1;
 	}
@@ -176,60 +209,23 @@ public class Ludo {
 	 * @return dice value to client
 	 */
 	public int throwDice() {
-		// TODO Metoden throwDice uten parametre skal brukes på serveren når en bruker kaster en terning. 
-		// Metoden vil generere en ny terningverdi (mellom 1 og 6) for aktiv spiller. 
-		// Verdien som returneres fra denne metoden kan så overføres til klientene og 
-		// der kalles metoden throwDice som tar en parameter (den verdien som du fikk på serveren). 
-		// På denne måten kan du være sikker på at ingen jukser. 
-		// Uansett hvilken metode som kalles så vil det bli generert en DiceEvent 
-		// som sendes til alle registrerte DiceListener objekter. 
-		// Denne DiceEvent'en inneholder en referanse til Ludo spillet og 
-		// hvilken spiller som er aktiv og verdien på terningen. 
-		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
-		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		
-		if (status == "Initiated")
+
+		if (getStatus() == "Initiated")
 			setStatus("Started");
 		
 		randomGenerator = new Random();
-		dice = randomGenerator.nextInt(6) + 1;
+		this.dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
 		
-		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
-		
-		for(int i = 0; i < diceListenerers.size(); i++){
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), dice);
+		for (int i = 0; i < diceListenerers.size(); i++) {
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
 		
-		shouldGoToNextPlayer();
+		if (shouldGoToNextPlayer() || (!canMove() && !allHome()))
+			nextPlayer();
 		
 		return dice;
-	}
-	
-	public boolean shouldGoToNextPlayer(){
-		
-		//if you can't move any pieces
-		if(!canMove()){
-			return true;
-		}
-		//when you have thrown three times
-		if(diceThrows > 3){
-			return true;
-		}
-		//Throw the dice 3 times until you get a six and move a piece out
-		if(dice != 6 && allHome() && diceThrows < 3){
-			return true;
-		}
-		//a piece can be moved out and you can throw again
-		if(dice == 6 && allHome()){
-			diceThrows = 0;
-			return false;
-		}
-		//you can't throw more than three times, even if you get a six the third time
-		if(diceThrows == 3 && dice == 6){
-			return true;
-		}		
-		return false;
 	}
 	
 	/**
@@ -237,32 +233,60 @@ public class Ludo {
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int diceValue) {
-		// TODO Metoden throwDice uten parametre skal brukes på serveren når en bruker kaster en terning. 
-		// Metoden vil generere en ny terningverdi (mellom 1 og 6) for aktiv spiller. 
-		// Verdien som returneres fra denne metoden kan så overføres til klientene og 
-		// der kalles metoden throwDice som tar en parameter (den verdien som du fikk på serveren). 
-		// På denne måten kan du være sikker på at ingen jukser. 
-		// Uansett hvilken metode som kalles så vil det bli generert en DiceEvent 
-		// som sendes til alle registrerte DiceListener objekter. 
-		// Denne DiceEvent'en inneholder en referanse til Ludo spillet og 
-		// hvilken spiller som er aktiv og verdien på terningen. 
-		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
-		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		if (status == "Initiated")
+
+		if (getStatus() == "Initiated")
 			setStatus("Started");
 		
 		this.dice = diceValue;
 		diceThrows++;
-		DiceEvent diceThrow = new DiceEvent(this, activePlayer, dice);
 		
-		for(int i = 0; i < diceListenerers.size(); i++){
+		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), diceValue);
+		for (int i = 0; i < diceListenerers.size(); i++) {
 			diceListenerers.get(i).diceThrown(diceThrow);
 		}
+		if (shouldGoToNextPlayer() || (!canMove() && !allHome()))
+			nextPlayer();
 		
-		shouldGoToNextPlayer();
-		
-		return dice;
+		return diceValue;
 	}
+	
+	/**
+	 * Testing if the turn should go to the next player
+	 * @return if the turn should change
+	 */
+	public boolean shouldGoToNextPlayer(){
+		
+		/**
+		 * Should not go to next player if the game is finished
+		 */
+		if ( this.status == "Finished"){
+			return false;
+		}
+			
+		/**
+		 * When you have thrown three times
+		 */
+		if (diceThrows > 3){
+			return true;
+		}
+		
+		/**
+		 * Throw the dice 3 times until you get a six and move a piece out
+		 */
+		if (dice != 6 && allHome() && diceThrows >= 3){
+			return true;
+		}
+		
+		/**
+		 *  You can't throw more than three times, even if you get a six the third time
+		 */
+		if (diceThrows == 3 && dice == 6 && !allHome()){
+			return true;
+		}
+		
+		return false;
+	}
+	
 	
 	/**
 	 * @param player, player to move
@@ -271,45 +295,27 @@ public class Ludo {
 	 * @return true or false. If a player is not blocked or blocked
 	 */
 	public boolean movePiece(int player, int fromPos, int toPos) {
-		/* TODO
-		Metoden movePiece tar tre parametre, hvilken spiller en skal flytte brikken for, 
-		hvor den skal flyttes fra og hvor den skal flyttes til. 
-		
-		NB, hvor den skal flyttes fra og hvor den skal flyttes til er sett fra spillerens synspunkt. 
-		
-	
-		For å finne hvor dette er på spillebrettet se over. Reglene for spillet håndheves i denne metoden. 
-		
-		
-		Metoden returnerer true dersom brikken blir flyttet og false dersom brikken ikke blir flyttet. 
-		Brikken blir ikke flytter dersom det ikke er en brikke på fra posisjonen eller at til-fra ikke 
-		er det samme som antall øyne på terningen. 
-
-		Når en brikke flyttes fra start (0) til første spillefelt (1) så må en ha seks øyne på terningen. 
-		For å komme i mål (59) 
-		må en ha nøyaktig antall øyne på terningen. Dersom en motspiller står med to eller flere brikker på 
-		hverandre mellom fra og til (inklusive) så kan det heller ikke flyttes.
-		Dersom en brikke kan flyttes så vil det bli generert en PieceEvent som forteller hvilken spiller 
-		som har flyttet hvilken av sine brikker og hvor den er flyttet fra og til. 
-		Dersom brukeren har vunnet spillet så genereres en PlayerEvent med state lik WON. 
-		Dersom brukeren ikke har vunnet og 
-		ikke har kastet en sekser og brikken ikke ble flyttet ut fra start (og dermed brukeren skal få et ekstra kast) 
-		så vil det bli generert to PlayerEvents (som når det kastes en terning) for å bytte aktiv spiller.
-
-		
-		*/
-		
+		int piece = getPiece(player, fromPos);
 		if (isValidMove(player, fromPos, toPos)) {
-			playerPieces[player][fromPos]--;
-			playerPieces[player][toPos]++;
+			playerPieces[player][piece] = toPos;
+						
+			PieceEvent pieceMove = new PieceEvent(this, activePlayer, piece, fromPos, toPos);
+			for(int i = 0; i < pieceListenerers.size(); i++){
+				pieceListenerers.get(i).pieceMoved(pieceMove);
+			}
+			
 			checkUnfortionateOpponents(player, toPos);
 			checkWinner();
+			if(shouldGoToNextPlayer() || fromPos == 0 || dice != 6)
+				nextPlayer();
+
 			return true;
 		}
 		
 		return false;
 
 	}
+
 	
 	/**
 	 * Boolean testing if the conditions of a move is valid, need move have to be the same length as the dice value,
@@ -323,26 +329,31 @@ public class Ludo {
 		/**
 		 * IF NO PIECE
 		 */
-		if (playerPieces[player][fromPos] == 0)
+		if (getPiece(player, fromPos) == -1)
 			return false;
+		
 	
 		/**
 		 * IF BLOCKED
 		 */
-		if ( blocked(player, fromPos, toPos - fromPos) )
+		if ( blocked(player, fromPos, toPos) )
 			return false;
+		
 		
 		/**
 		 * IF MISMATCH DICE/MOVE LENGTH
 		 */
-		if (toPos - fromPos != dice)
+		if (toPos - fromPos != dice && toPos != 1)
 			return false;
+		
+		
 		
 		/**
 		 * FROM POS NEED TO BE BIGGER THAN TO POS
 		 */
-		if (fromPos <= toPos)
+		if (toPos <= fromPos) 
 			return false;
+		
 		
 		/**
 		 * POSITIONS NEED TO BE ON THE BOARD
@@ -350,17 +361,20 @@ public class Ludo {
 		if ( fromPos > 59 || toPos > 59)
 			return false;
 		
+		
 		/**
 		 * NEED VALUE 6 ON DICE TO MOVE FROM HOME
 		 */
 		if (fromPos == 0 && dice != 6)
 			return false;
 		
+		
 		/**
 		 * WHEN MOVING FROM HOME YOU CAN ONLY MOVE 1
 		 */
 		if (fromPos == 0 && toPos != 1 )
 			return false;
+		
 		
 		/**
 		 * EVERYTHING GOOD
@@ -380,13 +394,10 @@ public class Ludo {
 	 * @return "Started" until a player has won the game.
 	 * @return "Finished" when a player has won the game.
 	 */
-	public String getStatus() 
-	{
-		// TODO Metoden getStatus returnerer status for selve spillet. status er Created inntil det 
-		// er lagt til spillere i spillet. Når det er lagt til spillere så er status Initiated inntil 
-		// en spiller har kastet en terning.
-		// Når den første terningen er kastet så er status for spillet Started helt frem til en spiller vinner spillet, 
-		// da går status over til å være Finished.
+
+	public String getStatus() {
+		checkWinner();
+
 		return status;
 	}
 	/**
@@ -395,9 +406,14 @@ public class Ludo {
  	* @return RED,BLUE,YELLOW or GREEN depending on who won
  	*/
 	public int getWinner() {
-		for (int i = 0; i < players.size(); i++){
-			if(playerPieces[i][59] == 4)
-				return i;
+		for (int player = 0; player < players.size(); player++){
+			int pieces = 0;
+        	for (int piece = 0; piece < 4; piece++){
+        		if(playerPieces[player][piece] == 59)
+        			pieces++;
+        	}
+        	if (pieces == 4)
+				return player;
 		}
 		return -1;
 	}
@@ -416,11 +432,8 @@ public class Ludo {
 	int[][] getUserToPlayGrid() {
 		int[][] board = new int[4][91];
 		for(int player = 0; player < 4; player++) {
-			for(int position = 0; position < 59; position++) {
-				if ( playerPieces[player][position] != 0) {
-					int pos = userGridToLudoBoardGrid(player, position);
-					board[player][pos] = playerPieces[player][position];
-				}
+			for(int piece = 0; piece < 4; piece++) {
+				board[player][userGridToLudoBoardGrid(player,playerPieces[player][piece])]++;
 			}
 		}
 		return board;		
@@ -432,8 +445,12 @@ public class Ludo {
 	 * @return true || false
 	 */
 	boolean allHome() {
-		return (playerPieces[activePlayer()][0] + playerPieces[activePlayer()][59] == 4 );
-		
+		int homeCount = 0;
+		for (int i = 0; i < 4; i++) {
+			if (playerPieces[activePlayer()][i] == 0)
+				homeCount++;
+		}
+		return (homeCount == 4 );
 	}
 	
 	/**
@@ -441,38 +458,60 @@ public class Ludo {
 	 * if at max player, go back to first player
 	 */
 	void nextPlayer() {
+		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.WAITING);
+		for (int i = 0; i < playerListenerers.size(); i++) {
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
+		
 		dice = 0;
 		diceThrows = 0;
+
 		activePlayer++;
-		if (activePlayer > 3)
-			activePlayer = 0;
-		
+		while (!isActive(activePlayer)) {
+			activePlayer++;
+			if (activePlayer > nrOfPlayers())
+				activePlayer = 0;
+		}
+
+		playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.PLAYING);
+		for (int i = 0; i < playerListenerers.size(); i++) {
+			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
 	}
 	
 	/**
 	 * Finds out if a piece can move from its position, example
 	 * if it's from the start position or getting into finish
-	 * @return true
+	 * @return true/false, if the player can move
 	 */
     boolean canMove() {
-
-    	int active = activePlayer();
-    
-    	for(int piece = 0; piece < 4; piece++){
-    		int pos = getPosition(active, piece);
-    		if(pos == playerPieces[active][59]){
-    			return false;
-    		} else if (pos == playerPieces[active][0]) {
-    			if (dice == 6) {
-    				return true;
-    			}
-    		}
-    		if (blocked(active, pos, dice)) {
-    			return false;
-    		}
+    	for (int piece = 0; piece < 4; piece++) {
+    		if (pieceCanMove(activePlayer(), piece))
+    			return true;
     	}
+
+    	return false;
+    }
+    
+    /**
+     * Testing if a specific piece can move
+     * @param player the owner of the piece
+     * @param position the position of the piece
+     * @return if the piece can move
+     */
+    boolean pieceCanMove(int player, int piece) {
+    	if (playerPieces[player][piece] == 59)
+    		return false;
     	
+    	if (playerPieces[player][piece] == 0 && dice != 6)
+    		return false;
     	
+    	if (blocked(player, playerPieces[player][piece], playerPieces[player][piece] + dice))
+    		return false;
+    	
+    	if (playerPieces[player][piece] + dice > 59)
+    		return false;
+
     	return true;
     }
     
@@ -484,13 +523,10 @@ public class Ludo {
      * @param diceValue, number of steps to move
      * @return true/false, if block or not blocked
      */
-    boolean blocked(int player, int position, int diceValue) {
-    	int height = playerPieces[player][position];
-    	
-    	for(int i = 0; i <= diceValue; i++){
-    		if(checkBlockAt(player, position + i, height)){
+    boolean blocked(int player, int fromPos, int toPos) {
+    	for (int i = 1; i <= toPos - fromPos; i++) {
+    		if ( checkBlockAt(player, fromPos + i) )
     			return true;
-    		}
     	}
     	return false;
     }
@@ -502,14 +538,12 @@ public class Ludo {
      * @param height, number of players on that position
      * @return true/false, if the field is blocked
      */
-    boolean checkBlockAt(int player, int position, int height) {
-    	
+    boolean checkBlockAt(int player, int position) {
     	int[][] board = getUserToPlayGrid();
-		int pos = userGridToLudoBoardGrid(player, position);
-		for(int i = 0; i < 4; i++){
-			if(board[i][pos] >= height){
+		int boardPosition = userGridToLudoBoardGrid(player, position);
+		for (int testPlayer = 0; testPlayer < 4; testPlayer++) {
+			if (board[testPlayer][boardPosition] > 1 && testPlayer != player )
 				return true;
-			}
 		}
     	return false;
     }
@@ -542,41 +576,56 @@ public class Ludo {
 		 * Testing each of the players, if they have a piece in the position
 		 * using moveBack if there is a piece there
 		 */
-		for (int playerNum = 0; playerNum < 4; playerNum++)
-			if( playerNum != player && board[playerNum][pos] != 0)
+
+		for(int playerNum = 0; playerNum < 4; playerNum++)
+			if( playerNum != player && board[playerNum][pos] != 0){
+
 				moveBack(playerNum, pos);
-    }
+    
+			}}
     
     /**
      * Moving back a players piece based on the board position
      * @param playerNum the player to move back
      * @param boardPos the position on the board
      */
-    private void moveBack(int playerNum, int boardPos) {
-    	playerPieces[playerNum][0]++;
-		int playerPos = boardPosToPlayerPos(playerNum, boardPos);
-		
-		/** 
-		 * if there is a piece on the position
-		 */
-		if (playerPieces[playerNum][playerPos] != 0)
-			playerPieces[playerNum][playerPos]--;
-		
-		/**
-		 * Case where the position is on the second round 
-		 * and we need to add one round to the array
-		 */
-		else if (playerPieces[playerNum][playerPos + 52] != 0)
-			playerPieces[playerNum][playerPos + 52]--;
+    private void moveBack(int player, int position) {
+		int playerPos = boardPosToPlayerPos(player, position);
+		int piece = getPiece(player, playerPos);
+
+		if (piece == -1)
+			piece = getPiece(player, position + 52);
+
+		if (piece != -1)
+			if (userGridToLudoBoardGrid(player, playerPieces[player][piece]) == position) {
+				PieceEvent pieceMove = new PieceEvent(this, player, piece, playerPieces[player][piece], 0);
+				for (int i = 0; i < pieceListenerers.size(); i++) {
+					pieceListenerers.get(i).pieceMoved(pieceMove);
+				}
+				playerPieces[player][piece] = 0;
+			
+			}
     }
     
     /**
      * Updating status to finished if one of the players has won the game
      */
     private void checkWinner() {
-    	for (int i = 0; i < 4; i++){
-    		if(playerPieces[i][59] == 4)
+
+    	for (int player = 0; player < 4; player++){
+    		int pieces = 0;
+        	for (int piece = 0; piece < 4; piece++){
+        		if(playerPieces[player][piece] == 59)
+        			pieces++;
+        	}
+        	if (pieces == 4) {
+        		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.WON);
+    			for (int i = 0; i < playerListenerers.size(); i++) {
+    				playerListenerers.get(i).playerStateChanged(playerChange);
+    			}
     			setStatus("Finished");
+        	}
+
     	}
     }
     
@@ -584,19 +633,19 @@ public class Ludo {
      * Is active are returning a true, if a player is not Inactive or not there.
      * @return true || false
      */
-    private boolean isActive(int player) throws NoSuchPlayerException
-    {	
-    	
-    	if (players.get(player) == null)
-    	{	
-    		throw new NoSuchPlayerException("No player by this name");
-    	}
-    	
-    	if (players.get(player).startsWith("Inactive: "))
-    	{		
+
+    private boolean isActive(int player) {	
+    	String playerName;
+    	try {
+    		playerName = players.get(player);
+		} catch (Exception e) {
+    		return false;
+		}
+
+    	if (playerName.startsWith("Inactive: ")) {		
+
     		return false;
     	}
-    	
     	return true;
     }
 

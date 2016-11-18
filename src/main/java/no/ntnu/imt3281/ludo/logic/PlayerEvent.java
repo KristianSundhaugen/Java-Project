@@ -9,22 +9,22 @@ public class PlayerEvent {
 	
 	private int activePlayer;
 	private int state;
+	private Ludo ludo;
 	
-	public PlayerEvent(Ludo ludo, int bLUE, Object pLAYING2) {
-		
+	public PlayerEvent(Ludo ludo, int player, int state) {
+		this.ludo = ludo;
+		this.activePlayer = player;
+		this.state = state;	
 	}
 	
 	public PlayerEvent(Object obj){
 		
 	}
-	
-	public PlayerEvent(Object obj, int i, int j){
-		
-	}
-	
-	public boolean Equals(Object obj){
-		
-		return true;
+	@Override
+	public boolean equals(Object obj){
+		PlayerEvent event = (PlayerEvent)obj;
+		return (event.getActivePLayer() == this.activePlayer && 
+				event.getState() == this.state);
 	}
 	
 	public int getActivePLayer(){
