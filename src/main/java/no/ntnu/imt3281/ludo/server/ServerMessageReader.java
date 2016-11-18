@@ -22,6 +22,8 @@ public class ServerMessageReader implements Runnable {
 			try {Thread.sleep(100);} catch (InterruptedException e) {}
 		}    	
 	}
+	
+	
 	private void parseMessage(Message message) {
 		if (message.isDisconnected()) {
 			server.removeClient(message.getClient());

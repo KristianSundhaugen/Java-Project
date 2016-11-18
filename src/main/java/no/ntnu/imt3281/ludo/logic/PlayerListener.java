@@ -1,10 +1,7 @@
 package no.ntnu.imt3281.ludo.logic;
 
-public class PlayerListener {
+public interface PlayerListener {
 
-	public void playerStateChanged(PlayerEvent ple) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void playerStateChanged(PlayerEvent event);
 
 }

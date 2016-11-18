@@ -3,7 +3,6 @@ package no.ntnu.imt3281.ludo.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -27,10 +26,7 @@ public class Server  {
 	public static void main(String[] args) {
         try {
 			new Server();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 	}
     
     
@@ -42,7 +38,8 @@ public class Server  {
     	this.reader = new ServerMessageReader(this);
         new Thread(reader).start();
 
-    	ServerSocket listener = new ServerSocket(9090);
+    	@SuppressWarnings("resource")
+		ServerSocket listener = new ServerSocket(9090);
     	System.out.println("new socket");
         while(true) {
         	Socket socket = listener.accept();

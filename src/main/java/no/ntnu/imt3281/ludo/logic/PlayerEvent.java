@@ -7,32 +7,28 @@ public class PlayerEvent {
 	public static final int WON = 2;
 	public static final int LEFTGAME = 3;
 	
-	private int activePlayer;
+	private int player;
 	private int state;
 	private Ludo ludo;
 	
 	public PlayerEvent(Ludo ludo, int player, int state) {
-		this.ludo = ludo;
-		this.activePlayer = player;
+		this.setLudo(ludo);
+		this.player = player;
 		this.state = state;	
 	}
 	
-	public PlayerEvent(Object obj){
-		
-	}
 	@Override
 	public boolean equals(Object obj){
 		PlayerEvent event = (PlayerEvent)obj;
-		return (event.getActivePLayer() == this.activePlayer && 
-				event.getState() == this.state);
+		return (event.getPlayer().equals(this.getPlayer()) && event.getState() == this.getState());
 	}
 	
-	public int getActivePLayer(){
-		return activePlayer;
+	public String getPlayer(){
+		return String.valueOf(this.player);
 	}
 	
-	public void setActivePlayer(int activePlayer){
-		this.activePlayer = activePlayer;
+	public void setPlayer(int activePlayer){
+		this.player = activePlayer;
 	}
 	
 	public int getState(){
@@ -42,4 +38,13 @@ public class PlayerEvent {
 	public void setState(int state){
 		this.state = state;
 	}
+
+	public Ludo getLudo() {
+		return ludo;
+	}
+
+	public void setLudo(Ludo ludo) {
+		this.ludo = ludo;
+	}
+
 }
