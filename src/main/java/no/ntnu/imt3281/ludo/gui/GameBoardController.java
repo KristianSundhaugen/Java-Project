@@ -70,16 +70,10 @@ public class GameBoardController {
 	
 
     public GameBoardController(){
-<<<<<<< HEAD
-    	
-    	//playerPiece[i][ii].setX(corner.points[i*4+ii].getX()-8+ii*4
-    	//playerPiece[i][ii].setY(corner.points[i*4+ii].getX()-2+ii*2
-=======
     	ludo = new Ludo();
     	ludo.addDiceListener(Connection.getConnection());
     	ludo.addPieceListener(Connection.getConnection());
     	ludo.addPlayerListener(Connection.getConnection());
->>>>>>> 1052077c83dbfcc76d1f7dc20e130865c10d9373
     }
     
 	/**

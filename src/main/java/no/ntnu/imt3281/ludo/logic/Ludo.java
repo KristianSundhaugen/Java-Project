@@ -4,7 +4,11 @@ package no.ntnu.imt3281.ludo.logic;
 
 import java.util.Random;
 import java.util.Vector;
-
+/**
+ * Ludo represent a game. Each game has an unique id. With four constants RED, BLUE, 
+ * YELLOW and GREEN, represented by integers 0 to 3 and indicates each of the individual players. 
+ * Each player has an name, represented by a string saved in a vector. 
+ */
 public class Ludo {
 
 	public static int RED = 0;
@@ -410,14 +414,25 @@ public class Ludo {
 	public void addDiceListener(DiceListener diceListener) {
 		diceListenerers.add(diceListener);
 	}
-
+	/**
+	 * Adding a pieceListener to the pieceListener vector
+	 * @param pieceListener
+	 */
 	public void addPieceListener(PieceListener pieceListener) {
 		pieceListenerers.add(pieceListener);
 	}
-
+	/**
+	 * Adding a playerListener to the playerListener vector
+	 * @param playerListener
+	 */
 	public void addPlayerListener(PlayerListener playerListener) {
 		playerListenerers.add(playerListener);
 	}
+	/**
+	 * Gets the user to player grid, there can be two to four users
+	 * who each has 4 pieces that wil get a position on the board
+	 * @return board
+	 */
 	int[][] getUserToPlayGrid() {
 		int[][] board = new int[4][91];
 		for(int player = 0; player < 4; player++) {
@@ -637,12 +652,18 @@ public class Ludo {
     	}
     	return true;
     }
-
+    /** 
+     * Sets the game id 
+     * @param gameId
+     */
 	public void setId(String gameId) {
 		this.id = gameId;
 		
 	}
-
+	/**
+	 * Returns the game id
+	 * @return id 
+	 */
 	public String getId() {
 		return this.id;
 	}
