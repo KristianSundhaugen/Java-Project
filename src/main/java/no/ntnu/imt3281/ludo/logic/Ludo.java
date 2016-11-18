@@ -201,7 +201,7 @@ public class Ludo {
 			setStatus("Started");
 		
 		randomGenerator = new Random();
-		dice = randomGenerator.nextInt(6) + 1;
+		this.dice = randomGenerator.nextInt(6) + 1;
 		diceThrows++;
 		
 		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), dice);
@@ -215,7 +215,6 @@ public class Ludo {
 		return dice;
 	}
 	
-
 	/**
 	 * @param The value generated from throwDice()
 	 * @return Dice value of throwDice()?
@@ -467,13 +466,14 @@ public class Ludo {
 	/**
 	 * Finds out if a piece can move from its position, example
 	 * if it's from the start position or getting into finish
-	 * @return true
+	 * @return true/false, if the player can move
 	 */
     boolean canMove() {
     	for (int piece = 0; piece < 4; piece++) {
     		if (pieceCanMove(activePlayer(), piece))
     			return true;
     	}
+
     	return false;
     }
     
@@ -495,6 +495,7 @@ public class Ludo {
     	
     	if (playerPieces[player][piece] + dice > 59)
     		return false;
+
     	return true;
     }
     
