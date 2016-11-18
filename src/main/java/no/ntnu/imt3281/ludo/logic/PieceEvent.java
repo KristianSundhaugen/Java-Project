@@ -8,7 +8,7 @@ public class PieceEvent {
 	private int to;
 
 	public PieceEvent(Ludo ludo, int player, int piece, int fromPos, int toPos) {
-		this.ludo = ludo;
+		this.setLudo(ludo);
 		this.player = player;
 		this.piece = piece;
 		this.from = fromPos;
@@ -58,6 +58,14 @@ public class PieceEvent {
 	
 	public void setTo(int to){
 		this.to = to;
+	}
+
+	public Ludo getLudo() {
+		return ludo;
+	}
+
+	public void setLudo(Ludo ludo) {
+		this.ludo = ludo;
 	}
 	
 }

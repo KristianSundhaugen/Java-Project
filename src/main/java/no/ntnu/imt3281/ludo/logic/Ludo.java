@@ -11,6 +11,9 @@ public class Ludo {
 	public static int BLUE = 1;
 	public static int YELLOW = 2;
 	public static int GREEN = 3;
+	
+	private String id;
+	
 	private Vector<String> players;
 	private int activePlayer;
 	private int dice;
@@ -23,18 +26,7 @@ public class Ludo {
 	private Vector<DiceListener> diceListenerers = new Vector<>();
 	private Vector<PieceListener> pieceListenerers = new Vector<>();
 	private Vector<PlayerListener> playerListenerers = new Vector<>();
-	public void debug(){
-    	System.out.println("userGridToPlayerGrid");
-    	int[][] board = playerPieces;
-    	//int[][] board = getUserToPlayGrid();
-		for ( int player = 0; player < 4; player++){
-			for ( int position = 0; position < board[0].length; position++)
-    			System.out.print(board[player][position] + " : ");
-			System.out.println("");
-		}
-		System.out.println("");
 
-    }
 	/**
 	 * Constructor creating new game with players
 	 * @param player1 the user name of the first player, can be null if there is no player
@@ -119,12 +111,9 @@ public class Ludo {
 	 * @param player, which player to get name for
 	 * @return name of player
 	 */
-	public Object getPlayerName(int player) throws NoSuchPlayerException {
+	public String getPlayerName(int player) {
 		try {
-			if (players.get(player) == null)
-				throw new NoSuchPlayerException("No player by this name");
-			else
-				return players.get(player);
+			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
@@ -144,7 +133,7 @@ public class Ludo {
 		
 			players.add(name);
 			setStatus("Initiated");
-			PlayerEvent playerChange = new PlayerEvent(this, players.indexOf(name), PlayerEvent.PLAYING);
+			PlayerEvent playerChange = new PlayerEvent(this, players.indexOf(name), PlayerEvent.WAITING);
 			for (int i = 0; i < playerListenerers.size(); i++) {
 				playerListenerers.get(i).playerStateChanged(playerChange);
 			}
@@ -257,30 +246,26 @@ public class Ludo {
 		/**
 		 * Should not go to next player if the game is finished
 		 */
-		if ( this.status == "Finished"){
+		if ( this.status == "Finished")
 			return false;
-		}
 			
 		/**
 		 * When you have thrown three times
 		 */
-		if (diceThrows > 3){
+		if (diceThrows > 3)
 			return true;
-		}
 		
 		/**
 		 * Throw the dice 3 times until you get a six and move a piece out
 		 */
-		if (dice != 6 && allHome() && diceThrows >= 3){
+		if (dice != 6 && allHome() && diceThrows >= 3)
 			return true;
-		}
 		
 		/**
 		 *  You can't throw more than three times, even if you get a six the third time
 		 */
-		if (diceThrows == 3 && dice == 6 && !allHome()){
+		if (diceThrows == 3 && dice == 6 && !allHome())
 			return true;
-		}
 		
 		return false;
 	}
@@ -380,8 +365,7 @@ public class Ludo {
 		return true;
 	}
 	
-	public void setStatus(String status)
-	{
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	
@@ -396,6 +380,7 @@ public class Ludo {
 		checkWinner();
 		return status;
 	}
+	
 	/**
  	* Returns who has won (-1 is returned until 
  	* a player has won). When a player has won
@@ -414,6 +399,10 @@ public class Ludo {
 		return -1;
 	}
 
+	/**
+	 * Adding a diceListener to the diceListeners vector
+	 * @param diceListener
+	 */
 	public void addDiceListener(DiceListener diceListener) {
 		diceListenerers.add(diceListener);
 	}
@@ -636,5 +625,14 @@ public class Ludo {
     	}
     	return true;
     }
+
+	public void setId(String gameId) {
+		this.id = gameId;
+		
+	}
+
+	public String getId() {
+		return this.id;
+	}
 
 }
