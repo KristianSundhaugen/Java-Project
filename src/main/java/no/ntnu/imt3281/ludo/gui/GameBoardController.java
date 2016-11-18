@@ -19,9 +19,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+
 import no.ntnu.imt3281.ludo.logic.Ludo;
 import no.ntnu.imt3281.ludo.server.GameMessage;
-import no.ntnu.imt3281.ludo.server.Message;
+import no.ntnu.imt3281.ludo.client.Connection;
 
 public class GameBoardController {
 	
@@ -64,14 +65,21 @@ public class GameBoardController {
     @FXML
     private Button sendTextButton;
     
-	private Ludo ludo = new Ludo();
+	private Ludo ludo;
     
-	private String id;
+	
 
     public GameBoardController(){
+<<<<<<< HEAD
     	
     	//playerPiece[i][ii].setX(corner.points[i*4+ii].getX()-8+ii*4
     	//playerPiece[i][ii].setY(corner.points[i*4+ii].getX()-2+ii*2
+=======
+    	ludo = new Ludo();
+    	ludo.addDiceListener(Connection.getConnection());
+    	ludo.addPieceListener(Connection.getConnection());
+    	ludo.addPlayerListener(Connection.getConnection());
+>>>>>>> 1052077c83dbfcc76d1f7dc20e130865c10d9373
     }
     
 	/**
@@ -82,12 +90,7 @@ public class GameBoardController {
     	System.out.println("Dice value: " + i);
     }
 
-    /**
-     * @return the id of the game
-     */
-	public String getId() {
-		return this.id;
-	}
+    
 	
 	/**
 	 * Getting a new message sent from the server to this game
@@ -125,13 +128,18 @@ public class GameBoardController {
 		}
 		player.setText(playerName);
 	}
-
+	/**
+     * @return the id of the game
+     */
+	public String getId() {
+		return ludo.getId();
+	}
 	/**
 	 * Setting the id of the game from the server
 	 * @param gameId
 	 */
 	public void setId(String gameId) {
-    	this.id = id;		
+    	ludo.setId(gameId);
 	}
     
 	/**

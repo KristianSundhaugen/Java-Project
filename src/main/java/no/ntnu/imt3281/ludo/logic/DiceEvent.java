@@ -9,12 +9,13 @@ public class DiceEvent {
 	public DiceEvent(Ludo ludo, int player, int dice) {
 		this.dice = dice;
 		this.player = player;
-		this.ludo = ludo;
+		this.setLudo(ludo);
 	}
 	
-	public DiceEvent(Object obj){
-		
-	}
+	/**
+	 * Used to test if this object is the same as the one sent as a parameter
+	 * @param obj the object to test against
+	 */
 	@Override
 	public boolean equals(Object obj){
 		DiceEvent event = (DiceEvent)obj;
@@ -22,6 +23,9 @@ public class DiceEvent {
 				event.getDice() == this.dice);
 	}
 	
+	/**
+	 * @return the player from the event
+	 */
 	public int getPlayer(){
 		return player;
 	}
@@ -36,6 +40,14 @@ public class DiceEvent {
 	
 	public void setDice(int dice){
 		this.dice = dice;
+	}
+
+	public Ludo getLudo() {
+		return ludo;
+	}
+
+	public void setLudo(Ludo ludo) {
+		this.ludo = ludo;
 	}
 	
 

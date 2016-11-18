@@ -8,10 +8,21 @@ import java.util.Vector;
 import javafx.application.Platform;
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
+import no.ntnu.imt3281.ludo.logic.DiceEvent;
+import no.ntnu.imt3281.ludo.logic.DiceListener;
+import no.ntnu.imt3281.ludo.logic.PieceEvent;
+import no.ntnu.imt3281.ludo.logic.PieceListener;
+import no.ntnu.imt3281.ludo.logic.PlayerEvent;
+import no.ntnu.imt3281.ludo.logic.PlayerListener;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
 
-public class Connection {
+/**
+ * Singleton class for holding a connection to the server
+ * Receiving events from the game and is sending them to the server
+ * @author lassesviland
+ */
+public class Connection implements DiceListener, PieceListener, PlayerListener {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
@@ -123,5 +134,44 @@ public class Connection {
 	 */
 	public static void stopConnection() {
 		getConnection().reader.stop();
+	}
+	
+	/**
+	 * Called when a piece have been moved, 
+	 * sending message to the server with the information from the event
+	 * @param event the event that was called
+	 */
+	@Override
+	public void pieceMoved(PieceEvent event) {
+		sendMessage("PIECE:" + event.getFrom() 
+		+ ":"  + event.getTo() 
+		+ ":" + event.getPiece() 
+		+ ":" + event.getPlayer() , 
+		"GAME", 
+		event.getLudo().getId());		
+	}
+
+	/**
+	 * Called when a dice is thrown,
+ 	 * sending message to the server with the information from the event
+	 * @param event the event that was called from the server
+	 */
+	@Override
+	public void diceThrown(DiceEvent event) {
+		sendMessage("DICE:" + event.getDice() 
+		+ ":" + event.getPlayer() , 
+		"GAME", 
+		event.getLudo().getId());
+	}
+	/**
+	 * Called when the state of a player is changed, 
+	 * sending message to the server with the new state
+	 */
+	@Override
+	public void playerStateChanged(PlayerEvent event) {
+		sendMessage("PLAYER:" + event.getState() 
+		+ ":" + event.getPlayer() , 
+		"GAME", 
+		event.getLudo().getId());
 	}
 }

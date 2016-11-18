@@ -26,7 +26,6 @@ public class LudoController {
     public void joinRandomGame(ActionEvent e) { 
     	LudoController controller = this;
        	Connection.newGame(controller);
-    	//createNewGame("1");
     }
     public void createNewGame(String gameId){
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("GameBoard.fxml"));

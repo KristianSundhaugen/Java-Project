@@ -1,10 +1,8 @@
 package no.ntnu.imt3281.ludo.logic;
 
-public class PieceListener {
+public interface PieceListener {
 
-	public void pieceMoved(PieceEvent pe) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void pieceMoved(PieceEvent event);
+
 
 }
