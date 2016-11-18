@@ -49,5 +49,11 @@ public class GameMessage {
 	public boolean isNewGameRequest() {
 		return gameMessageType.equals("NEW_RANDOM_GAME_REQUEST");
 	}
+	/**
+	 * @return the content of the message
+	 */
+	public String getMessage(){
+		return this.msg.getMessage();
+	}
 	
 }

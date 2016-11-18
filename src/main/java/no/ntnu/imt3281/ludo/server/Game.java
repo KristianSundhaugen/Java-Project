@@ -2,9 +2,15 @@ package no.ntnu.imt3281.ludo.server;
 
 import java.util.Vector;
 
+import no.ntnu.imt3281.ludo.logic.DiceEvent;
+import no.ntnu.imt3281.ludo.logic.DiceListener;
 import no.ntnu.imt3281.ludo.logic.Ludo;
+import no.ntnu.imt3281.ludo.logic.PieceEvent;
+import no.ntnu.imt3281.ludo.logic.PieceListener;
+import no.ntnu.imt3281.ludo.logic.PlayerEvent;
+import no.ntnu.imt3281.ludo.logic.PlayerListener;
 
-public class Game {
+public class Game implements PieceListener, PlayerListener, DiceListener {
 	private static int idCounter = 0;
 	private Vector<ServerClient> players = new Vector<>(4);
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
@@ -86,9 +92,25 @@ public class Game {
 	 * Running a game message sent from a client in this game
 	 * @param message the message the client sent
 	 */
-	public void runMessage(GameMessage message) {
-		// TODO Auto-generated method stub
-		
+	public void runMessage(GameMessage msg) {
+        if(msg.isType("PLAYER_EVENT")) {
+        	String[] parts = msg.getMessage().split(":");
+        	String state = parts[1];
+			String player = parts[2];
+		} else if (msg.isType("PIECE_EVENT")) {
+			String[] parts = msg.getMessage().split(":");
+        	int from = Integer.parseInt(parts[1]);
+			int to = Integer.parseInt(parts[2]);
+			int player = Integer.parseInt(parts[4]);
+			ludoGame.movePiece(player, from, to);
+			forwardMessage(msg.getMessage(), msg.getClient());
+		} else if (msg.isType("DICE_EVENT")) {
+			String[] parts = msg.getMessage().split(":");
+        	int dice = Integer.parseInt(parts[1]);
+			int player = Integer.parseInt(parts[2]);
+		} else if (msg.isType("DICE_THROW")) {
+			ludoGame.throwDice();
+		}
 	}
 
 	/**
@@ -98,6 +120,17 @@ public class Game {
 	public void sendMessage(String message) {
 		for (ServerClient player : players) {
 			player.sendMessage(new Message(message, "GAME", this.id).toString());
+		}
+	}
+	/**
+	 * Sending a game message to all players in the game
+	 * except the player that triggered the message
+	 * @param message the content of the message to send
+	 */
+	public void forwardMessage(String message, ServerClient client) {
+		for (ServerClient player : players) {
+			if (player != client)
+				player.sendMessage(new Message(message, "GAME", this.id).toString());
 		}
 	}
 	
@@ -113,5 +146,38 @@ public class Game {
 	 */
 	public void startGame() {
     	sendMessage("START_GAME:" + 0);
+	}
+
+	/**
+	 * Called when a piece have been moved, 
+	 * sending message to the clients with the information from the event
+	 * @param event the event that was called
+	 */
+	@Override
+	public void pieceMoved(PieceEvent event) {
+		//sendMessage("PIECE:" + event.getFrom() 
+		//+ ":"  + event.getTo() 
+		//+ ":" + event.getPiece() 
+		//+ ":" + event.getPlayer() );		
+	}
+
+	/**
+	 * Called when a dice is thrown,
+ 	 * sending message to the clients with the information from the event
+	 * @param event the event that was called from the server
+	 */
+	@Override
+	public void diceThrown(DiceEvent event) {
+		sendMessage("DICE:" + event.getDice() 
+		+ ":" + event.getPlayer() );
+	}
+	/**
+	 * Called when the state of a player is changed, 
+	 * sending message to the clients with the new state
+	 */
+	@Override
+	public void playerStateChanged(PlayerEvent event) {
+		sendMessage("PLAYER:" + event.getState() 
+		+ ":" + event.getPlayer() );
 	}
 }

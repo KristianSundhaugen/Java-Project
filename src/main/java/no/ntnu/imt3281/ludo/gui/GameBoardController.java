@@ -21,6 +21,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 import no.ntnu.imt3281.ludo.logic.Ludo;
+import no.ntnu.imt3281.ludo.logic.PlayerEvent;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.client.Connection;
 
@@ -80,8 +81,7 @@ public class GameBoardController {
 	 * Throwing a dice
 	 */
     public void throwDiceController(){
-    	int i = ludo.throwDice();
-    	System.out.println("Dice value: " + i);
+    	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
     }
 
     
@@ -91,23 +91,44 @@ public class GameBoardController {
 	 * @param msg the message
 	 */
 	public void gameMessage(GameMessage msg) {
-		if(msg.isType("NEW_JOINED_GAME")) {
-			
-		} else if (msg.isType("PLAYER_JOINED")){
+		if(msg.isType("PLAYER_EVENT")) {
+        	String[] parts = msg.getMessage().split(":");
+        	int state = Integer.parseInt(parts[1]);
+			int playerNum = Integer.parseInt(parts[2]);
+			if (state == PlayerEvent.LEFTGAME) {
+				ludo.removePlayer(ludo.getPlayerName(playerNum));
+				Label player = player1Name;
+				switch (playerNum) {
+					case 1:player = player1Name;break;
+					case 2:player = player2Name;break;
+					case 3:player = player3Name;break;
+					case 4:player = player4Name;break;
+				}
+				player.setText(ludo.getPlayerName(playerNum));
+			} else if (state == PlayerEvent.WON) {
+				
+			} else if (state == PlayerEvent.PLAYING) {
+				
+			} else if (state == PlayerEvent.WAITING) {
+				
+			}
+		} else if (msg.isType("PIECE_EVENT")) {
+			String[] parts = msg.getMessage().split(":");
+        	int fromPos = Integer.parseInt(parts[1]);
+			int toPos = Integer.parseInt(parts[2]);
+			int player = Integer.parseInt(parts[4]);
+			ludo.movePiece(player, fromPos, toPos);
+		} else if (msg.isType("DICE_EVENT")) {
+			String[] parts = msg.getMessage().split(":");
+        	int diceValue = Integer.parseInt(parts[1]);
+			int player = Integer.parseInt(parts[2]);
+			ludo.throwDice(diceValue);
+			if (ludo.activePlayer() == player) {
+				
+			}
+		} else if (msg.isType("PLAYER_JOINED")) {
 			playerJoin(msg.getMessageValue());
-		} else if (msg.isType("START_GAME")){
-			
-		} else if (msg.isType("DICE_THROW")){
-			
-		} else if (msg.isType("PLAYER_MOVE")){
-			
-		} else if (msg.isType("CHANGE_TURN")){
-			
-		} else if (msg.isType("PLAYER_DISCONNECT")){
-			
-		} else if (msg.isType("GAME_FINISHED")){
-			
-		} else if (msg.isType("PLAYER_JOINED")){
+		} else if( msg.isType("START_GAME")) {
 			
 		}
 	}

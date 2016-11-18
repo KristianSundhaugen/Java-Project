@@ -12,7 +12,6 @@ public class ServerMessageReader implements Runnable {
 	public void run() {
 		while (true) {
 			Vector<ServerClient> clients = server.getClients();
-		    System.out.println(clients.size());
 			for (int i = 0; i < clients.size(); i++){
 				Message msg = clients.get(i).getMessage();
 				if (msg != null)
