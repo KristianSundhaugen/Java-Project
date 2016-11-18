@@ -63,6 +63,9 @@ public class GameBoardController {
 	private String id;
 
     public GameBoardController(){
+    	
+    	//playerPiece[i][ii].setX(corner.points[i*4+ii].getX()-8+ii*4
+    	//playerPiece[i][ii].setY(corner.points[i*4+ii].getX()-2+ii*2
     }
     
 	/**

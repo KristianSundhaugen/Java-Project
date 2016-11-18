@@ -131,7 +131,7 @@ public class Ludo {
 			throw new IllegalPlayerNameException("Illegal Player Name");
 		if (name != null) {
 			players.add(name);
-			this.status = "Initiated";
+			setStatus("Initiated");
 		}
 	}
 
@@ -188,8 +188,8 @@ public class Ludo {
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
 		
-		if (this.status == "Initiated")
-			this.status = "Started";
+		if (status == "Initiated")
+			setStatus("Started");
 		
 		randomGenerator = new Random();
 		dice = randomGenerator.nextInt(6) + 1;
@@ -248,8 +248,8 @@ public class Ludo {
 		// hvilken spiller som er aktiv og verdien på terningen. 
 		// På serveren kan en lytte på denne for å sende verdien på terningen til alle spillerne. 
 		// På hver klient så kan en lytte på denne meldingen for å vise verdien på terningen som ble kastet.
-		if (this.status == "Initiated")
-			this.status = "Started";
+		if (status == "Initiated")
+			setStatus("Started");
 		
 		this.dice = diceValue;
 		diceThrows++;
@@ -387,7 +387,6 @@ public class Ludo {
 		// en spiller har kastet en terning.
 		// Når den første terningen er kastet så er status for spillet Started helt frem til en spiller vinner spillet, 
 		// da går status over til å være Finished.
-		checkWinner();
 		return status;
 	}
 	/**
@@ -543,7 +542,7 @@ public class Ludo {
 		 * Testing each of the players, if they have a piece in the position
 		 * using moveBack if there is a piece there
 		 */
-		for(int playerNum = 0; playerNum < 4; playerNum++)
+		for (int playerNum = 0; playerNum < 4; playerNum++)
 			if( playerNum != player && board[playerNum][pos] != 0)
 				moveBack(playerNum, pos);
     }
@@ -577,7 +576,7 @@ public class Ludo {
     private void checkWinner() {
     	for (int i = 0; i < 4; i++){
     		if(playerPieces[i][59] == 4)
-    			this.status = "Finished";
+    			setStatus("Finished");
     	}
     }
     
@@ -588,7 +587,7 @@ public class Ludo {
     private boolean isActive(int player) throws NoSuchPlayerException
     {	
     	
-    	if(players.get(player) == null)
+    	if (players.get(player) == null)
     	{	
     		throw new NoSuchPlayerException("No player by this name");
     	}
