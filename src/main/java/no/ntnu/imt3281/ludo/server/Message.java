@@ -1,5 +1,6 @@
 package no.ntnu.imt3281.ludo.server;
 
+import no.ntnu.imt3281.ludo.client.Client;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
 
@@ -33,7 +34,8 @@ public class Message {
 	 *            the client that sent the message
 	 */
 	public Message(String fullMessage, ServerClient client) {
-		System.out.println("Server recieving: -> " + fullMessage);
+		if (!fullMessage.equals("PING"))
+			System.out.println("Server recieving: -> " + fullMessage);
 
 		this.client = client;
 		this.type = fullMessage.split(":")[0];
@@ -45,9 +47,9 @@ public class Message {
 		}
 	}
 
-	public Message(String fullMessage, Connection connection) {
+	public Message(String fullMessage, Client connection) {
 		System.out.println("Client recieving: -> " + fullMessage);
-		this.connection = connection;
+		//this.connection = connection;
 		this.type = fullMessage.split(":")[0];
 		if (!type.equals("PING")) {
 			this.id = fullMessage.split(":")[1];
@@ -56,8 +58,7 @@ public class Message {
 	}
 
 	/**
-	 * Test to see if message is a game message
-	 * 
+	 * Test to see if message is a disconnect message
 	 * @return true/false depending on the type
 	 */
 	public boolean isDisconnected() {
@@ -66,7 +67,6 @@ public class Message {
 
 	/**
 	 * Test to see if message is a game message
-	 * 
 	 * @return true/false depending on the type
 	 */
 	public boolean isGame() {

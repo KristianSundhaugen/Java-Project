@@ -23,6 +23,7 @@ public class ServerClient {
 		}
 	}
 	public void sendMessage(String message) {
+		System.out.println("Server sending: " + message);
 		output.println(message);
 	}
 	public Message getMessage(){
@@ -49,7 +50,6 @@ public class ServerClient {
 			return false; 
 
 		if (lastMessageTime < System.currentTimeMillis() - PING_DELAY){
-			System.out.println("Sending ping");
 			output.println("PING");
 			this.lastMessageTime = System.currentTimeMillis();
 		}

@@ -26,7 +26,7 @@ public class Server  {
 	public static void main(String[] args) {
         try {
 			new Server();
-		} catch (IOException e) {}
+		} catch (IOException e) {System.out.println(e);}
 	}
     
     
@@ -78,9 +78,14 @@ public class Server  {
 				if (game.isJoinableByClient(message.getClient())) {
 					game.addPlayer(message.getClient());
 					gameFound = true;
-					if(game.isFull()){
+					if (game.isFull()) {
 						game.startGame();
 					}
+					/********************************************************/
+					if (game.getPlayers() > 1) {
+						game.startGame();
+					}
+					/********************************************************/
 				}
 			}
 			if (!gameFound){

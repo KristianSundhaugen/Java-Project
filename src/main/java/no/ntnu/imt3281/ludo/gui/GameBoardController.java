@@ -109,9 +109,23 @@ public class GameBoardController {
 			} else if (state == PlayerEvent.WON) {
 				
 			} else if (state == PlayerEvent.PLAYING) {
-				
+				ImageView playerActive = player1Active;
+				switch (ludo.nrOfPlayers()) {
+					case 1:playerActive = player1Active;break;
+					case 2:playerActive = player2Active;break;
+					case 3:playerActive = player3Active;break;
+					case 4:playerActive = player4Active;break;
+				}	
+				playerActive.setVisible(true);
 			} else if (state == PlayerEvent.WAITING) {
-				
+				ImageView playerActive = player1Active;
+				switch (ludo.nrOfPlayers()) {
+					case 1:playerActive = player1Active;break;
+					case 2:playerActive = player2Active;break;
+					case 3:playerActive = player3Active;break;
+					case 4:playerActive = player4Active;break;
+				}	
+				playerActive.setVisible(false);
 			}
 		} else if (msg.isType("PIECE_EVENT")) {
 			String[] parts = msg.getMessage().split(":");
@@ -123,14 +137,15 @@ public class GameBoardController {
 			String[] parts = msg.getMessage().split(":");
         	int diceValue = Integer.parseInt(parts[1]);
 			int player = Integer.parseInt(parts[2]);
-			ludo.throwDice(diceValue);
-			if (ludo.activePlayer() == player) {
-				
-			}
+			throwDice(diceValue, player);
 		} else if (msg.isType("PLAYER_JOINED")) {
+			System.out.println("PLAYER JOIN");
 			playerJoin(msg.getMessageValue());
 		} else if( msg.isType("START_GAME")) {
-			
+			player4Active.setVisible(true);
+			player4Active.setVisible(false);
+			player4Active.setVisible(false);
+			player4Active.setVisible(false);
 		}
 	}
 	private void playerJoin(String playerName) {
@@ -144,6 +159,15 @@ public class GameBoardController {
 		}
 		player.setText(playerName);
 	}
+	private void throwDice(int diceValue, int player) {
+		ludo.throwDice(diceValue);
+		diceThrown.setImage(new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png")));
+
+		if (ludo.activePlayer() == player) {
+			
+		}
+	}
+
 	/**
      * @return the id of the game
      */

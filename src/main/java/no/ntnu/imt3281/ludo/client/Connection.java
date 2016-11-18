@@ -90,6 +90,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 * @param msg the message received from the server
 	 */
 	public void messageParser(Message msg) {
+		System.out.println("Message Parser");
 		if (msg.isChat()){
 			// TODO add message to chat window
 		} else if (msg.isGame()) {
@@ -103,7 +104,9 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 * @param gmsg the game message 
 	 */
 	private void sendGameMessage(GameMessage gmsg) {
+		System.out.println("Game Message");
 		if (gmsg.isNewGame()) {
+			System.out.println("New Game From Server");
 			LudoController controller = SynchronizedHolder.waitingNewGame;
 			Platform.runLater(new Runnable() {
 	            @Override
@@ -113,7 +116,9 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 			});
 			SynchronizedHolder.waitingNewGame = null;
 		} else {
+			System.out.println("Game Message else");
 			for (GameBoardController game : games) {
+				
 				if (game.getId() == gmsg.getId())
 					game.gameMessage(gmsg);
 			}
@@ -158,10 +163,11 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void diceThrown(DiceEvent event) {
-		sendMessage("DICE:" + event.getDice() 
+		/*sendMessage("DICE:" + event.getDice() 
 		+ ":" + event.getPlayer() , 
 		"GAME", 
 		event.getLudo().getId());
+		*/
 	}
 	/**
 	 * Called when the state of a player is changed, 

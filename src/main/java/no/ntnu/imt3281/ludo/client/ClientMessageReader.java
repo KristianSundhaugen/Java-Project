@@ -42,8 +42,10 @@ public class ClientMessageReader implements Runnable {
 			if (!input.ready())
 				return null;
 			String msg = input.readLine();
-			if (msg != null)
+			if (msg != null){
+				System.out.println(msg);
 				return new Message(msg, connection);
+			}
 		} catch (IOException e) {}
 		return null;
 	}	

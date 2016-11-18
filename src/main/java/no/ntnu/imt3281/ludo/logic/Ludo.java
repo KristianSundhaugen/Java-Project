@@ -15,7 +15,7 @@ public class Ludo {
 	private String id;
 	
 	private Vector<String> players;
-	private int activePlayer;
+	private int activePlayer = 0;
 	private int dice;
 	private int diceThrows = 0;
 	private String status = "Created";

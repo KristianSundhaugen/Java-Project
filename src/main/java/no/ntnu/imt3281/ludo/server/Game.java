@@ -93,6 +93,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 * @param message the message the client sent
 	 */
 	public void runMessage(GameMessage msg) {
+		System.out.println("RUNNIGN MESSAGE");
         if(msg.isType("PLAYER_EVENT")) {
         	String[] parts = msg.getMessage().split(":");
         	String state = parts[1];
@@ -109,6 +110,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
         	int dice = Integer.parseInt(parts[1]);
 			int player = Integer.parseInt(parts[2]);
 		} else if (msg.isType("DICE_THROW")) {
+			System.out.println("DICE THROW");
 			ludoGame.throwDice();
 		}
 	}
@@ -140,6 +142,12 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	public boolean isFull() {
 		return players.size() == 4;
 	}
+	/**
+	 * @return the amount of active players in the game
+	 */
+	public int getPlayers() {
+		return ludoGame.activePlayers();
+	}
 	
 	/**
 	 * Starting the game
@@ -168,6 +176,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 */
 	@Override
 	public void diceThrown(DiceEvent event) {
+		System.out.println("DICE THROW EVENT");
 		sendMessage("DICE:" + event.getDice() 
 		+ ":" + event.getPlayer() );
 	}
