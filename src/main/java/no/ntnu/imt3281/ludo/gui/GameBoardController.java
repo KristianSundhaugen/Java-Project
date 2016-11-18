@@ -134,13 +134,15 @@ public class GameBoardController {
     
 	/**
 	 * Loads the image for the pieces
-	 * Adds a rectangle on each piece and fill it with the  correct image
+	 * Adds a rectangle on each piece and fill it with the correct image
 	 * 
-	 * Setting the position for each piece is not yet implemented
 	 */
 	public void setUpPieces(int diceValue){
 		
-		
+		int[][] piecePositions = new int[91][2];
+		//piecePosition[13.5][2.5]
+		//create a class
+		//function that takes player and piece position and returns rectangle
 		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
@@ -152,23 +154,11 @@ public class GameBoardController {
 			for(int j = 0; j < 4; j++){
 				pieces[i][j] = new Rectangle(48, 48);
 				pieces[i][j].setFill(new ImagePattern(pieceImages[i]));
-				//how to place the pieces on each start position?
 				pieces[i][j].setX(0);
 				pieces[i][j].setY(0);
 				
-				//there is probably a better way?
-				final int player = i;
-				final int piece = j;
-				pieces[i][j].setOnMouseClicked(new EventHandler<MouseEvent>() {
-					
-					@Override
-					public void handle(MouseEvent event) {
-											
-						int startPos = ludo.getPosition(player, piece);
-						int endPos = startPos + diceValue;
-						ludo.movePiece(player, startPos, endPos);
-					}
-				});
+				
+				
 			}
 		}
 	}
