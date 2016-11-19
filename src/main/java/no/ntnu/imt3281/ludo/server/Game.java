@@ -14,7 +14,8 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	private static int idCounter = 0;
 	private Vector<ServerClient> players = new Vector<>(4);
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
-	private String type;
+	private String status = "WAITING";
+	private String type = "OPEN";
 	private String id;
 	private Ludo ludoGame;
 	
@@ -22,9 +23,11 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 * Creating a new game with the default type open
 	 */
     public Game() {
-    	this.type = "OPEN";
     	this.id = String.valueOf(idCounter++);
     	ludoGame = new Ludo();
+    	ludoGame.addDiceListener(this);
+    	ludoGame.addPieceListener(this);
+    	ludoGame.addPlayerListener(this);
     }
     
     /**
@@ -51,7 +54,9 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
      * @return boolean saying if the client can join the game
      */
     public boolean isJoinableByClient(ServerClient client) {
-    	if (isOpen() && players.size() <= 4)
+    	if (this.status.equals("STARTED"))
+    		return false;
+    	else if (isOpen() && players.size() <= 4)
     		return true;
     	else if (!isOpen() && isPayerInvited(client))
     		return true;
@@ -76,9 +81,12 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
      * @param client the client that should be added to the game
      */
 	public void addPlayer(ServerClient client){
+    	sendMessageToClient("NEW_JOINED_GAME:" + players.size(), client);
+    	for (ServerClient player : players) {
+    		sendMessageToClient("PLAYER_JOINED:" + player.getUsername(), client);
+		}
     	players.add(client);
-    	client.sendMessage(new Message("NEW_JOINED_GAME", "GAME", this.id).toString());
-    	sendMessage("PLAYER_JOINED:" + client.toString());
+    	sendMessage("PLAYER_JOINED:" + client.getUsername());
     }
 	
 	/**
@@ -93,7 +101,6 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 * @param message the message the client sent
 	 */
 	public void runMessage(GameMessage msg) {
-		System.out.println("RUNNIGN MESSAGE");
         if(msg.isType("PLAYER_EVENT")) {
         	String[] parts = msg.getMessage().split(":");
         	String state = parts[1];
@@ -104,7 +111,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 			int to = Integer.parseInt(parts[2]);
 			int player = Integer.parseInt(parts[4]);
 			ludoGame.movePiece(player, from, to);
-			forwardMessage(msg.getMessage(), msg.getClient());
+			sendMessageExcemptClient(msg.getMessage(), msg.getClient());
 		} else if (msg.isType("DICE_EVENT")) {
 			String[] parts = msg.getMessage().split(":");
         	int dice = Integer.parseInt(parts[1]);
@@ -124,12 +131,23 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 			player.sendMessage(new Message(message, "GAME", this.id).toString());
 		}
 	}
+	
+	/**
+	 * Sending a game message to the client specified as a parameter
+	 * @param message the content of the message to send
+	 * @param client the client to send the message to
+	 */
+	public void sendMessageToClient(String message, ServerClient client) {
+		client.sendMessage(new Message(message, "GAME", this.id).toString());
+	}
+	
 	/**
 	 * Sending a game message to all players in the game
 	 * except the player that triggered the message
 	 * @param message the content of the message to send
+	 * @param the client that should not receive the message
 	 */
-	public void forwardMessage(String message, ServerClient client) {
+	public void sendMessageExcemptClient(String message, ServerClient client) {
 		for (ServerClient player : players) {
 			if (player != client)
 				player.sendMessage(new Message(message, "GAME", this.id).toString());
@@ -142,11 +160,12 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	public boolean isFull() {
 		return players.size() == 4;
 	}
+	
 	/**
-	 * @return the amount of active players in the game
+	 * @return the number of players that have been in the game
 	 */
 	public int getPlayers() {
-		return ludoGame.activePlayers();
+		return ludoGame.nrOfPlayers();
 	}
 	
 	/**
@@ -154,6 +173,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 */
 	public void startGame() {
     	sendMessage("START_GAME:" + 0);
+    	this.status = "STARTED";
 	}
 
 	/**
@@ -163,7 +183,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 */
 	@Override
 	public void pieceMoved(PieceEvent event) {
-		//sendMessage("PIECE:" + event.getFrom() 
+		//sendMessage("PIECE_EVENT:" + event.getFrom() 
 		//+ ":"  + event.getTo() 
 		//+ ":" + event.getPiece() 
 		//+ ":" + event.getPlayer() );		
@@ -177,7 +197,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	@Override
 	public void diceThrown(DiceEvent event) {
 		System.out.println("DICE THROW EVENT");
-		sendMessage("DICE:" + event.getDice() 
+		sendMessage("DICE_EVENT:" + event.getDice() 
 		+ ":" + event.getPlayer() );
 	}
 	/**
@@ -186,7 +206,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 */
 	@Override
 	public void playerStateChanged(PlayerEvent event) {
-		sendMessage("PLAYER:" + event.getState() 
+		sendMessage("PLAYER_EVENT:" + event.getState() 
 		+ ":" + event.getPlayer() );
 	}
 }

@@ -16,7 +16,7 @@ public class Ludo {
 	public static int YELLOW = 2;
 	public static int GREEN = 3;
 	
-	private String id;
+	private String id = "-1";
 	
 	private Vector<String> players;
 	private int activePlayer = 0;
@@ -646,11 +646,7 @@ public class Ludo {
     		return false;
 		}
 
-    	if (playerName.startsWith("Inactive: ")) {		
-
-    		return false;
-    	}
-    	return true;
+    	return (playerName.startsWith("Inactive: "));
     }
     /** 
      * Sets the game id 

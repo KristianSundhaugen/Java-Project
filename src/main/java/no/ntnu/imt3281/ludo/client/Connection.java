@@ -111,16 +111,19 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 			Platform.runLater(new Runnable() {
 	            @Override
 	            public void run() {
-	            	controller.createNewGame(gmsg.getId());
+	            	controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
 	            }
 			});
 			SynchronizedHolder.waitingNewGame = null;
 		} else {
-			System.out.println("Game Message else");
-			for (GameBoardController game : games) {
-				
-				if (game.getId() == gmsg.getId())
-					game.gameMessage(gmsg);
+			boolean run = true;
+			while(run){
+				for (GameBoardController game : games) {
+					if (game.getId().equals(gmsg.getId())) {
+						game.gameMessage(gmsg);
+						run = false;					
+					}
+				}
 			}
 		}
 	}
@@ -148,7 +151,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void pieceMoved(PieceEvent event) {
-		sendMessage("PIECE:" + event.getFrom() 
+		sendMessage("PIECE_EVENT:" + event.getFrom() 
 		+ ":"  + event.getTo() 
 		+ ":" + event.getPiece() 
 		+ ":" + event.getPlayer() , 
@@ -163,7 +166,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void diceThrown(DiceEvent event) {
-		/*sendMessage("DICE:" + event.getDice() 
+		/*sendMessage("DICE_EVENT:" + event.getDice() 
 		+ ":" + event.getPlayer() , 
 		"GAME", 
 		event.getLudo().getId());
@@ -175,7 +178,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void playerStateChanged(PlayerEvent event) {
-		sendMessage("PLAYER:" + event.getState() 
+		sendMessage("PLAYER_EVENT:" + event.getState() 
 		+ ":" + event.getPlayer() , 
 		"GAME", 
 		event.getLudo().getId());

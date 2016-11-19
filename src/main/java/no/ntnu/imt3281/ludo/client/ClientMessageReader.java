@@ -27,7 +27,7 @@ public class ClientMessageReader implements Runnable {
 	public void run() {
 		while (status.equals("OPEN")) {
 			Message msg = getMessage();
-			if (msg != null)
+			if (msg != null && !msg.isPing())
 				connection.messageParser(msg);
 			try {Thread.sleep(100);} catch (InterruptedException e) {}
 		}    	
@@ -37,15 +37,13 @@ public class ClientMessageReader implements Runnable {
 	 * Trying to read a message from the input stream if there is new input available
 	 * @return a message object
 	 */
-	private Message getMessage(){
+	private Message getMessage() {
 		try {
 			if (!input.ready())
 				return null;
 			String msg = input.readLine();
-			if (msg != null){
-				System.out.println(msg);
+			if (msg != null)
 				return new Message(msg, connection);
-			}
 		} catch (IOException e) {}
 		return null;
 	}	

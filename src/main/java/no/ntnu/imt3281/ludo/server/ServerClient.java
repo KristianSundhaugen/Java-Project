@@ -13,6 +13,7 @@ public class ServerClient {
 	private BufferedReader input;
 	private long lastMessageTime = System.currentTimeMillis() + PING_DELAY;
 	private String status = "CONNECTED";
+	private String username = "Player" + (int)(Math.random()*1000);
 	public ServerClient(Socket socket) {
 		this.socket = socket;
 		try {
@@ -60,5 +61,8 @@ public class ServerClient {
 			
 		
 		return !output.checkError();
+	}
+	public String getUsername() {
+		return username;
 	}
 }

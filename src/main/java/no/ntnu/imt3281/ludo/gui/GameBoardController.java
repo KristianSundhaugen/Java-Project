@@ -2,6 +2,7 @@
 package no.ntnu.imt3281.ludo.gui;
 
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 
@@ -68,20 +69,41 @@ public class GameBoardController {
     private Button sendTextButton;
     
 	private Ludo ludo;
-    
-	
 
+	private int playerNumber;
+    
+	/**
+	 * Constructor for the controller, making local Ludo object and sending it to the connection
+	 */
     public GameBoardController(){
     	ludo = new Ludo();
+    	Connection.addGame(this);
+    }
+    
+    /**
+     * Running when FXML have finished loading
+     */
+    @FXML
+    protected void initialize() {
     	ludo.addDiceListener(Connection.getConnection());
     	ludo.addPieceListener(Connection.getConnection());
     	ludo.addPlayerListener(Connection.getConnection());
+		ImageView[] playersActive = new ImageView[]{
+				player1Active,
+				player2Active,
+				player3Active,
+				player4Active};
+		for (int i = 0; i < playersActive.length; i++) {
+			playersActive[i].setVisible(false);
+		}
+		throwTheDice.setDisable(true);
     }
     
 	/**
 	 * Throwing a dice
 	 */
-    public void throwDiceController(){
+    public void throwDiceController() {
+    	throwTheDice.setDisable(true);
     	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
     }
 
@@ -92,6 +114,20 @@ public class GameBoardController {
 	 * @param msg the message
 	 */
 	public void gameMessage(GameMessage msg) {
+		Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+            	gameMessageParser(msg);
+            }
+		});
+	}
+	
+	/**
+	 * Parsing a game message
+	 * @param msg the message to parse
+	 */
+	private void gameMessageParser(GameMessage msg) {
+		System.out.println("GameMessage Conrrller");
 		if(msg.isType("PLAYER_EVENT")) {
         	String[] parts = msg.getMessage().split(":");
         	int state = Integer.parseInt(parts[1]);
@@ -109,14 +145,8 @@ public class GameBoardController {
 			} else if (state == PlayerEvent.WON) {
 				
 			} else if (state == PlayerEvent.PLAYING) {
-				ImageView playerActive = player1Active;
-				switch (ludo.nrOfPlayers()) {
-					case 1:playerActive = player1Active;break;
-					case 2:playerActive = player2Active;break;
-					case 3:playerActive = player3Active;break;
-					case 4:playerActive = player4Active;break;
-				}	
-				playerActive.setVisible(true);
+				setActivePlayer(playerNum);
+				
 			} else if (state == PlayerEvent.WAITING) {
 				ImageView playerActive = player1Active;
 				switch (ludo.nrOfPlayers()) {
@@ -141,13 +171,45 @@ public class GameBoardController {
 		} else if (msg.isType("PLAYER_JOINED")) {
 			System.out.println("PLAYER JOIN");
 			playerJoin(msg.getMessageValue());
-		} else if( msg.isType("START_GAME")) {
-			player4Active.setVisible(true);
-			player4Active.setVisible(false);
-			player4Active.setVisible(false);
-			player4Active.setVisible(false);
+		} else if (msg.isType("START_GAME")) {
+			setActivePlayer(0);
+			activateThrowButton(0);
 		}
 	}
+	
+	/**
+	 * Setting a specific player as the active player, hiding dices for the other players, show for the active player
+	 * @param playerNum the player number of the active player
+	 */
+	private void setActivePlayer(int playerNum) {
+		ImageView[] playersActive = new ImageView[]{
+				player1Active,
+				player2Active,
+				player3Active,
+				player4Active};
+		for (int i = 0; i < playersActive.length; i++) {
+			if( i == playerNum)
+				playersActive[i].setVisible(true);
+			else
+				playersActive[i].setVisible(false);
+		}
+	}
+	
+	/**
+	 * Activating the throw button for a specific player
+	 * @param player the player to activate for
+	 */
+	private void activateThrowButton(int player) {
+		if (player == this.playerNumber)
+			throwTheDice.setDisable(false);
+		else
+			throwTheDice.setDisable(true);
+	}
+	
+	/**
+	 * Running when a player is joining the game, adding the player to the ludo game and updating the GUI with the user name
+	 * @param playerName the user name of the new player
+	 */
 	private void playerJoin(String playerName) {
 		ludo.addPlayer(playerName);
 		Label player = player1Name;
@@ -159,12 +221,18 @@ public class GameBoardController {
 		}
 		player.setText(playerName);
 	}
+	
+	/**
+	 * Running when there is a throw dice event from the server, updating the value of the dice
+	 * @param diceValue the value of the dice
+	 * @param player the player that threw the dice
+	 */
 	private void throwDice(int diceValue, int player) {
 		ludo.throwDice(diceValue);
 		diceThrown.setImage(new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png")));
-
 		if (ludo.activePlayer() == player) {
-			
+			// TODO Run function to mark possible possition user can move and add click listeners for those possitions
+			// setUpPieces(diceValue)
 		}
 	}
 
@@ -211,5 +279,10 @@ public class GameBoardController {
 				
 			}
 		}
+	}
+
+	public void setPlayerNumber(int playerNumber) {
+		this.playerNumber = playerNumber;
+		
 	}
 }
