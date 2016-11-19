@@ -90,6 +90,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 * @param msg the message received from the server
 	 */
 	public void messageParser(Message msg) {
+		System.out.println("Message Parser");
 		if (msg.isChat()){
 			// TODO add message to chat window
 		} else if (msg.isGame()) {
@@ -103,19 +104,26 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 * @param gmsg the game message 
 	 */
 	private void sendGameMessage(GameMessage gmsg) {
+		System.out.println("Game Message");
 		if (gmsg.isNewGame()) {
+			System.out.println("New Game From Server");
 			LudoController controller = SynchronizedHolder.waitingNewGame;
 			Platform.runLater(new Runnable() {
 	            @Override
 	            public void run() {
-	            	controller.createNewGame(gmsg.getId());
+	            	controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
 	            }
 			});
 			SynchronizedHolder.waitingNewGame = null;
 		} else {
-			for (GameBoardController game : games) {
-				if (game.getId() == gmsg.getId())
-					game.gameMessage(gmsg);
+			boolean run = true;
+			while(run){
+				for (GameBoardController game : games) {
+					if (game.getId().equals(gmsg.getId())) {
+						game.gameMessage(gmsg);
+						run = false;					
+					}
+				}
 			}
 		}
 	}
@@ -143,7 +151,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void pieceMoved(PieceEvent event) {
-		sendMessage("PIECE:" + event.getFrom() 
+		sendMessage("PIECE_EVENT:" + event.getFrom() 
 		+ ":"  + event.getTo() 
 		+ ":" + event.getPiece() 
 		+ ":" + event.getPlayer() , 
@@ -158,10 +166,11 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void diceThrown(DiceEvent event) {
-		sendMessage("DICE:" + event.getDice() 
+		/*sendMessage("DICE_EVENT:" + event.getDice() 
 		+ ":" + event.getPlayer() , 
 		"GAME", 
 		event.getLudo().getId());
+		*/
 	}
 	/**
 	 * Called when the state of a player is changed, 
@@ -169,7 +178,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 */
 	@Override
 	public void playerStateChanged(PlayerEvent event) {
-		sendMessage("PLAYER:" + event.getState() 
+		sendMessage("PLAYER_EVENT:" + event.getState() 
 		+ ":" + event.getPlayer() , 
 		"GAME", 
 		event.getLudo().getId());

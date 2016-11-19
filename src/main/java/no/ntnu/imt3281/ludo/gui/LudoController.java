@@ -27,7 +27,7 @@ public class LudoController {
     	LudoController controller = this;
        	Connection.newGame(controller);
     }
-    public void createNewGame(String gameId){
+    public void createNewGame(String gameId, int playerNumber){
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("GameBoard.fxml"));
     	loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
     	
@@ -43,6 +43,7 @@ public class LudoController {
     		GameBoardController controller = loader.getController();
     		
     		controller.setId(gameId);
+    		controller.setPlayerNumber(playerNumber);
     		
         	Tab tab = new Tab("Game");
     		tab.setContent(gameBoard);

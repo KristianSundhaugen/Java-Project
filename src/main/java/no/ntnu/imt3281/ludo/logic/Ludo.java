@@ -4,7 +4,11 @@ package no.ntnu.imt3281.ludo.logic;
 
 import java.util.Random;
 import java.util.Vector;
-
+/**
+ * Ludo represent a game. Each game has an unique id. With four constants RED, BLUE, 
+ * YELLOW and GREEN, represented by integers 0 to 3 and indicates each of the individual players. 
+ * Each player has an name, represented by a string saved in a vector. 
+ */
 public class Ludo {
 
 	public static int RED = 0;
@@ -12,10 +16,10 @@ public class Ludo {
 	public static int YELLOW = 2;
 	public static int GREEN = 3;
 	
-	private String id;
+	private String id = "-1";
 	
 	private Vector<String> players;
-	private int activePlayer;
+	private int activePlayer = 0;
 	private int dice;
 	private int diceThrows = 0;
 	private String status = "Created";
@@ -133,6 +137,7 @@ public class Ludo {
 		
 			players.add(name);
 			setStatus("Initiated");
+
 			PlayerEvent playerChange = new PlayerEvent(this, players.indexOf(name), PlayerEvent.WAITING);
 			for (int i = 0; i < playerListenerers.size(); i++) {
 				playerListenerers.get(i).playerStateChanged(playerChange);
@@ -197,6 +202,7 @@ public class Ludo {
 	 * @return dice value to client
 	 */
 	public int throwDice() {
+
 		if (getStatus() == "Initiated")
 			setStatus("Started");
 		
@@ -220,6 +226,7 @@ public class Ludo {
 	 * @return Dice value of throwDice()?
 	 */
 	public int throwDice(int diceValue) {
+
 		if (getStatus() == "Initiated")
 			setStatus("Started");
 		
@@ -375,8 +382,10 @@ public class Ludo {
 	 * @return "Started" until a player has won the game.
 	 * @return "Finished" when a player has won the game.
 	 */
+
 	public String getStatus() {
 		checkWinner();
+
 		return status;
 	}
 	
@@ -405,14 +414,25 @@ public class Ludo {
 	public void addDiceListener(DiceListener diceListener) {
 		diceListenerers.add(diceListener);
 	}
-
+	/**
+	 * Adding a pieceListener to the pieceListener vector
+	 * @param pieceListener
+	 */
 	public void addPieceListener(PieceListener pieceListener) {
 		pieceListenerers.add(pieceListener);
 	}
-
+	/**
+	 * Adding a playerListener to the playerListener vector
+	 * @param playerListener
+	 */
 	public void addPlayerListener(PlayerListener playerListener) {
 		playerListenerers.add(playerListener);
 	}
+	/**
+	 * Gets the user to player grid, there can be two to four users
+	 * who each has 4 pieces that wil get a position on the board
+	 * @return board
+	 */
 	int[][] getUserToPlayGrid() {
 		int[][] board = new int[4][91];
 		for(int player = 0; player < 4; player++) {
@@ -560,8 +580,10 @@ public class Ludo {
 		 * Testing each of the players, if they have a piece in the position
 		 * using moveBack if there is a piece there
 		 */
+
 		for(int playerNum = 0; playerNum < 4; playerNum++)
 			if( playerNum != player && board[playerNum][pos] != 0){
+
 				moveBack(playerNum, pos);
     
 			}}
@@ -593,6 +615,7 @@ public class Ludo {
      * Updating status to finished if one of the players has won the game
      */
     private void checkWinner() {
+
     	for (int player = 0; player < 4; player++){
     		int pieces = 0;
         	for (int piece = 0; piece < 4; piece++){
@@ -604,8 +627,9 @@ public class Ludo {
     			for (int i = 0; i < playerListenerers.size(); i++) {
     				playerListenerers.get(i).playerStateChanged(playerChange);
     			}
-    			setStatus("Finished");;
+    			setStatus("Finished");
         	}
+
     	}
     }
     
@@ -613,6 +637,7 @@ public class Ludo {
      * Is active are returning a true, if a player is not Inactive or not there.
      * @return true || false
      */
+
     private boolean isActive(int player) {	
     	String playerName;
     	try {
@@ -621,17 +646,20 @@ public class Ludo {
     		return false;
 		}
 
-    	if (playerName.startsWith("Inactive: ")) {		
-    		return false;
-    	}
-    	return true;
+    	return (playerName.startsWith("Inactive: "));
     }
-
+    /** 
+     * Sets the game id 
+     * @param gameId
+     */
 	public void setId(String gameId) {
 		this.id = gameId;
 		
 	}
-
+	/**
+	 * Returns the game id
+	 * @return id 
+	 */
 	public String getId() {
 		return this.id;
 	}
