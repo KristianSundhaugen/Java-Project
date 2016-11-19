@@ -145,8 +145,6 @@ public class GameBoardController {
 	 */
 	public void setUpPieces(int diceValue){
 		
-		//create a class
-		//function that takes player and piece position and returns rectangle
 		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
@@ -158,10 +156,24 @@ public class GameBoardController {
 			for(int j = 0; j < 4; j++){
 				pieces[i][j] = new Rectangle(48, 48);
 				pieces[i][j].setFill(new ImagePattern(pieceImages[i]));
+				//Probably a better way to do this? Feel like it doesn't look good
 				double px = getXPosition(i * 4 + j);
 				double py = getYPosition(i * 4 + j);
 				pieces[i][j].setX(px);
 				pieces[i][j].setY(py);
+				int player = i;
+				int piece = j;
+				pieces[i][j].setOnMouseClicked(new EventHandler<MouseEvent>(){
+					
+					@Override
+		            public void handle(MouseEvent t){
+						
+						//Send message to client about player clicking on piece
+						int fromPos = ludo.getPosition(player, piece);
+						int toPos = fromPos + diceValue;
+						ludo.movePiece(ludo.activePlayer(), fromPos, toPos);
+					}
+				});
 			}
 		}
 	}
