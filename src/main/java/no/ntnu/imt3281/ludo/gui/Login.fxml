@@ -7,7 +7,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button fx:id="loginButton" layoutX="420.0" layoutY="320.0" mnemonicParsing="false" onAction="#handleLoginButton" text="Login">
+      <Button fx:id="loginButton" layoutX="316.0" layoutY="320.0" mnemonicParsing="false" onAction="#handleLoginButton" text="Login">
          <font>
             <Font size="24.0" />
          </font>
@@ -32,5 +32,15 @@
             <Font size="24.0" />
          </font>
       </PasswordField>
+      <Label layoutX="300.0" layoutY="53.0" prefHeight="30.0" prefWidth="0.0" textFill="#eb2b09">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Button layoutX="95.0" layoutY="320.0" mnemonicParsing="false" text="Register">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
    </children>
 </Pane>
