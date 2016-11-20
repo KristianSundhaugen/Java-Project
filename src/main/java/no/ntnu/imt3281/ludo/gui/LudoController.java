@@ -44,7 +44,7 @@ public class LudoController {
     		
     		controller.setId(gameId);
     		controller.setPlayerNumber(playerNumber);
-    		
+    		controller.setPane(gameBoard);
         	Tab tab = new Tab("Game");
     		tab.setContent(gameBoard);
         	tabbedPane.getTabs().add(tab);

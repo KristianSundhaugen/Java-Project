@@ -187,6 +187,17 @@ public class Ludo {
 		}
 		return -1;
 	}
+	
+	/**
+	 * Getting the players piece position and using that to get the board position
+	 * @param player the player that owns the piece
+	 * @param piece the piece that we want the position for
+	 * @return the position of the piece on the ludo board
+	 */
+	public int getPieceBoardPos(int player, int piece) {
+		int playerPos = getPiece(player, piece);
+		return userGridToLudoBoardGrid(player, playerPos);
+	}
 
 	/**
 	 * Get the active player
