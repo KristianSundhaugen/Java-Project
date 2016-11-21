@@ -26,6 +26,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
+    	static LudoController startNewChat = null;
     }
 	
     private Socket socket;
@@ -135,6 +136,15 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	public static void newGame(LudoController ludoController) {
 		SynchronizedHolder.waitingNewGame = ludoController;
 		sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
+	}
+	
+	/**
+	 * 
+	 * @param ludoController
+	 */
+	public static void newChat(LudoController ludoController) {
+		SynchronizedHolder.startNewChat = ludoController;
+		sendMessage("NEW_CHAT_REQUEST", "CHAT", "-1");
 	}
 	
 	/**

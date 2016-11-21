@@ -160,10 +160,10 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 		}
 	}
 	
-	public void sendMessageExcemptChatter(String message, ServerClient client) {
+	public void sendChatMessageExcemptChatter(String message, ServerClient client) {
 		for (ServerClient chatter : chatters) {
 			if (chatter != client)
-				chatter.sendMessage(new Message(message, "GAME", this.id).toString());
+				chatter.sendMessage(new Message(message, "CHAT", this.id).toString());
 		}
 	}
 	
