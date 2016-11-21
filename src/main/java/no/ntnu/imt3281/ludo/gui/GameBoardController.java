@@ -78,13 +78,14 @@ public class GameBoardController {
 	private int playerNumber;
 
 	private AnchorPane gameBoard;
-    
+    private Rectangle[][] pieces;
 	/**
 	 * Constructor for the controller, making local Ludo object and sending it to the connection
 	 */
     public GameBoardController(){
     	ludo = new Ludo();
     	Connection.addGame(this);
+		pieces = new Rectangle[4][4];
     }
     
     /**
@@ -179,8 +180,7 @@ public class GameBoardController {
 			System.out.println("PLAYER JOIN");
 			playerJoin(msg.getMessageValue());
 		} else if (msg.isType("START_GAME")) {
-			setActivePlayer(0);
-			activateThrowButton(0);
+			waitForNextThrow(0);
 		}
 	}
 	
@@ -212,7 +212,13 @@ public class GameBoardController {
 		else
 			throwTheDice.setDisable(true);
 	}
-	
+	private void waitForNextThrow(int player) {
+		if ( this.playerNumber == player) {
+			setActivePlayer(player);
+			activateThrowButton(player);
+			clearPieceMouseClick();
+		}
+	}
 	/**
 	 * Running when a player is joining the game, adding the player to the ludo game and updating the GUI with the user name
 	 * @param playerName the user name of the new player
@@ -236,11 +242,22 @@ public class GameBoardController {
 	 */
 	private void throwDice(int diceValue, int player) {
 		ludo.throwDice(diceValue);
-		diceThrown.setImage(new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png")));
+		setDiceImage(diceValue);
+		setUpPieces();
 		if (ludo.activePlayer() == player) {
-			// TODO Run function to mark possible possition user can move and add click listeners for those possitions
-			setUpPieces();
+			if (diceValue != 6 && ludo.allHome()) {
+				waitForNextThrow(player);
+			} else {
+				addPieceMouseClick(player, diceValue);
+				System.out.println("ASDASDS");
+			}
+		} else {
+			waitForNextThrow(ludo.activePlayer());
 		}
+	}
+	private void setDiceImage(int diceValue) {
+		Image image = new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png"));
+		diceThrown.setImage(image);
 	}
 
 	/**
@@ -258,18 +275,13 @@ public class GameBoardController {
 	}
     
 	
-	
-	public void movePiece(int diceValue) {
-		setUpPieces();
-	}
+
 	/**
 	 * Using the pieces position in the ludo object to place
 	 * the images of the pictures on the correct locations on the 
 	 * ludo board
 	 */
 	public void setUpPieces(){
-		System.out.println("Setup Pieces");
-		Rectangle[][] pieces = new Rectangle[4][4];
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
 		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/bluePiece.png"));
@@ -281,28 +293,41 @@ public class GameBoardController {
 				pieces[player][piece] = new Rectangle(48, 48);
 				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
 				int position = ludo.getPieceBoardPos(player, piece);
-				System.out.println(position);
-				pieces[player][piece].setX(getXPosition(position) + piece*8);
-				pieces[player][piece].setY(getYPosition(position) + piece*4);
+
+				pieces[player][piece].setX(getXPosition(position) -3 + piece * 2);
+				pieces[player][piece].setY(getYPosition(position));
 				gameBoard.getChildren().add(pieces[player][piece]);
 			}
 		}
 	}
-	public void setMouseClick(int diceValue) {
-		/**
-		 * pieces[i][j].setOnMouseClicked(new EventHandler<MouseEvent>(){
-					
-					@Override
-		            public void handle(MouseEvent t){
-						
-						//Send message to client about player clicking on piece
-						int fromPos = ludo.getPosition(player, piece);
-						int toPos = fromPos + diceValue;
-						ludo.movePiece(ludo.activePlayer(), fromPos, toPos);
-					}
-				});
-		 */
+	public void addPieceMouseClick(int player, int diceValue) {
+		System.out.println("add mouse click");
+		// TODO legge til markering for di brikker som kan flyttes og hvor di kan flyttes til
+		for (int piece = 0; piece < 4; piece++) {
+			final int finalPiece = piece;
+			pieces[player][piece].setOnMouseClicked(e -> pieceClicked(player, finalPiece, diceValue));
+		}
+		
 	}
+	public void clearPieceMouseClick() {
+		System.out.println("Clear mouse click");
+		for (int player = 0; player < 4; player++) {
+			for (int piece = 0; piece < 4; piece++) {
+				pieces[player][piece].setOnMouseClicked(null);
+			}
+		}
+	}
+	private void pieceClicked(int player, int piece, int diceValue) {
+		System.out.println("pieceClicked");
+		int from = ludo.getPosition(player, piece);
+		int to = ludo.getPosition(player, piece) + diceValue;
+		if (from == 0)
+			to = 1;
+		System.out.println(ludo.movePiece(player, from, to));
+		setUpPieces();
+		clearPieceMouseClick();
+	}
+
 	public double getYPosition(int pos){
 		return piecePos[pos][1] * 48;
 	}

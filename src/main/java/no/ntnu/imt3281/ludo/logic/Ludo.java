@@ -195,7 +195,9 @@ public class Ludo {
 	 * @return the position of the piece on the ludo board
 	 */
 	public int getPieceBoardPos(int player, int piece) {
-		int playerPos = getPiece(player, piece);
+		int playerPos = getPosition(player, piece);
+		if (playerPos == 0)
+			return userGridToLudoBoardGrid(player, playerPos) + piece;
 		return userGridToLudoBoardGrid(player, playerPos);
 	}
 
@@ -219,6 +221,8 @@ public class Ludo {
 		
 		randomGenerator = new Random();
 		this.dice = randomGenerator.nextInt(6) + 1;
+		if(diceThrows == 0)
+			this.dice = 6;
 		diceThrows++;
 		
 		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), dice);
@@ -295,23 +299,20 @@ public class Ludo {
 	 * @return true or false. If a player is not blocked or blocked
 	 */
 	public boolean movePiece(int player, int fromPos, int toPos) {
+
 		int piece = getPiece(player, fromPos);
 		if (isValidMove(player, fromPos, toPos)) {
 			playerPieces[player][piece] = toPos;
-						
 			PieceEvent pieceMove = new PieceEvent(this, activePlayer, piece, fromPos, toPos);
 			for(int i = 0; i < pieceListenerers.size(); i++){
 				pieceListenerers.get(i).pieceMoved(pieceMove);
 			}
-			
 			checkUnfortionateOpponents(player, toPos);
 			checkWinner();
 			if(shouldGoToNextPlayer() || fromPos == 0 || dice != 6)
 				nextPlayer();
-
 			return true;
 		}
-		
 		return false;
 
 	}
@@ -459,7 +460,7 @@ public class Ludo {
 	 * if all active players are at their start position
 	 * @return true || false
 	 */
-	boolean allHome() {
+	public boolean allHome() {
 		int homeCount = 0;
 		for (int i = 0; i < 4; i++) {
 			if (playerPieces[activePlayer()][i] == 0)
@@ -477,20 +478,27 @@ public class Ludo {
 		for (int i = 0; i < playerListenerers.size(); i++) {
 			playerListenerers.get(i).playerStateChanged(playerChange);
 		}
-		
 		dice = 0;
 		diceThrows = 0;
-
-		activePlayer++;
-		while (!isActive(activePlayer)) {
-			activePlayer++;
-			if (activePlayer > nrOfPlayers())
-				activePlayer = 0;
-		}
-
+		nextActivePlayer();
+		
 		playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.PLAYING);
 		for (int i = 0; i < playerListenerers.size(); i++) {
 			playerListenerers.get(i).playerStateChanged(playerChange);
+		}
+	}
+	
+	/**
+	 * Looping until it finds a new active player, will end up at current player
+	 * if that is the only active player
+	 */
+	void nextActivePlayer() {
+		for (int i = 0; i < nrOfPlayers(); i++) {
+			activePlayer++;
+			if (activePlayer > nrOfPlayers())
+				activePlayer = 0;
+			if (isActive(activePlayer))
+				return;
 		}
 	}
 	
@@ -657,7 +665,7 @@ public class Ludo {
     		return false;
 		}
 
-    	return (playerName.startsWith("Inactive: "));
+    	return !(playerName.startsWith("Inactive: "));
     }
     /** 
      * Sets the game id 
