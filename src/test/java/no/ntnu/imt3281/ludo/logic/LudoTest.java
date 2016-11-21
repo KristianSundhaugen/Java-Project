@@ -149,7 +149,8 @@ public class LudoTest {
     @Test
     public void needASixToGetStarted() {
         Ludo ludo = new Ludo("Player1", "Player2", null, null);
-
+        System.out.println(ludo.nrOfPlayers());
+        
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
         ludo.throwDice(1);
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
@@ -478,9 +479,13 @@ public class LudoTest {
 
         // Create a mock DiceListener
         DiceListener diceListener = mock(DiceListener.class);
+
         ludo.addDiceListener(diceListener); // Add the dice listener
+
         ludo.throwDice(6); // RED is in play
+
         ludo.movePiece(Ludo.RED, 0, 1);
+
         ludo.throwDice(3); // BLUE is in play
 
         // Now check that the event has happened in the correct order

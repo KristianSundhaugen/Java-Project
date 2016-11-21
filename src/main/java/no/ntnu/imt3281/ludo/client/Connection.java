@@ -172,6 +172,7 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 		event.getLudo().getId());
 		*/
 	}
+	
 	/**
 	 * Called when the state of a player is changed, 
 	 * sending message to the server with the new state

@@ -49,7 +49,7 @@ public class Client extends Application {
 		Connection.stopConnection();
 	}
 
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	public static void main(String[] args) {
 		launch(args);
 	/**	 String serverAddress = "localhost";
 		        Socket socket = new Socket(serverAddress, 9090);

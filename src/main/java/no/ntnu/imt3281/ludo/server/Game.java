@@ -87,6 +87,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
     		sendMessageToClient("PLAYER_JOINED:" + player.getUsername(), client);
 		}
     	players.add(client);
+    	ludoGame.addPlayer(client.getUsername());
     	sendMessage("PLAYER_JOINED:" + client.getUsername());
     }
 	
@@ -106,6 +107,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
         	String[] parts = msg.getMessage().split(":");
         	String state = parts[1];
 			String player = parts[2];
+			
 		} else if (msg.isType("PIECE_EVENT")) {
 			String[] parts = msg.getMessage().split(":");
         	int from = Integer.parseInt(parts[1]);
@@ -176,7 +178,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 * @return the number of players that have been in the game
 	 */
 	public int getPlayers() {
-		return ludoGame.nrOfPlayers();
+		return players.size();
 	}
 	
 	/**
@@ -211,6 +213,7 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 		sendMessage("DICE_EVENT:" + event.getDice() 
 		+ ":" + event.getPlayer() );
 	}
+	
 	/**
 	 * Called when the state of a player is changed, 
 	 * sending message to the clients with the new state

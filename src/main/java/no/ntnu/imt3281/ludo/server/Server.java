@@ -13,7 +13,7 @@ import java.util.Vector;
  * @author 
  *
  */
-public class Server  {
+public class Server {
 	private Vector<ServerClient> clients  = new Vector<>();
 	private Vector<Game> games = new Vector<>();
 	private Vector<Chat> chats = new Vector<>();
