@@ -27,9 +27,8 @@ public class Connection {
 	private ClientMessageReader reader;
 	
 	private Connection() {
-    	String serverAddress = "localhost";
         try {
-			socket = new Socket(serverAddress, 9090);
+			socket = new Socket(Globals.serverAddress, Globals.serverPort);
 			output = new PrintWriter(socket.getOutputStream(), true);
 			this.reader = new ClientMessageReader(this, socket);
 			Thread readerThread = new Thread(this.reader);

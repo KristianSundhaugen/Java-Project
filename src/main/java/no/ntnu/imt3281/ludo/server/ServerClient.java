@@ -8,14 +8,12 @@ import java.net.Socket;
 
 public class ServerClient {
 	private static final int PING_DELAY = 2000;
-	private Socket socket;
 	private PrintWriter output;
 	private BufferedReader input;
 	private long lastMessageTime = System.currentTimeMillis() + PING_DELAY;
 	private String status = "CONNECTED";
 	private String username = "Player" + (int)(Math.random()*1000);
 	public ServerClient(Socket socket) {
-		this.socket = socket;
 		try {
 			this.output = new PrintWriter(socket.getOutputStream(), true);
 			this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));

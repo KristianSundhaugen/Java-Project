@@ -118,6 +118,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 */
 	public void runChatMessage(ChatMessage cmsg) {
 		sendChatMessage(cmsg.getUsername() + ":" + cmsg.getMessageContent(), cmsg.getClient());
+		chatMessages.add(cmsg.getUsername() + ":" + cmsg.getMessageContent());
 		logChat(cmsg.getUsername(), cmsg.getMessageContent());
 	}
 	/**

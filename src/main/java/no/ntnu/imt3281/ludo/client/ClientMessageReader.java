@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Vector;
 
 import no.ntnu.imt3281.ludo.server.Message;
 
@@ -43,7 +42,7 @@ public class ClientMessageReader implements Runnable {
 				return null;
 			String msg = input.readLine();
 			if (msg != null)
-				return new Message(msg, connection);
+				return new Message(msg);
 		} catch (IOException e) {}
 		return null;
 	}

@@ -1,7 +1,5 @@
 package no.ntnu.imt3281.ludo.server;
 
-import no.ntnu.imt3281.ludo.client.Connection;
-
 /**
  * Message object for parsing a message passed between the server and client
  * @author Lasse Sviland
@@ -9,7 +7,6 @@ import no.ntnu.imt3281.ludo.client.Connection;
 public class Message {
 	private String message;
 	private ServerClient client;
-	private Connection connection;
 	private String type;
 	private String id;
 
@@ -49,10 +46,9 @@ public class Message {
 		}
 	}
 
-	public Message(String fullMessage, Connection connection) {
+	public Message(String fullMessage) {
 		if (!fullMessage.equals("PING"))
 			System.out.println("Client recieving: -> " + fullMessage);
-		this.connection = connection;
 		this.type = fullMessage.split(":")[0];
 		if (!type.equals("PING")) {
 			this.id = fullMessage.split(":")[1];

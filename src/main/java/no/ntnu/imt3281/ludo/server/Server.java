@@ -16,6 +16,7 @@ public class Server {
     private ServerMessageReader reader;
 	private boolean stop = false;
     private static Server server;
+    
     /**
      * Main function to start the program
      * @param args
@@ -63,24 +64,20 @@ public class Server {
 	public void removeClient(ServerClient client) {
 		clients.remove(client);
 	}
-
 	
 	/**
 	 * Sending a message object to the game the message belongs to
 	 * @param message the message object to send
 	 */
 	public void parseMessage(Message msg) {
-		if (msg.isGame() && msg.getGameMessage().isNewGameRequest()){
+		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
 			joinNewGame(msg.getGameMessage());
-		} else {
-			for (Game game : games) {
-				if (game.getId().equals(msg.getGameMessage().getId())) {
-					game.runMessage(msg);
-				}
-			}
-		}
-		
+		else
+			for (Game game : games)
+				if (game.getId().equals(msg.getGameMessage().getId()))
+					game.runMessage(msg);	
 	}
+	
 	/**
 	 * Adding player to a new game, creating a new one if there is none to join
 	 * @param gmsg the game message received from the client
@@ -102,7 +99,6 @@ public class Server {
 			games.add(game);
 		}
 	}
-
 	
 	/**
 	 * @return a vector with all connected clients

@@ -2,8 +2,11 @@ package no.ntnu.imt3281.ludo.client;
 
 public class Globals {
 
+	public static int serverPort = 9090;
+	public static String serverAddress = "localhost";
+
 	public static double[][] getPiecePossitions() {
-	  double[][] piecePos = new double[92][2];
+	    double[][] piecePos = new double[92][2];
 		//Red start positions
 		piecePos[0] = new double[]{11.5,1.5};
 		piecePos[1] = new double[]{12.5,2.5};

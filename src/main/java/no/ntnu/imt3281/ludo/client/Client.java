@@ -1,20 +1,11 @@
 package no.ntnu.imt3281.ludo.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import javax.swing.JOptionPane;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import no.ntnu.imt3281.ludo.server.Message;
 
 
 
