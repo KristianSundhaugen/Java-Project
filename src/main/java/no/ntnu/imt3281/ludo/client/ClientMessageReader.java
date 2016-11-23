@@ -10,8 +10,8 @@ import no.ntnu.imt3281.ludo.server.Message;
 
 public class ClientMessageReader implements Runnable {
     private Connection connection;
-    private String status = "OPEN";
 	private BufferedReader input;
+	private boolean stop = false;
 	
     public ClientMessageReader(Connection connection, Socket socket) {
 		this.connection = connection;
@@ -25,7 +25,7 @@ public class ClientMessageReader implements Runnable {
 	 * Trying to read messages from the socket all the time
 	 */
 	public void run() {
-		while (status.equals("OPEN")) {
+		while (!stop) {
 			Message msg = getMessage();
 			if (msg != null && !msg.isPing())
 				connection.messageParser(msg);
@@ -46,6 +46,11 @@ public class ClientMessageReader implements Runnable {
 				return new Message(msg, connection);
 		} catch (IOException e) {}
 		return null;
+	}
+
+	public void stop() {
+		this.stop  = true;
+		
 	}	
 	
 			
