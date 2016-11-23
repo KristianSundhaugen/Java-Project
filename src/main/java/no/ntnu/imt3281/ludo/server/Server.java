@@ -14,6 +14,7 @@ public class Server {
 	private Vector<ServerClient> clients  = new Vector<>();
 	private Vector<Game> games = new Vector<>();
     private ServerMessageReader reader;
+	private boolean stop = false;
     private static Server server;
     /**
      * Main function to start the program
@@ -28,7 +29,6 @@ public class Server {
         		server.stop();
         	}        
         });        
-        	
 	}
     
     /**
@@ -37,8 +37,8 @@ public class Server {
     protected void stop() {
 		if(reader != null)
 			reader.stop();
+		this.stop = true;
 	}
-
 
 	/**
      * Constructor for the server, Creating a socket and accepting new clients
@@ -50,11 +50,9 @@ public class Server {
 
     	@SuppressWarnings("resource")
 		ServerSocket listener = new ServerSocket(9090);
-    	System.out.println("new socket");
-        while(true) {
+        while(!stop) {
         	Socket socket = listener.accept();
         	clients.add(new ServerClient(socket));
-        	System.out.println("new connection");
         }
     }
 
