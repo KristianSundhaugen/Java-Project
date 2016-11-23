@@ -108,10 +108,21 @@ public class GameBoardController {
 	/**
 	 * Throwing a dice
 	 */
-    public void throwDiceController() {
+    public void throwDiceButton() {
     	throwTheDice.setDisable(true);
     	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
     	setDiceImage(0);
+    }
+    /**
+     * Triggered when the say button is clicked under the chat
+     * sending a message to the server about the the chat message
+     */
+    public void sendMessageButton() {
+    	if (textToSay.getText().length() > 0) {
+    		String player = ludo.getPlayerName(playerNumber);
+    		Connection.sendMessage(player + ":" + textToSay.getText(), "CHAT", ludo.getId());
+    		textToSay.setText("");
+    	}
     }
 	
 	/**
@@ -149,7 +160,7 @@ public class GameBoardController {
 	 * @param msg the message to parse
 	 */
 	private void chatMessageParser(ChatMessage msg) {
-		
+		chatArea.appendText(msg.getUsername() + ": " + msg.getMessageContent());
 	}
 	
 	/**
