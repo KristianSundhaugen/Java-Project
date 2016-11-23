@@ -117,8 +117,8 @@ public class Connection {
 	}
 	
 	/**
-	 * 
-	 * @param ludoController
+	 * Sending request to the server to join a new chat
+	 * @param ludoController the controller to respond to when the server sends and awnser
 	 */
 	public static void newChat(LudoController ludoController) {
 		SynchronizedHolder.startNewChat = ludoController;
