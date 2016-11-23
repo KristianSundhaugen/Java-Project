@@ -18,19 +18,31 @@ public class Server {
 	private Vector<Game> games = new Vector<>();
 	private Vector<Chat> chats = new Vector<>();
     private ServerMessageReader reader;
-    
+    private static Server server;
     /**
      * Main function to start the program
      * @param args
      */
 	public static void main(String[] args) {
         try {
-			new Server();
+			server = new Server();
 		} catch (IOException e) {System.out.println(e);}
+        Runtime.getRuntime().addShutdownHook(new Thread() {            
+        	public void run() { 
+        		server.stop();
+        	}        
+        });        
+        	
 	}
     
     
-    /**
+    protected void stop() {
+		if(reader != null)
+			reader.stop();
+	}
+
+
+	/**
      * Constructor for the server, Creating a socket and accepting new clients
      * @throws IOException
      */
