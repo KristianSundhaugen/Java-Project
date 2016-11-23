@@ -2,33 +2,33 @@
 package no.ntnu.imt3281.ludo.gui;
 
 
+
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-
-/**
- * Sample Skeleton for 'GameBoard.fxml' Controller Class
- */
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-
 import no.ntnu.imt3281.ludo.logic.Ludo;
 import no.ntnu.imt3281.ludo.logic.PlayerEvent;
+import no.ntnu.imt3281.ludo.server.ChatMessage;
 import no.ntnu.imt3281.ludo.server.GameMessage;
+import no.ntnu.imt3281.ludo.server.Message;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.client.Globals;
 
+/**
+ * Class holding a game and a chat, doing logic out from messages from the server
+ * @author Lasse Sviland
+ *
+ */
 public class GameBoardController {
 	
     @FXML
@@ -66,6 +66,9 @@ public class GameBoardController {
 
     @FXML
     private TextField textToSay;
+    
+    @FXML
+    private Label wonLabel;
 
     @FXML
     private Button sendTextButton;
@@ -73,12 +76,10 @@ public class GameBoardController {
 	private Ludo ludo;
 
     private double[][] piecePos = Globals.getPiecePossitions();
-	
-
 	private int playerNumber;
-
 	private AnchorPane gameBoard;
     private Rectangle[][] pieces;
+    
 	/**
 	 * Constructor for the controller, making local Ludo object and sending it to the connection
 	 */
@@ -93,9 +94,6 @@ public class GameBoardController {
      */
     @FXML
     protected void initialize() {
-    	ludo.addDiceListener(Connection.getConnection());
-    	ludo.addPieceListener(Connection.getConnection());
-    	ludo.addPlayerListener(Connection.getConnection());
 		ImageView[] playersActive = new ImageView[]{
 				player1Active,
 				player2Active,
@@ -106,7 +104,7 @@ public class GameBoardController {
 		}
 		throwTheDice.setDisable(true);
     }
-    
+
 	/**
 	 * Throwing a dice
 	 */
@@ -114,18 +112,19 @@ public class GameBoardController {
     	throwTheDice.setDisable(true);
     	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
     }
-
-    
 	
 	/**
 	 * Getting a new message sent from the server to this game
 	 * @param msg the message
 	 */
-	public void gameMessage(GameMessage msg) {
+	public void messageParser(Message msg) {
 		Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	gameMessageParser(msg);
+            	if (msg.isChat())
+            		chatMessageParser(msg.getChatMessage());
+            	else if (msg.isGame())
+            		gameMessageParser(msg.getGameMessage());
             }
 		});
 	}
@@ -135,55 +134,92 @@ public class GameBoardController {
 	 * @param msg the message to parse
 	 */
 	private void gameMessageParser(GameMessage msg) {
-		System.out.println("GameMessage Conrrller");
-		if(msg.isType("PLAYER_EVENT")) {
-        	String[] parts = msg.getMessage().split(":");
-        	int state = Integer.parseInt(parts[1]);
-			int playerNum = Integer.parseInt(parts[2]);
-			if (state == PlayerEvent.LEFTGAME) {
-				ludo.removePlayer(ludo.getPlayerName(playerNum));
-				Label player = player1Name;
-				switch (playerNum) {
-					case 1:player = player1Name;break;
-					case 2:player = player2Name;break;
-					case 3:player = player3Name;break;
-					case 4:player = player4Name;break;
-				}
-				player.setText(ludo.getPlayerName(playerNum));
-			} else if (state == PlayerEvent.WON) {
-				
-			} else if (state == PlayerEvent.PLAYING) {
-				setActivePlayer(playerNum);
-				
-			} else if (state == PlayerEvent.WAITING) {
-				ImageView playerActive = player1Active;
-				switch (ludo.nrOfPlayers()) {
-					case 1:playerActive = player1Active;break;
-					case 2:playerActive = player2Active;break;
-					case 3:playerActive = player3Active;break;
-					case 4:playerActive = player4Active;break;
-				}	
-				playerActive.setVisible(false);
-			}
-		} else if (msg.isType("PIECE_EVENT")) {
-			String[] parts = msg.getMessage().split(":");
-        	int fromPos = Integer.parseInt(parts[1]);
-			int toPos = Integer.parseInt(parts[2]);
-			int player = Integer.parseInt(parts[4]);
-			ludo.movePiece(player, fromPos, toPos);
-		} else if (msg.isType("DICE_EVENT")) {
-			String[] parts = msg.getMessage().split(":");
-        	int diceValue = Integer.parseInt(parts[1]);
-			int player = Integer.parseInt(parts[2]);
-			throwDice(diceValue, player);
-		} else if (msg.isType("PLAYER_JOINED")) {
-			System.out.println("PLAYER JOIN");
-			playerJoin(msg.getMessageValue());
-		} else if (msg.isType("START_GAME")) {
-			waitForNextThrow(0);
+		switch (msg.getType()) {
+			case "PLAYER_EVENT": runPlayerEvent(msg); 	break;
+			case "PIECE_EVENT":  runPieceEvent(msg); 	break;
+			case "DICE_EVENT": 	 runDiceEvent(msg); 	break;
+			case "PLAYER_JOINED":runPlayerJoined(msg); 	break;
+			case "START_GAME":   waitForNextThrow(0); 	break;
 		}
 	}
 	
+	/**
+	 * Parsing a chat messaae
+	 * @param msg the message to parse
+	 */
+	private void chatMessageParser(ChatMessage msg) {
+		
+	}
+	
+	/**
+	 * Responding to a player event from the server
+	 * Doing actions in the gui/ludo game if a player state changes
+	 * @param msg the message containing the  event
+	 */
+	private void runPlayerEvent(GameMessage msg) {
+		int player = msg.part(2);
+		switch (msg.part(1)) {
+			case PlayerEvent.LEFTGAME: 
+				ludo.removePlayer(ludo.getPlayerName(player));
+				updatePlayerNames();
+				break;
+			case PlayerEvent.WON: 
+				setWinner(player);
+				break;
+			case PlayerEvent.PLAYING: 
+				waitForNextThrow(player); 
+				break;
+		}
+	}
+	
+	/**
+	 * Responding to a piece event from the server
+	 * Doing actions in the gui/ludo game if a piece is moved
+	 * @param msg the message containing the event
+	 */
+	private void runPieceEvent(GameMessage msg) {
+		int player = msg.part(4);
+		ludo.movePiece(player, msg.part(1), msg.part(2));
+		if (ludo.activePlayer() == player) 
+			waitForNextThrow(player);
+	}
+	
+	/**
+	 * Responding to a dice event from the server
+	 * Doing actions in the gui/ludo game if a dice is thrown
+	 * @param msg the message containing the event
+	 */
+	private void runDiceEvent(GameMessage msg) {
+		throwDice(msg.part(1), msg.part(2));
+	}
+	
+	/**
+	 * Responding to a player join message from the server
+	 * Doing actions in the gui/ludo game to add the player
+	 * @param msg the message containing the message
+	 */
+	private void runPlayerJoined(GameMessage msg) {
+		ludo.addPlayer(msg.getMessageValue());
+		updatePlayerNames();
+	}
+
+	/**
+	 * Showing the win message with the color fo the winning player, and the text with the player that won
+	 * @param playerNum the player number that won
+	 */
+	private void setWinner(int playerNum) {
+		switch (playerNum) {
+			case 0:	wonLabel.setStyle("textFill:RED");break;
+			case 1:	wonLabel.setStyle("textFill:BLUE");break;
+			case 2:	wonLabel.setStyle("textFill:YELLOW");break;
+			case 3:	wonLabel.setStyle("textFill:GREEN");break;
+		}			
+		wonLabel.setText(ludo.getPlayerName(playerNum) + " won!");
+		wonLabel.setVisible(true);
+		throwTheDice.setDisable(true);
+
+	}
+
 	/**
 	 * Setting a specific player as the active player, hiding dices for the other players, show for the active player
 	 * @param playerNum the player number of the active player
@@ -212,19 +248,34 @@ public class GameBoardController {
 		else
 			throwTheDice.setDisable(true);
 	}
+	
+	/**
+	 * Waiting for the next player to throw
+	 * clearing any action that might be left from last player,
+	 * setting the active sign on the active player
+	 * @param player the player that should throw
+	 */
 	private void waitForNextThrow(int player) {
-		if ( this.playerNumber == player) {
-			setActivePlayer(player);
-			activateThrowButton(player);
-			clearPieceMouseClick();
-		}
+		updatePiecePositions();
+		setActivePlayer(player);
+		activateThrowButton(player);
+		clearPieceMouseClick();
 	}
+	
 	/**
 	 * Running when a player is joining the game, adding the player to the ludo game and updating the GUI with the user name
-	 * @param playerName the user name of the new player
 	 */
-	private void playerJoin(String playerName) {
-		ludo.addPlayer(playerName);
+	private void updatePlayerNames() {
+		for (int i = 0; i < ludo.nrOfPlayers(); i++) {
+			updatePlayerName(i);
+		}
+	}
+	
+	/**
+	 * Updating the player name in the gui for a spesiffic player
+	 * @param playerNum the player to update the name for
+	 */
+	private void updatePlayerName(int playerNum){
 		Label player = player1Name;
 		switch (ludo.nrOfPlayers()) {
 			case 1:player = player1Name;break;
@@ -232,7 +283,9 @@ public class GameBoardController {
 			case 3:player = player3Name;break;
 			case 4:player = player4Name;break;
 		}
-		player.setText(playerName);
+		player.setText(ludo.getPlayerName(playerNum));
+		if (this.playerNumber == playerNum)
+			player.setUnderline(true);
 	}
 	
 	/**
@@ -243,18 +296,21 @@ public class GameBoardController {
 	private void throwDice(int diceValue, int player) {
 		ludo.throwDice(diceValue);
 		setDiceImage(diceValue);
-		setUpPieces();
 		if (ludo.activePlayer() == player) {
 			if (diceValue != 6 && ludo.allHome()) {
 				waitForNextThrow(player);
 			} else {
 				addPieceMouseClick(player, diceValue);
-				System.out.println("ASDASDS");
 			}
 		} else {
 			waitForNextThrow(ludo.activePlayer());
 		}
 	}
+	
+	/**
+	 * Setting the dice image to the dcie valuse sent as a parameter
+	 * @param diceValue the value of the dice
+	 */
 	private void setDiceImage(int diceValue) {
 		Image image = new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png"));
 		diceThrown.setImage(image);
@@ -266,6 +322,7 @@ public class GameBoardController {
 	public String getId() {
 		return ludo.getId();
 	}
+	
 	/**
 	 * Setting the id of the game from the server
 	 * @param gameId the id of the game
@@ -274,75 +331,140 @@ public class GameBoardController {
     	ludo.setId(gameId);
 	}
     
-	
-
 	/**
-	 * Using the pieces position in the ludo object to place
-	 * the images of the pictures on the correct locations on the 
-	 * ludo board
+	 * Adding the pieces to the board, 4 for each player
 	 */
-	public void setUpPieces(){
+	public void setUpPieces() {
 		Image[] pieceImages = new Image[4];
 		pieceImages[0] = new Image(getClass().getResourceAsStream("/images/redPiece.png"));
 		pieceImages[1] = new Image(getClass().getResourceAsStream("/images/bluePiece.png"));
-		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
-		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
+		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
+		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
 		
 		for(int player = 0; player < 4; player++){
 			for(int piece = 0; piece < 4; piece++){
-				pieces[player][piece] = new Rectangle(48, 48);
+				pieces[player][piece] = new Rectangle(36, 36);
 				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
-				int position = ludo.getPieceBoardPos(player, piece);
-
-				pieces[player][piece].setX(getXPosition(position) -3 + piece * 2);
-				pieces[player][piece].setY(getYPosition(position));
 				gameBoard.getChildren().add(pieces[player][piece]);
 			}
 		}
+		updatePiecePositions();
 	}
-	public void addPieceMouseClick(int player, int diceValue) {
-		System.out.println("add mouse click");
-		// TODO legge til markering for di brikker som kan flyttes og hvor di kan flyttes til
-		for (int piece = 0; piece < 4; piece++) {
-			final int finalPiece = piece;
-			pieces[player][piece].setOnMouseClicked(e -> pieceClicked(player, finalPiece, diceValue));
-		}
-		
-	}
-	public void clearPieceMouseClick() {
-		System.out.println("Clear mouse click");
-		for (int player = 0; player < 4; player++) {
-			for (int piece = 0; piece < 4; piece++) {
-				pieces[player][piece].setOnMouseClicked(null);
+	
+	/**
+	 * Updating the positions of the players pieces out from the positions in the ludo game
+	 */
+	public void updatePiecePositions() {
+		for(int player = 0; player < 4; player++){
+			for(int piece = 0; piece < 4; piece++){
+				int playerPos = ludo.getPosition(player, piece);
+				int piecesAtPos = ludo.piecesAtPosition(player, playerPos);
+				if (playerPos == 0)
+					piecesAtPos = 1;
+				
+				int position = ludo.getPieceBoardPos(player, piece);
+				
+				if (piecesAtPos == 1)
+					pieces[player][piece].setX(getXPosition(position));
+				else
+					pieces[player][piece].setX(getXPosition(position) + piece * 3);
+				
+				pieces[player][piece].setY(getYPosition(position));
+				pieces[player][piece].setEffect(null);
 			}
 		}
 	}
-	private void pieceClicked(int player, int piece, int diceValue) {
-		System.out.println("pieceClicked");
-		int from = ludo.getPosition(player, piece);
-		int to = ludo.getPosition(player, piece) + diceValue;
-		if (from == 0)
-			to = 1;
-		System.out.println(ludo.movePiece(player, from, to));
-		setUpPieces();
-		clearPieceMouseClick();
-	}
-
-	public double getYPosition(int pos){
-		return piecePos[pos][1] * 48;
+	
+	/**
+	 * Adding mouse click listeners for the buttons that a player is able to move
+	 * @param player the player that should get the listener
+	 * @param diceValue the dice value that was thrown
+	 */
+	public void addPieceMouseClick(int player, int diceValue) {
+		for (int piece = 0; piece < 4; piece++) {
+			final int finalPiece = piece;
+			int from = ludo.getPosition(player, piece);
+			int to = ludo.getPosition(player, piece) + diceValue;
+			if (from == 0)
+				to = 1;
+			if (ludo.isValidMove(player, from, to)) {
+				pieces[player][piece].setOnMouseClicked(e -> pieceClicked(player, finalPiece));
+				addShaddow(pieces[player][piece]);
+			}
+		}
 	}
 	
-	public double getXPosition(int pos){
-		return piecePos[pos][0] * 48;
-	}
-	
-
-	public void setPlayerNumber(int playerNumber) {
-		this.playerNumber = playerNumber;
+	/**
+	 * Adding a shaddow to a image, used to mark the piece that can be moved
+	 * @param image the image to add a shaddow to
+	 */
+	public void addShaddow(Rectangle image){
+		DropShadow dropShadow = new DropShadow();
+		dropShadow.setRadius(7.0);
+		dropShadow.setOffsetX(3.0);
+		dropShadow.setOffsetY(3.0);
+		dropShadow.setColor(Color.color(0, 0, 0));
+		image.setEffect(dropShadow);
 		
 	}
+	
+	/**
+	 * Removing all mouse click listeners and effect for all pieces in the game
+	 */
+	public void clearPieceMouseClick() {
+		for (int player = 0; player < 4; player++) {
+			for (int piece = 0; piece < 4; piece++) {
+				pieces[player][piece].setOnMouseClicked(null);
+				pieces[player][piece].setEffect(null);
+			}
+		}
+	}
+	
+	/**
+	 * Telling the server when a piece with a click listener was clicked,
+	 * removing the listeners
+	 * @param player the player that owns the piece
+	 * @param piece the piece that was clicked
+	 */
+	private void pieceClicked(int player, final int piece) {
+		Connection.sendMessage("PIECE_CLICK:" + piece + ":" + player, "GAME", getId());
+		clearPieceMouseClick();
+	}
+	
+	/**
+	 * Returning the Y position on the board out from a game position
+	 * @param pos the position in the game
+	 * @return the Y collumn on the board
+	 */
+	public double getYPosition(int pos){
+		return piecePos[pos][1] * 48 + 6;
+	}
+	
+	/**
+	 * Returning the X position on the board out from a game position
+	 * @param pos the position in the game
+	 * @return the X row on the board
+	 */
+	public double getXPosition(int pos){
+		return piecePos[pos][0] * 48 + 6;
+	}
+	
+	/**
+	 * Setting the number of the player owning the session
+	 * then updating the names
+	 * @param playerNumber the player number
+	 */
+	public void setPlayerNumber(int playerNumber) {
+		this.playerNumber = playerNumber;
+		updatePlayerNames();
+	}
+	
+	/**
+	 * Setting the AnchorPane for the game, this is used to add pieces to the game
+	 * @param gameBoard the AnchorPane
+	 */
 	public void setPane(AnchorPane gameBoard) {
 		this.gameBoard = gameBoard;
-    	setUpPieces();
+		setUpPieces();
 	}
 }
