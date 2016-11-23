@@ -1,8 +1,11 @@
 package no.ntnu.imt3281.ludo.server;
 
 import no.ntnu.imt3281.ludo.client.Connection;
-import no.ntnu.imt3281.ludo.gui.GameBoardController;
 
+/**
+ * Message object for parsing a message passed between the server and client
+ * @author Lasse Sviland
+ */
 public class Message {
 	private String message;
 	private ServerClient client;
@@ -75,7 +78,6 @@ public class Message {
 
 	/**
 	 * Test to see if message is a chat message
-	 * 
 	 * @return true/false depending on the type
 	 */
 	public boolean isChat() {
@@ -109,14 +111,26 @@ public class Message {
 	public ServerClient getClient() {
 		return client;
 	}
-
+	
+	/**
+	 * @return game message version of this object
+	 */
 	public GameMessage getGameMessage() {
 		return new GameMessage(this);
 	}
-
+	
+	/**
+	 * @return boolean telling if the message is a PING message
+	 */
 	public boolean isPing() {
-		// TODO Auto-generated method stub
 		return type.equals("PING");
+	}
+	
+	/**
+	 * @return chat message version of this object
+	 */
+	public ChatMessage getChatMessage() {
+		return new ChatMessage(this);
 	}
 
 }
