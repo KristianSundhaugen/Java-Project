@@ -148,9 +148,7 @@ public class LudoTest {
      */
     @Test
     public void needASixToGetStarted() {
-        Ludo ludo = new Ludo("Player1", "Player2", null, null);
-        System.out.println(ludo.nrOfPlayers());
-        
+        Ludo ludo = new Ludo("Player1", "Player2", null, null);        
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
         ludo.throwDice(1);
         assertEquals(Ludo.RED, ludo.activePlayer(), 0);
