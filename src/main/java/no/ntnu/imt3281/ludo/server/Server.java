@@ -13,7 +13,6 @@ import java.util.Vector;
 public class Server {
 	private Vector<ServerClient> clients  = new Vector<>();
 	private Vector<Game> games = new Vector<>();
-	private Vector<Chat> chats = new Vector<>();
     private ServerMessageReader reader;
     private static Server server;
     /**
@@ -84,7 +83,10 @@ public class Server {
 		}
 		
 	}
-	
+	/**
+	 * Adding player to a new game, creating a new one if there is none to join
+	 * @param gmsg the game message received from the client
+	 */
 	private void joinNewGame(GameMessage gmsg) {
 		boolean gameFound = false;
 		for (Game game : games) {

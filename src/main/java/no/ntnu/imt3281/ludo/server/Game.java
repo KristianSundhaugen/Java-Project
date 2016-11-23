@@ -210,7 +210,6 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 */
 	@Override
 	public void diceThrown(DiceEvent event) {
-		System.out.println("DICE THROW EVENT");
 		sendMessage("DICE_EVENT:" + event.getDice() 
 		+ ":" + event.getPlayer() );
 	}
