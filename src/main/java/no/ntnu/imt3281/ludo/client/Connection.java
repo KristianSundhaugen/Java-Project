@@ -82,10 +82,10 @@ public class Connection {
 	 * @param msg the message received from the server
 	 */
 	public void messageParser(Message msg) {
-		 if (msg.isGame() && msg.getGameMessage().isNewGame()) {
-			 if (SynchronizedHolder.waitingNewGame != null)
-	        		SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
-				SynchronizedHolder.waitingNewGame = null;		
+		if (msg.isGame() && msg.getGameMessage().isNewGame()) {
+			if (SynchronizedHolder.waitingNewGame != null)
+	        	SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
+			SynchronizedHolder.waitingNewGame = null;		
 		} else
 			parseGameMessage(msg);	
 	}
@@ -117,7 +117,7 @@ public class Connection {
 	
 	/**
 	 * Sending request to the server to join a new chat
-	 * @param ludoController the controller to respond to when the server sends and awnser
+	 * @param ludoController the controller to respond to when the server sends and answer
 	 */
 	public static void newChat(LudoController ludoController) {
 		SynchronizedHolder.startNewChat = ludoController;

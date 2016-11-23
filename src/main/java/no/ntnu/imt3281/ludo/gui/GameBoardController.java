@@ -31,6 +31,9 @@ import no.ntnu.imt3281.ludo.client.Globals;
  */
 public class GameBoardController {
 	
+	@FXML
+	private ImageView boardBackground;
+	
     @FXML
     private Label player1Name;
 
@@ -109,10 +112,15 @@ public class GameBoardController {
 	 * Throwing a dice
 	 */
     public void throwDiceButton() {
-    	throwTheDice.setDisable(true);
-    	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
-    	setDiceImage(0);
+    	if (ludo.getStatus().equals("Created"))
+        	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
+    	else {
+    		throwTheDice.setDisable(true);
+    		Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
+    		setDiceImage(0);
+    	}
     }
+    
     /**
      * Triggered when the say button is clicked under the chat
      * sending a message to the server about the the chat message
@@ -120,7 +128,7 @@ public class GameBoardController {
     public void sendMessageButton() {
     	if (textToSay.getText().length() > 0) {
     		String player = ludo.getPlayerName(playerNumber);
-    		Connection.sendMessage(player + ":" + textToSay.getText(), "CHAT", ludo.getId());
+    		Connection.sendMessage(player + ":" + textToSay.getText().replaceAll(":","%colon%"), "CHAT", ludo.getId());
     		textToSay.setText("");
     	}
     }
@@ -151,16 +159,16 @@ public class GameBoardController {
 			case "PIECE_EVENT":  runPieceEvent(msg); 	break;
 			case "DICE_EVENT": 	 runDiceEvent(msg); 	break;
 			case "PLAYER_JOINED":runPlayerJoined(msg); 	break;
-			case "START_GAME":   waitForNextThrow(0); 	break;
+			case "START_GAME":   throwTheDice.setText("Throw the dice"); waitForNextThrow(0); break;
 		}
 	}
-	
+
 	/**
 	 * Parsing a chat message
 	 * @param msg the message to parse
 	 */
 	private void chatMessageParser(ChatMessage msg) {
-		chatArea.appendText(msg.getUsername() + ": " + msg.getMessageContent() + "\n");
+		chatArea.appendText(msg.getUsername() + ": " + msg.getMessageContent().replaceAll("%colon%",":") + "\n");
 	}
 	
 	/**
@@ -213,6 +221,10 @@ public class GameBoardController {
 	private void runPlayerJoined(GameMessage msg) {
 		ludo.addPlayer(msg.getMessageValue());
 		updatePlayerNames();
+		if (ludo.nrOfPlayers() > 1) {
+			throwTheDice.setText("Start Game");
+			throwTheDice.setDisable(false);
+		}
 	}
 
 	/**
@@ -221,15 +233,27 @@ public class GameBoardController {
 	 */
 	private void setWinner(int playerNum) {
 		switch (playerNum) {
-			case 0:	wonLabel.setStyle("textFill:RED");break;
-			case 1:	wonLabel.setStyle("textFill:BLUE");break;
-			case 2:	wonLabel.setStyle("textFill:YELLOW");break;
-			case 3:	wonLabel.setStyle("textFill:GREEN");break;
+			case 0:	wonLabel.setStyle("-fx-text-fill: RED;");	break;
+			case 1:	wonLabel.setStyle("-fx-text-fill: BLUE;");	break;
+			case 2:	wonLabel.setStyle("-fx-text-fill: YELLOW;");break;
+			case 3:	wonLabel.setStyle("-fx-text-fill: GREEN;");	break;
 		}			
 		wonLabel.setText(ludo.getPlayerName(playerNum) + " won!");
 		wonLabel.setVisible(true);
 		throwTheDice.setDisable(true);
-
+		hideImages();
+	}
+	
+	/**
+	 * Hiding the board and all pieces
+	 */
+	private void hideImages() {
+		for(int player = 0; player < 4; player++){
+			for(int piece = 0; piece < 4; piece++){
+				pieces[player][piece].setVisible(false);
+			}
+		}
+		boardBackground.setVisible(false);
 	}
 
 	/**
@@ -278,13 +302,12 @@ public class GameBoardController {
 	 * Running when a player is joining the game, adding the player to the ludo game and updating the GUI with the user name
 	 */
 	private void updatePlayerNames() {
-		for (int i = 0; i < ludo.nrOfPlayers(); i++) {
+		for (int i = 0; i < ludo.nrOfPlayers(); i++)
 			updatePlayerName(i);
-		}
 	}
 	
 	/**
-	 * Updating the player name in the gui for a spesiffic player
+	 * Updating the player name in the GUI for a specific player
 	 * @param playerNum the player to update the name for
 	 */
 	private void updatePlayerName(int playerNum){
@@ -298,6 +321,8 @@ public class GameBoardController {
 		player.setText(ludo.getPlayerName(playerNum));
 		if (this.playerNumber == playerNum)
 			player.setUnderline(true);
+		else
+			player.setUnderline(false);
 	}
 	
 	/**
@@ -308,15 +333,13 @@ public class GameBoardController {
 	private void throwDice(int diceValue, int player) {
 		ludo.throwDice(diceValue);
 		setDiceImage(diceValue);
-		if (ludo.activePlayer() == player) {
-			if (diceValue != 6 && ludo.allHome()) {
+		if (ludo.activePlayer() == player && player == this.playerNumber) {
+			if (diceValue != 6 && ludo.allHome())
 				waitForNextThrow(player);
-			} else {
+			else
 				addPieceMouseClick(player, diceValue);
-			}
-		} else {
+		} else
 			waitForNextThrow(ludo.activePlayer());
-		}
 	}
 	
 	/**
@@ -482,5 +505,6 @@ public class GameBoardController {
 	public void setPane(AnchorPane gameBoard) {
 		this.gameBoard = gameBoard;
 		setUpPieces();
+		throwTheDice.setText("Waiting for players");
 	}
 }
