@@ -22,7 +22,7 @@ import no.ntnu.imt3281.ludo.server.Message;
  * Receiving events from the game and is sending them to the server
  * @author lassesviland
  */
-public class Connection implements DiceListener, PieceListener, PlayerListener {
+public class Connection {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
@@ -31,15 +31,16 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
     private Socket socket;
 	private PrintWriter output;
 	private Vector<GameBoardController> games = new Vector<>();
-	private Thread reader;
+	private ClientMessageReader reader;
 	
 	private Connection() {
     	String serverAddress = "localhost";
         try {
 			socket = new Socket(serverAddress, 9090);
 			output = new PrintWriter(socket.getOutputStream(), true);
-			this.reader = new Thread(new ClientMessageReader(this, socket));
-			reader.start();	        
+			this.reader = new ClientMessageReader(this, socket);
+			Thread readerThread = new Thread(this.reader);
+			readerThread.start();	        
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,7 +112,8 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 			Platform.runLater(new Runnable() {
 	            @Override
 	            public void run() {
-	            	controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
+	            	if (controller != null)
+	            		controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
 	            }
 			});
 			SynchronizedHolder.waitingNewGame = null;
@@ -143,45 +145,6 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	public static void stopConnection() {
 		getConnection().reader.stop();
 	}
-	
-	/**
-	 * Called when a piece have been moved, 
-	 * sending message to the server with the information from the event
-	 * @param event the event that was called
-	 */
-	@Override
-	public void pieceMoved(PieceEvent event) {
-		sendMessage("PIECE_EVENT:" + event.getFrom() 
-		+ ":"  + event.getTo() 
-		+ ":" + event.getPiece() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());		
-	}
 
-	/**
-	 * Called when a dice is thrown,
- 	 * sending message to the server with the information from the event
-	 * @param event the event that was called from the server
-	 */
-	@Override
-	public void diceThrown(DiceEvent event) {
-		/*sendMessage("DICE_EVENT:" + event.getDice() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());
-		*/
-	}
-	
-	/**
-	 * Called when the state of a player is changed, 
-	 * sending message to the server with the new state
-	 */
-	@Override
-	public void playerStateChanged(PlayerEvent event) {
-		sendMessage("PLAYER_EVENT:" + event.getState() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());
-	}
+
 }
