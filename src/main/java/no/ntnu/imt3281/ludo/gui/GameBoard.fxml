@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -143,5 +145,13 @@
             </VBox>
          </children>
       </HBox>
+      <Label fx:id="wonLabel" alignment="CENTER" prefHeight="722.0" prefWidth="722.0" text="Player x Won!" textAlignment="CENTER" textFill="RED" underline="true">
+         <font>
+            <Font name="Avenir Roman" size="96.0" />
+         </font>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
    </children>
 </AnchorPane>
