@@ -111,6 +111,7 @@ public class GameBoardController {
     public void throwDiceController() {
     	throwTheDice.setDisable(true);
     	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
+    	setDiceImage(0);
     }
 	
 	/**
@@ -312,7 +313,11 @@ public class GameBoardController {
 	 * @param diceValue the value of the dice
 	 */
 	private void setDiceImage(int diceValue) {
-		Image image = new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png"));
+		Image image;
+		if (diceValue == 0)
+			image = new Image(getClass().getResourceAsStream("/images/rolldice.png"));
+		else
+			image = new Image(getClass().getResourceAsStream("/images/dice" + diceValue + ".png"));
 		diceThrown.setImage(image);
 	}
 

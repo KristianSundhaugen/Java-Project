@@ -1,7 +1,7 @@
 package no.ntnu.imt3281.ludo.server;
 
 /**
- * 
+ * Class holding a chat message that is used to get the chat content when messages is passed between client and server
  * @author Lasse Sviland
  *
  */
