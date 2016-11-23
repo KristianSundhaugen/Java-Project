@@ -160,7 +160,7 @@ public class GameBoardController {
 	 * @param msg the message to parse
 	 */
 	private void chatMessageParser(ChatMessage msg) {
-		chatArea.appendText(msg.getUsername() + ": " + msg.getMessageContent());
+		chatArea.appendText(msg.getUsername() + ": " + msg.getMessageContent() + "\n");
 	}
 	
 	/**
