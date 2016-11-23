@@ -137,7 +137,11 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	public void runGameMessage(GameMessage gmsg) {
 		switch (gmsg.getType()) {
 		case "DICE_THROW": 
-			ludoGame.throwDice(); break;
+			if (status.equals("WAITING"))
+				startGame();
+			else
+				ludoGame.throwDice();
+			break;
 		case "PIECE_CLICK":
         	int piece = gmsg.part(1);
 			int player = gmsg.part(2);
@@ -151,6 +155,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 			break;
 		}
 	}
+	
 	/**
 	 * Sending a game message to all players in the game
 	 * @param message the content of the message to send
