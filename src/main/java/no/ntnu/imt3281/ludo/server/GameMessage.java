@@ -1,9 +1,19 @@
 package no.ntnu.imt3281.ludo.server;
 
+/**
+ * Class holding a game message that is used to get the game content when messages is passed between client and server
+ * @author Lasse Sviland
+ *
+ */
 public class GameMessage {
 	private Message msg;
 	private String gameMessageType;
 	private String gameMessageValue;
+	
+	/**
+	 * constructor parsing a msg object and getting the relevant parts for the game message
+	 * @param msg the message that contains the game message
+	 */
 	public GameMessage(Message msg) {
 		this.msg = msg;
 		String[] messageParts = msg.getMessage().split(":");
@@ -54,6 +64,24 @@ public class GameMessage {
 	 */
 	public String getMessage(){
 		return this.msg.getMessage();
+	}
+
+	/**
+	 * 
+	 * @return the message type
+	 */
+	public String getType() {
+		return gameMessageType;
+	}
+	
+	/**
+	 * Returning a certain part of the message out from a index
+	 * @param index the index of the part
+	 * @return the part at the given index
+	 */
+	public int part(int index) {
+		String[] parts = getMessage().split(":");
+    	return Integer.parseInt(parts[index]);
 	}
 	
 }
