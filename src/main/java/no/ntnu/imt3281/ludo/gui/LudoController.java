@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -26,6 +27,40 @@ public class LudoController {
 
     @FXML
     private TabPane tabbedPane;
+    
+    /**
+     * Response to user clicking join chat room button
+     */
+    @FXML
+    public void joinChatRoom() {
+    	
+    }
+    
+    /**
+     * Response to user clicking list chat room button
+     */
+    @FXML
+    public void listChatRooms() {
+    	try {
+
+    	//FXMLLoader loader = new FXMLLoader(getClass().getResource("ListRooms.fxml"));
+    	//loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    	AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("ListRooms.fxml"));
+		//Scene scene = new Scene(root);
+//
+  //  		AnchorPane gameBoard = loader.load();
+    		
+    		//GameBoardController controller = loader.getController();
+    		
+    		//controller.setPane(gameBoard);
+        	Tab tab = new Tab("Game ");
+    		tab.setContent(root);
+        	tabbedPane.getTabs().add(tab);
+    	} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    }
+    
     
     /**
      * Telling the server that the user wants to join a new random game
