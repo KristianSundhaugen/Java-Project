@@ -5,27 +5,20 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Vector;
 
-import javafx.application.Platform;
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
-import no.ntnu.imt3281.ludo.logic.DiceEvent;
-import no.ntnu.imt3281.ludo.logic.DiceListener;
-import no.ntnu.imt3281.ludo.logic.PieceEvent;
-import no.ntnu.imt3281.ludo.logic.PieceListener;
-import no.ntnu.imt3281.ludo.logic.PlayerEvent;
-import no.ntnu.imt3281.ludo.logic.PlayerListener;
-import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
 
 /**
  * Singleton class for holding a connection to the server
  * Receiving events from the game and is sending them to the server
- * @author lassesviland
+ * @author Lasse Sviland
  */
 public class Connection {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
+    	static LudoController startNewChat = null;
     }
 	
     private Socket socket;
@@ -42,7 +35,6 @@ public class Connection {
 			Thread readerThread = new Thread(this.reader);
 			readerThread.start();	        
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -91,40 +83,25 @@ public class Connection {
 	 * @param msg the message received from the server
 	 */
 	public void messageParser(Message msg) {
-		System.out.println("Message Parser");
-		if (msg.isChat()){
-			// TODO add message to chat window
-		} else if (msg.isGame()) {
-			sendGameMessage(msg.getGameMessage());			
-		}
+		 if (msg.isGame() && msg.getGameMessage().isNewGame()) {
+			 if (SynchronizedHolder.waitingNewGame != null)
+	        		SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
+				SynchronizedHolder.waitingNewGame = null;		
+		} else
+			parseGameMessage(msg);	
 	}
 	
 	/**
-	 * Creating a new game if it is a new game message
-	 * sending the message to the game if the game already exists
-	 * @param gmsg the game message 
+	 * Sending a message to the game, looping until the game can receive the message
+	 * @param msg the message to send to the game
 	 */
-	private void sendGameMessage(GameMessage gmsg) {
-		System.out.println("Game Message");
-		if (gmsg.isNewGame()) {
-			System.out.println("New Game From Server");
-			LudoController controller = SynchronizedHolder.waitingNewGame;
-			Platform.runLater(new Runnable() {
-	            @Override
-	            public void run() {
-	            	if (controller != null)
-	            		controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
-	            }
-			});
-			SynchronizedHolder.waitingNewGame = null;
-		} else {
-			boolean run = true;
-			while(run){
-				for (GameBoardController game : games) {
-					if (game.getId().equals(gmsg.getId())) {
-						game.gameMessage(gmsg);
-						run = false;					
-					}
+	private void parseGameMessage(Message msg) {
+		boolean run = true;
+		while(run){
+			for (GameBoardController game : games) {
+				if (game.getId().equals(msg.getId())) {
+					game.messageParser(msg);
+					run = false;					
 				}
 			}
 		}
@@ -137,6 +114,15 @@ public class Connection {
 	public static void newGame(LudoController ludoController) {
 		SynchronizedHolder.waitingNewGame = ludoController;
 		sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
+	}
+	
+	/**
+	 * 
+	 * @param ludoController
+	 */
+	public static void newChat(LudoController ludoController) {
+		SynchronizedHolder.startNewChat = ludoController;
+		sendMessage("NEW_CHAT_REQUEST", "CHAT", "-1");
 	}
 	
 	/**

@@ -144,7 +144,7 @@ public class GameBoardController {
 	}
 	
 	/**
-	 * Parsing a chat messaae
+	 * Parsing a chat message
 	 * @param msg the message to parse
 	 */
 	private void chatMessageParser(ChatMessage msg) {
@@ -153,7 +153,7 @@ public class GameBoardController {
 	
 	/**
 	 * Responding to a player event from the server
-	 * Doing actions in the gui/ludo game if a player state changes
+	 * Doing actions in the GUI / Ludo game if a player state changes
 	 * @param msg the message containing the  event
 	 */
 	private void runPlayerEvent(GameMessage msg) {
@@ -174,7 +174,7 @@ public class GameBoardController {
 	
 	/**
 	 * Responding to a piece event from the server
-	 * Doing actions in the gui/ludo game if a piece is moved
+	 * Doing actions in the GUI / Ludo game if a piece is moved
 	 * @param msg the message containing the event
 	 */
 	private void runPieceEvent(GameMessage msg) {
@@ -186,7 +186,7 @@ public class GameBoardController {
 	
 	/**
 	 * Responding to a dice event from the server
-	 * Doing actions in the gui/ludo game if a dice is thrown
+	 * Doing actions in the GUI / Ludo game if a dice is thrown
 	 * @param msg the message containing the event
 	 */
 	private void runDiceEvent(GameMessage msg) {
@@ -195,7 +195,7 @@ public class GameBoardController {
 	
 	/**
 	 * Responding to a player join message from the server
-	 * Doing actions in the gui/ludo game to add the player
+	 * Doing actions in the GUI / Ludo game to add the player
 	 * @param msg the message containing the message
 	 */
 	private void runPlayerJoined(GameMessage msg) {
@@ -204,8 +204,8 @@ public class GameBoardController {
 	}
 
 	/**
-	 * Showing the win message with the color fo the winning player, and the text with the player that won
-	 * @param playerNum the player number that won
+	 * Showing the win message with the color of the winning player, and the text with the player that won
+	 * @param playerNum the player number that have won the game
 	 */
 	private void setWinner(int playerNum) {
 		switch (playerNum) {
@@ -308,7 +308,7 @@ public class GameBoardController {
 	}
 	
 	/**
-	 * Setting the dice image to the dcie valuse sent as a parameter
+	 * Setting the dice image to the dice values sent as a parameter
 	 * @param diceValue the value of the dice
 	 */
 	private void setDiceImage(int diceValue) {

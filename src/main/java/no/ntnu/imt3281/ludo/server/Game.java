@@ -13,6 +13,7 @@ import no.ntnu.imt3281.ludo.logic.PlayerListener;
 public class Game implements PlayerListener, DiceListener, PieceListener {
 	private static int idCounter = 0;
 	private Vector<ServerClient> players = new Vector<>(4);
+	private Vector<ServerClient> chatters = new Vector<>();
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
 	private String status = "WAITING";
 	private String type = "OPEN";
@@ -136,6 +137,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 		for (ServerClient player : players) {
 			player.sendMessage(new Message(message, "GAME", this.id).toString());
 		}
+		for(ServerClient chatter : chatters){
+			chatter.sendMessage(new Message(message, "GAME", this.id).toString());
+		}
 	}
 	
 	/**
@@ -157,6 +161,13 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 		for (ServerClient player : players) {
 			if (player != client)
 				player.sendMessage(new Message(message, "GAME", this.id).toString());
+		}
+	}
+	
+	public void sendChatMessageExcemptChatter(String message, ServerClient client) {
+		for (ServerClient chatter : chatters) {
+			if (chatter != client)
+				chatter.sendMessage(new Message(message, "CHAT", this.id).toString());
 		}
 	}
 	
