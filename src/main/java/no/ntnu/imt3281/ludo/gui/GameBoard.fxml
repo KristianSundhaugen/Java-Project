@@ -145,7 +145,7 @@
             </VBox>
          </children>
       </HBox>
-      <Label fx:id="wonLabel" alignment="CENTER" prefHeight="722.0" prefWidth="722.0" text="Player x Won!" textAlignment="CENTER" textFill="RED" underline="true">
+      <Label fx:id="wonLabel" alignment="CENTER" prefHeight="722.0" prefWidth="722.0" text="Player x Won!" textAlignment="CENTER" textFill="RED" underline="true" visible="false">
          <font>
             <Font name="Avenir Roman" size="96.0" />
          </font>
