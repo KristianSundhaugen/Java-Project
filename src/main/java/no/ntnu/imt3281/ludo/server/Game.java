@@ -10,7 +10,7 @@ import no.ntnu.imt3281.ludo.logic.PieceListener;
 import no.ntnu.imt3281.ludo.logic.PlayerEvent;
 import no.ntnu.imt3281.ludo.logic.PlayerListener;
 
-public class Game implements PieceListener, PlayerListener, DiceListener {
+public class Game implements PlayerListener, DiceListener, PieceListener {
 	private static int idCounter = 0;
 	private Vector<ServerClient> players = new Vector<>(4);
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
@@ -26,8 +26,8 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
     	this.id = String.valueOf(idCounter++);
     	ludoGame = new Ludo();
     	ludoGame.addDiceListener(this);
-    	ludoGame.addPieceListener(this);
     	ludoGame.addPlayerListener(this);
+    	ludoGame.addPieceListener(this);
     }
     
     /**
@@ -55,6 +55,8 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
      */
     public boolean isJoinableByClient(ServerClient client) {
     	if (this.status.equals("STARTED"))
+    		return false;
+    	else if (players.indexOf(client) != -1)
     		return false;
     	else if (isOpen() && players.size() <= 4)
     		return true;
@@ -103,24 +105,26 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	 */
 	public void runMessage(GameMessage msg) {
         if(msg.isType("PLAYER_EVENT")) {
-        	String[] parts = msg.getMessage().split(":");
-        	String state = parts[1];
-			String player = parts[2];
-			
 		} else if (msg.isType("PIECE_EVENT")) {
 			String[] parts = msg.getMessage().split(":");
         	int from = Integer.parseInt(parts[1]);
 			int to = Integer.parseInt(parts[2]);
 			int player = Integer.parseInt(parts[4]);
-			ludoGame.movePiece(player, from, to);
-			sendMessageExcemptClient(msg.getMessage(), msg.getClient());
-		} else if (msg.isType("DICE_EVENT")) {
-			String[] parts = msg.getMessage().split(":");
-        	int dice = Integer.parseInt(parts[1]);
-			int player = Integer.parseInt(parts[2]);
+			//ludoGame.movePiece(player, from, to);
+			//sendMessageExcemptClient(msg.getMessage(), msg.getClient());
 		} else if (msg.isType("DICE_THROW")) {
-			System.out.println("DICE THROW");
 			ludoGame.throwDice();
+		} else if (msg.isType("PIECE_CLICK")) {
+			String[] parts = msg.getMessage().split(":");
+        	int piece = Integer.parseInt(parts[1]);
+			int player = Integer.parseInt(parts[2]);
+			if (ludoGame.activePlayer() == player) {
+				int from = ludoGame.getPosition(player, piece);
+				int to = ludoGame.getPosition(player, piece) + ludoGame.getDice();
+				if (from == 0)
+					to = 1;
+				ludoGame.movePiece(player, from, to);
+			}
 		}
 	}
 
@@ -179,19 +183,6 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	}
 
 	/**
-	 * Called when a piece have been moved, 
-	 * sending message to the clients with the information from the event
-	 * @param event the event that was called
-	 */
-	@Override
-	public void pieceMoved(PieceEvent event) {
-		//sendMessage("PIECE_EVENT:" + event.getFrom() 
-		//+ ":"  + event.getTo() 
-		//+ ":" + event.getPiece() 
-		//+ ":" + event.getPlayer() );		
-	}
-
-	/**
 	 * Called when a dice is thrown,
  	 * sending message to the clients with the information from the event
 	 * @param event the event that was called from the server
@@ -211,5 +202,13 @@ public class Game implements PieceListener, PlayerListener, DiceListener {
 	public void playerStateChanged(PlayerEvent event) {
 		sendMessage("PLAYER_EVENT:" + event.getState() 
 		+ ":" + event.getPlayer() );
+	}
+
+	@Override
+	public void pieceMoved(PieceEvent event) {
+		sendMessage("PIECE_EVENT:" + event.getFrom() 
+				+ ":" + event.getTo()
+				+ ":" + event.getPiece()
+				+ ":" + event.getPlayer());
 	}
 }
