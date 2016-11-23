@@ -6,11 +6,8 @@ import java.net.Socket;
 import java.util.Vector;
 
 /**
- * 
- * This is the main class for the server. 
- * **Note, change this to extend other classes if desired.**
- * 
- * @author 
+ * Class for holding the server, letting clients send messages, and pass messages to the clients
+ * @author Lasse Sviland
  *
  */
 public class Server {
@@ -35,7 +32,9 @@ public class Server {
         	
 	}
     
-    
+    /**
+     * Stopping the reading from reading messages from the connected clients
+     */
     protected void stop() {
 		if(reader != null)
 			reader.stop();
@@ -67,65 +66,43 @@ public class Server {
 	public void removeClient(ServerClient client) {
 		clients.remove(client);
 	}
-	
-	/**
-	 * Passing along message depending on the message type
-	 * @param message to be passed along
-	 */
-	public void sendMessage(Message message) {
-		if (message.isGame())
-			sendMessageToGame(message.getGameMessage());
-		else if (message.isChat())
-			sendMessageToChat(message);
-	}
+
 	
 	/**
 	 * Sending a message object to the game the message belongs to
 	 * @param message the message object to send
 	 */
-	private void sendMessageToGame(GameMessage message) {
-		if (message.isNewGameRequest()){
-			boolean gameFound = false;
-			for (Game game : games) {
-				if (game.isJoinableByClient(message.getClient())) {
-					game.addPlayer(message.getClient());
-					gameFound = true;
-					if (game.isFull()) {
-						game.startGame();
-					}
-					/********************************************************/
-					if (game.getPlayers() > 1) {
-						game.startGame();
-					}
-					/********************************************************/
-				}
-			}
-			if (!gameFound){
-				Game game = new Game();
-				game.addPlayer(message.getClient());
-				games.add(game);
-			}
+	public void parseMessage(Message msg) {
+		if (msg.isGame() && msg.getGameMessage().isNewGameRequest()){
+			joinNewGame(msg.getGameMessage());
 		} else {
 			for (Game game : games) {
-				if (game.getId().equals(message.getId())) {
-					game.runMessage(message);
+				if (game.getId().equals(msg.getGameMessage().getId())) {
+					game.runMessage(msg);
 				}
 			}
 		}
 		
 	}
 	
-	/**
-	 * Sending a message object to the chat the message belongs to
-	 * @param message the message object to send
-	 */
-	private void sendMessageToChat(Message message) {
-		for (Chat chat : chats) {
-			if (chat.getId().equals(message.getId())) {
-				chat.runMessage(message);
+	private void joinNewGame(GameMessage gmsg) {
+		boolean gameFound = false;
+		for (Game game : games) {
+			if (game.isJoinableByClient(gmsg.getClient())) {
+				game.addPlayer(gmsg.getClient());
+				gameFound = true;
+				if (game.isFull()) {
+					game.startGame();
+				}
 			}
 		}
+		if (!gameFound){
+			Game game = new Game();
+			game.addPlayer(gmsg.getClient());
+			games.add(game);
+		}
 	}
+
 	
 	/**
 	 * @return a vector with all connected clients

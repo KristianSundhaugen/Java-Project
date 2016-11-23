@@ -15,6 +15,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	private Vector<ServerClient> players = new Vector<>(4);
 	private Vector<ServerClient> chatters = new Vector<>();
 	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
+	private Vector<String> chatMessages = new Vector<>();
 	private String status = "WAITING";
 	private String type = "OPEN";
 	private String id;
@@ -104,21 +105,41 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 * Running a game message sent from a client in this game
 	 * @param message the message the client sent
 	 */
-	public void runMessage(GameMessage msg) {
-        if(msg.isType("PLAYER_EVENT")) {
-		} else if (msg.isType("PIECE_EVENT")) {
-			String[] parts = msg.getMessage().split(":");
-        	int from = Integer.parseInt(parts[1]);
-			int to = Integer.parseInt(parts[2]);
-			int player = Integer.parseInt(parts[4]);
-			//ludoGame.movePiece(player, from, to);
-			//sendMessageExcemptClient(msg.getMessage(), msg.getClient());
-		} else if (msg.isType("DICE_THROW")) {
-			ludoGame.throwDice();
-		} else if (msg.isType("PIECE_CLICK")) {
-			String[] parts = msg.getMessage().split(":");
-        	int piece = Integer.parseInt(parts[1]);
-			int player = Integer.parseInt(parts[2]);
+	public void runMessage(Message msg) {
+		if (msg.isChat())
+			runChatMessage(msg.getChatMessage());
+		else if (msg.isGame())
+			runGameMessage(msg.getGameMessage());
+	}
+	
+	/**
+	 * Responding to a chat message, logging it to the server and sending message to other clients
+	 * @param cmsg the chat message received
+	 */
+	public void runChatMessage(ChatMessage cmsg) {
+		sendChatMessage(cmsg.getUsername() + ":" + cmsg.getMessageContent(), cmsg.getClient());
+		logChat(cmsg.getUsername(), cmsg.getMessageContent());
+	}
+	/**
+	 * Logging a chat message to the database
+	 * @param username the user that sent the message
+	 * @param messageContent the content of the message
+	 */
+	private void logChat(String username, String messageContent) {
+		// TODO log chat
+	}
+
+	/**
+	 * Responding to a game message
+	 * @param gmsg the game message received
+	 */
+	public void runGameMessage(GameMessage gmsg) {
+		switch (gmsg.getType()) {
+		case "DICE_THROW": 
+			ludoGame.throwDice(); break;
+		case "PIECE_CLICK":
+        	int piece = gmsg.part(1);
+			int player = gmsg.part(2);
 			if (ludoGame.activePlayer() == player) {
 				int from = ludoGame.getPosition(player, piece);
 				int to = ludoGame.getPosition(player, piece) + ludoGame.getDice();
@@ -126,9 +147,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 					to = 1;
 				ludoGame.movePiece(player, from, to);
 			}
+			break;
 		}
 	}
-
 	/**
 	 * Sending a game message to all players in the game
 	 * @param message the content of the message to send
@@ -136,9 +157,6 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	public void sendMessage(String message) {
 		for (ServerClient player : players) {
 			player.sendMessage(new Message(message, "GAME", this.id).toString());
-		}
-		for(ServerClient chatter : chatters){
-			chatter.sendMessage(new Message(message, "GAME", this.id).toString());
 		}
 	}
 	
@@ -152,23 +170,15 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	}
 	
 	/**
-	 * Sending a game message to all players in the game
-	 * except the player that triggered the message
-	 * @param message the content of the message to send
-	 * @param the client that should not receive the message
+	 * Sending a chat message to everyone in the game, or only in the chat, except for the 
+	 * @param message the message to send to the chat
+	 * @param client the client that should not receive the message
 	 */
-	public void sendMessageExcemptClient(String message, ServerClient client) {
-		for (ServerClient player : players) {
-			if (player != client)
-				player.sendMessage(new Message(message, "GAME", this.id).toString());
-		}
-	}
-	
-	public void sendChatMessageExcemptChatter(String message, ServerClient client) {
-		for (ServerClient chatter : chatters) {
-			if (chatter != client)
-				chatter.sendMessage(new Message(message, "CHAT", this.id).toString());
-		}
+	public void sendChatMessage(String message, ServerClient client) {
+		for (ServerClient chatter : chatters)
+			chatter.sendMessage(new Message(message, "CHAT", this.id).toString());
+		for (ServerClient player : players)
+			player.sendMessage(new Message(message, "CHAT", this.id).toString());	
 	}
 	
 	/**
@@ -214,7 +224,11 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 		sendMessage("PLAYER_EVENT:" + event.getState() 
 		+ ":" + event.getPlayer() );
 	}
-
+	
+	/**
+	 * Triggered when a piece is moved
+	 * sending messages to the players about the move
+	 */
 	@Override
 	public void pieceMoved(PieceEvent event) {
 		sendMessage("PIECE_EVENT:" + event.getFrom() 
