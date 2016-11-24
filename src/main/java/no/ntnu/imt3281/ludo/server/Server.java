@@ -16,6 +16,7 @@ public class Server {
     private ServerMessageReader reader;
 	private boolean stop = false;
     private static Server server;
+    private Database userDatabase;
     
     /**
      * Main function to start the program
@@ -135,13 +136,21 @@ public class Server {
 	}
 
 	/**
-	 * Player gets logged in
+	 * Username and password is checked in the database
+	 * If they are found and are correct the user will be logged in
+	 * If not the user will get a notification
 	 * @param lmessage, message recived from client
 	 */
 	private void userLogin(UserMessage lmessage){
 		
 	}
 	
+	/**
+	 * Check if the username already exist in the database
+	 * If not the user is registered and can log in
+	 * If not the user will get a notification
+	 * @param rmessage, message recived from client
+	 */
 	private void userRegister(UserMessage rmessage){
 		
 	}
