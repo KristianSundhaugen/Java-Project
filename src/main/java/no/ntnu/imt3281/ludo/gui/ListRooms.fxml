@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -17,8 +18,14 @@
           <RowConstraints maxHeight="800.0" minHeight="10.0" prefHeight="550.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Label" GridPane.hgrow="ALWAYS" />
-            <ListView fx:id="list" prefHeight="500.0" prefWidth="200.0" GridPane.rowIndex="1" />
+            <Label text="Available Chat Channels" GridPane.hgrow="ALWAYS">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="5.0" />
+               </padding></Label>
+            <ListView fx:id="list" onMouseClicked="#selectChannel" prefHeight="500.0" prefWidth="200.0" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>
