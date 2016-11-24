@@ -70,6 +70,26 @@ public class LudoController {
     }
     
     /**
+     * Response to user clicking challenge player button
+     */
+    @FXML
+    public void challengePlayers() {
+    	try {
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("InvitePlayers.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		AnchorPane listRooms = loader.load();
+    		InvitePlayerController controller = loader.getController();
+        	Tab tab = new Tab("Invite Players");
+    		controller.setLudoController(this, tab);
+    		tab.setContent(listRooms);
+        	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+    }
+    
+    /**
      * When user clicks on connect, the login screen will be displayed
      */
     @FXML

@@ -14,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.ludo.client.Connection;
+import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
  * 
  * @author Simen
@@ -38,6 +40,10 @@ public class PlayerLogin {
 		
 	}
 	
+	private void playerLoggedIn(){
+		Connection.newLoginRequest(this, username.getText(), password.getPassword().toString());
+	}
+	
 	/**
 	 * This will load the login scene and if both username and password is filled out
 	 * the user will be taken to the GameBoard scene and can start a new game.
@@ -45,6 +51,11 @@ public class PlayerLogin {
 	 */
 	@FXML
 	public void handleLoginButton(ActionEvent event) {
+
+
+		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
+		
+
 		
 		//change to check for username and password in database
 		if(username.getText().equals("") && password.getPassword().equals("")){
@@ -79,5 +90,19 @@ public class PlayerLogin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	public void setLudoController(LudoController ludoController, Tab tab) {
+		this.ludoController = ludoController;
+		this.tab = tab;
+	}
+
+	public void loginResponse(UserMessage userMessage) {
+		if(userMessage.intPart(1) == 0){
+			loginMessage.setText("Wrong username or password");
+		} else {
+			Connection.getConnection().loggedIn();
+			ludoController.removeTab(tab);
+		}
+		
 	}
 }

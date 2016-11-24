@@ -97,8 +97,8 @@ public class Message {
 	/**
 	 * @return boolean if the message is LOGIN message
 	 */
-	public boolean isLogin(){
-		return type.equals("LOGIN");
+	public boolean isUser(){
+		return type.equals("USER");
 	}
 	
 	public boolean isRegister(){

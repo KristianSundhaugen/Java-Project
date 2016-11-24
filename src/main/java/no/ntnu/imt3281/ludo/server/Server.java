@@ -16,6 +16,8 @@ public class Server {
     private ServerMessageReader reader;
 	private boolean stop = false;
     private static Server server;
+    private Database database;
+    private boolean isLoggedIn;
     
     /**
      * Main function to start the program
@@ -75,14 +77,18 @@ public class Server {
 	 */
 	public void parseMessage(Message msg) {
 		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
-			joinNewGame(msg.getGameMessage());
+			joinNewRandomGame(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
+			joinNewRandomGame(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isPlayerListRequest())
+			sendPlayerList(msg.getGameMessage());
 		else if (msg.isChat() && msg.getChatMessage().isListRequest())
 			sendChatList(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChatJoin())
 			joinNewChat(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChat())
 			createNewChat(msg.getChatMessage());
-		else if(msg.isLogin() && msg.getUserMessage().isLoginRequest())
+		else if(msg.isUser() && msg.getUserMessage().isLoginRequest())
 			userLogin(msg.getUserMessage());
 		else if(msg.isRegister() && msg.getUserMessage().isRegisterRequest())
 			userRegister(msg.getUserMessage());
@@ -123,12 +129,23 @@ public class Server {
 		}
 		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg, "CHAT", "-1").toString());	
 	}
+	
+	/**
+	 * @param cmsg sending list over chats the user can join
+	 */
+	private void sendPlayerList(GameMessage cmsg) {
+		String msg = "";
+		for (ServerClient client : clients)
+			if (!cmsg.getClient().equals(client))
+				msg += ":" + client.getUsername();
+		cmsg.getClient().sendMessage(new Message("PLAYER_LIST_RESPONSE" + msg, "GAME", "-1").toString());	
+	}
 
 	/**
 	 * Adding player to a new game, creating a new one if there is none to join
 	 * @param gmsg the game message received from the client
 	 */
-	private void joinNewGame(GameMessage gmsg) {
+	private void joinNewRandomGame(GameMessage gmsg) {
 		boolean gameFound = false;
 		for (Game game : games) {
 			if (game.isJoinableByClient(gmsg.getClient())) {
@@ -147,14 +164,28 @@ public class Server {
 	}
 
 	/**
-	 * Player gets logged in
+	 * Username and password is checked in the database
+	 * If they are found and are correct the user will be logged in
+	 * If not the user will get a notification
 	 * @param lmessage, message recived from client
 	 */
 	private void userLogin(UserMessage lmessage){
-		
+		UserMessage um = new UserMessage(lmessage);
+		if(database.checkLogin(um.stringPart(1), um.stringPart(2))){
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:1", "USER", "-1").toString());
+		} else {
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:0", "USER", "-1").toString());
+		}
 	}
 	
+	/**
+	 * Check if the username already exist in the database
+	 * If not the user is registered and can log in
+	 * If not the user will get a notification
+	 * @param rmessage, message recived from client
+	 */
 	private void userRegister(UserMessage rmessage){
+		//NO : IN USERNAME
 		
 	}
 	
