@@ -1,23 +1,27 @@
 package no.ntnu.imt3281.ludo.server;
 
-public class GameMessage {
-	private Message msg;
+/**
+ * Class holding a game message that is used to get the game content when messages is passed between client and server
+ * @author Lasse Sviland
+ *
+ */
+public class GameMessage extends Message {
 	private String gameMessageType;
 	private String gameMessageValue;
+	
+	/**
+	 * constructor parsing a msg object and getting the relevant parts for the game message
+	 * @param msg the message that contains the game message
+	 */
 	public GameMessage(Message msg) {
-		this.msg = msg;
-		String[] messageParts = msg.getMessage().split(":");
-		this.gameMessageType = messageParts[0];
-		if(messageParts.length > 1)
-			this.gameMessageValue = messageParts[1];
+		super(msg);
+		this.gameMessageType = stringPart(0);
+		try {
+			this.gameMessageValue = stringPart(1);
+		} catch (Exception e) {}
+			
 	}
 	
-	/** 
-	 * @return the id of the game sent from the server
-	 */
-	public String getId() {
-		return msg.getId();
-	}
 	/** 
 	 * @return the id of the game sent from the server
 	 */
@@ -25,12 +29,6 @@ public class GameMessage {
 		return gameMessageValue;
 	}
 	
-	/** 
-	 * @return the client that sent the message
-	 */
-	public ServerClient getClient() {
-		return msg.getClient();
-	}
 	
 	/**
 	 * @return boolean telling if it is a new game message
@@ -49,11 +47,12 @@ public class GameMessage {
 	public boolean isNewGameRequest() {
 		return gameMessageType.equals("NEW_RANDOM_GAME_REQUEST");
 	}
+
 	/**
-	 * @return the content of the message
+	 * @return the message type
 	 */
-	public String getMessage(){
-		return this.msg.getMessage();
+	public String getType() {
+		return gameMessageType;
 	}
 	
 }

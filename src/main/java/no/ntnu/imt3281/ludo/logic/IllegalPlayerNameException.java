@@ -1,7 +1,7 @@
 package no.ntnu.imt3281.ludo.logic;
 
 /**
- * If playername consists of four "*" i.e. "****"
+ * If player name consists of four "*" i.e. "****"
  * there will be sent a IllegalPlayerNameException
  * saying that "That name is illegal"
  *

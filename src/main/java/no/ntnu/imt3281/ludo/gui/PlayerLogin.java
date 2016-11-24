@@ -3,7 +3,6 @@ spackage no.ntnu.imt3281.ludo.gui;
 import java.io.IOException;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -21,7 +20,7 @@ import javafx.stage.Stage;
  * This class will handle login
  * Check password and username
  */
-public class PlayerLogin extends JFrame {
+public class PlayerLogin {
 	
 	@FXML
 	private JButton loginButton;

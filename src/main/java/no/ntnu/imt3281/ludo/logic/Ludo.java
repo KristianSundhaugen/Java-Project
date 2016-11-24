@@ -119,7 +119,7 @@ public class Ludo {
 		try {
 			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			return null;
+			return "";
 		}
 	}
 	
@@ -153,15 +153,17 @@ public class Ludo {
 	 */
 	public void removePlayer(String playerName) {
 		int index = players.indexOf(playerName);
-		players.remove(index);
-		players.add(index, "Inactive: " + playerName);
-		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
-		for (int i = 0; i < playerListenerers.size(); i++) {
-			playerListenerers.get(i).playerStateChanged(playerChange);
+		if(index > -1) {
+			players.remove(index);
+			players.add(index, "Inactive: " + playerName);
+			PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
+			for (int i = 0; i < playerListenerers.size(); i++) {
+				playerListenerers.get(i).playerStateChanged(playerChange);
+			}
 		}
-		
 		if( activePlayer() == index)
 			nextPlayer();
+		
 	}
 	
 	/**
@@ -221,8 +223,6 @@ public class Ludo {
 		
 		randomGenerator = new Random();
 		this.dice = randomGenerator.nextInt(6) + 1;
-		if(diceThrows == 0)
-			this.dice = 6;
 		diceThrows++;
 		
 		DiceEvent diceThrow = new DiceEvent(this, activePlayer(), dice);
@@ -299,14 +299,14 @@ public class Ludo {
 	 * @return true or false. If a player is not blocked or blocked
 	 */
 	public boolean movePiece(int player, int fromPos, int toPos) {
-
 		int piece = getPiece(player, fromPos);
 		if (isValidMove(player, fromPos, toPos)) {
 			playerPieces[player][piece] = toPos;
 			PieceEvent pieceMove = new PieceEvent(this, activePlayer, piece, fromPos, toPos);
-			for(int i = 0; i < pieceListenerers.size(); i++){
+			
+			for(int i = 0; i < pieceListenerers.size(); i++)
 				pieceListenerers.get(i).pieceMoved(pieceMove);
-			}
+			
 			checkUnfortionateOpponents(player, toPos);
 			checkWinner();
 			if(shouldGoToNextPlayer() || fromPos == 0 || dice != 6)
@@ -326,7 +326,7 @@ public class Ludo {
 	 * @param toPos the position the player is trying to move to
 	 * @return boolean telling if the tests passed
 	 */
-	private boolean isValidMove(int player, int fromPos, int toPos) {
+	public boolean isValidMove(int player, int fromPos, int toPos) {
 		/**
 		 * IF NO PIECE
 		 */
@@ -473,7 +473,7 @@ public class Ludo {
 	 * Get next player who is throwing dice
 	 * if at max player, go back to first player
 	 */
-	void nextPlayer() {
+	public void nextPlayer() {
 		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.WAITING);
 		for (int i = 0; i < playerListenerers.size(); i++) {
 			playerListenerers.get(i).playerStateChanged(playerChange);
@@ -507,13 +507,20 @@ public class Ludo {
 	 * if it's from the start position or getting into finish
 	 * @return true/false, if the player can move
 	 */
-    boolean canMove() {
-    	for (int piece = 0; piece < 4; piece++) {
+    public boolean canMove() {
+    	for (int piece = 0; piece < 4; piece++)
     		if (pieceCanMove(activePlayer(), piece))
     			return true;
-    	}
 
     	return false;
+    }
+    public int piecesAtPosition(int player, int position) {
+    	int pieceCount = 0;
+    	for (int piece = 0; piece < 4; piece++) {
+    		if (playerPieces[player][piece] == position)
+    			pieceCount++;
+    	}
+    	return pieceCount;
     }
     
     /**
@@ -676,11 +683,17 @@ public class Ludo {
 		
 	}
 	/**
-	 * Returns the game id
-	 * @return id 
+	 * @return the game id 
 	 */
 	public String getId() {
 		return this.id;
+	}
+
+	/**
+	 * @return the dice
+	 */
+	public int getDice() {
+		return dice;
 	}
 
 }

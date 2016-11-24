@@ -45,6 +45,13 @@ public class PlayerEvent {
 		return String.valueOf(this.player);
 	}
 	/**
+	 * get player string
+	 * @return player
+	 */
+	public int getPlayerNumber(){
+		return this.player;
+	}
+	/**
 	 * set player to be activePlayer int 
 	 * @param activePlayer
 	 */

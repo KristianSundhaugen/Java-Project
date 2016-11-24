@@ -5,44 +5,36 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Vector;
 
-import javafx.application.Platform;
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
+import no.ntnu.imt3281.ludo.gui.ListRoomsController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
-import no.ntnu.imt3281.ludo.logic.DiceEvent;
-import no.ntnu.imt3281.ludo.logic.DiceListener;
-import no.ntnu.imt3281.ludo.logic.PieceEvent;
-import no.ntnu.imt3281.ludo.logic.PieceListener;
-import no.ntnu.imt3281.ludo.logic.PlayerEvent;
-import no.ntnu.imt3281.ludo.logic.PlayerListener;
-import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
 
 /**
  * Singleton class for holding a connection to the server
  * Receiving events from the game and is sending them to the server
- * @author lassesviland
+ * @author Lasse Sviland
  */
-public class Connection implements DiceListener, PieceListener, PlayerListener {
+public class Connection {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
-    	static LudoController startNewChat = null;
+    	static ListRoomsController chatListRequest = null;
     }
 	
     private Socket socket;
 	private PrintWriter output;
 	private Vector<GameBoardController> games = new Vector<>();
-	private Thread reader;
+	private ClientMessageReader reader;
 	
 	private Connection() {
-    	String serverAddress = "localhost";
         try {
-			socket = new Socket(serverAddress, 9090);
+			socket = new Socket(Globals.serverAddress, Globals.serverPort);
 			output = new PrintWriter(socket.getOutputStream(), true);
-			this.reader = new Thread(new ClientMessageReader(this, socket));
-			reader.start();	        
+			this.reader = new ClientMessageReader(this, socket);
+			Thread readerThread = new Thread(this.reader);
+			readerThread.start();	        
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -91,39 +83,29 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	 * @param msg the message received from the server
 	 */
 	public void messageParser(Message msg) {
-		System.out.println("Message Parser");
-		if (msg.isChat()){
-			// TODO add message to chat window
-		} else if (msg.isGame()) {
-			sendGameMessage(msg.getGameMessage());			
-		}
+		if (msg.isGame() && msg.getGameMessage().isNewGame()) {
+			if (SynchronizedHolder.waitingNewGame != null)
+	        	SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
+			SynchronizedHolder.waitingNewGame = null;
+		} else if (msg.isChat() && msg.getChatMessage().isListResponse()) {
+			if (SynchronizedHolder.chatListRequest != null)
+	        	SynchronizedHolder.chatListRequest.listResponse(msg.getChatMessage());
+			SynchronizedHolder.chatListRequest = null;
+		} else
+			parseGameMessage(msg);	
 	}
 	
 	/**
-	 * Creating a new game if it is a new game message
-	 * sending the message to the game if the game already exists
-	 * @param gmsg the game message 
+	 * Sending a message to the game, looping until the game can receive the message
+	 * @param msg the message to send to the game
 	 */
-	private void sendGameMessage(GameMessage gmsg) {
-		System.out.println("Game Message");
-		if (gmsg.isNewGame()) {
-			System.out.println("New Game From Server");
-			LudoController controller = SynchronizedHolder.waitingNewGame;
-			Platform.runLater(new Runnable() {
-	            @Override
-	            public void run() {
-	            	controller.createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
-	            }
-			});
-			SynchronizedHolder.waitingNewGame = null;
-		} else {
-			boolean run = true;
-			while(run){
-				for (GameBoardController game : games) {
-					if (game.getId().equals(gmsg.getId())) {
-						game.gameMessage(gmsg);
-						run = false;					
-					}
+	private void parseGameMessage(Message msg) {
+		boolean run = true;
+		while(run){
+			for (GameBoardController game : games) {
+				if (game.getId().equals(msg.getId())) {
+					game.messageParser(msg);
+					run = false;					
 				}
 			}
 		}
@@ -139,12 +121,12 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	}
 	
 	/**
-	 * 
-	 * @param ludoController
+	 * Sending request to the server to join a new chat
+	 * @param ludoController the controller to respond to when the server sends and answer
 	 */
-	public static void newChat(LudoController ludoController) {
-		SynchronizedHolder.startNewChat = ludoController;
-		sendMessage("NEW_CHAT_REQUEST", "CHAT", "-1");
+	public static void newChatListRequest(ListRoomsController listController) {
+		SynchronizedHolder.chatListRequest = listController;
+		Connection.sendMessage("LIST", "CHAT", "-1");
 	}
 	
 	/**
@@ -153,45 +135,6 @@ public class Connection implements DiceListener, PieceListener, PlayerListener {
 	public static void stopConnection() {
 		getConnection().reader.stop();
 	}
-	
-	/**
-	 * Called when a piece have been moved, 
-	 * sending message to the server with the information from the event
-	 * @param event the event that was called
-	 */
-	@Override
-	public void pieceMoved(PieceEvent event) {
-		sendMessage("PIECE_EVENT:" + event.getFrom() 
-		+ ":"  + event.getTo() 
-		+ ":" + event.getPiece() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());		
-	}
 
-	/**
-	 * Called when a dice is thrown,
- 	 * sending message to the server with the information from the event
-	 * @param event the event that was called from the server
-	 */
-	@Override
-	public void diceThrown(DiceEvent event) {
-		/*sendMessage("DICE_EVENT:" + event.getDice() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());
-		*/
-	}
-	
-	/**
-	 * Called when the state of a player is changed, 
-	 * sending message to the server with the new state
-	 */
-	@Override
-	public void playerStateChanged(PlayerEvent event) {
-		sendMessage("PLAYER_EVENT:" + event.getState() 
-		+ ":" + event.getPlayer() , 
-		"GAME", 
-		event.getLudo().getId());
-	}
+
 }
