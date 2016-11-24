@@ -1,4 +1,4 @@
-spackage no.ntnu.imt3281.ludo.gui;
+package no.ntnu.imt3281.ludo.gui;
 
 import java.io.IOException;
 
