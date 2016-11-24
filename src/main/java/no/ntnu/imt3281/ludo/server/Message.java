@@ -56,6 +56,13 @@ public class Message {
 		}
 	}
 
+	public Message(Message msg) {
+		this.message = msg.getMessage();
+		this.client = msg.getClient();
+		this.type = msg.getType();
+		this.id = msg.getId();
+	}
+
 	/**
 	 * Test to see if message is a disconnect message
 	 * @return true/false depending on the type
@@ -79,6 +86,13 @@ public class Message {
 	public boolean isChat() {
 		return type.equals("CHAT");
 	}
+	
+	/**
+	 * @return boolean telling if the message is a PING message
+	 */
+	public boolean isPing() {
+		return type.equals("PING");
+	}
 
 	/**
 	 * @return the type and message as a string
@@ -100,6 +114,12 @@ public class Message {
 	public String getId() {
 		return id;
 	}
+	/**
+	 * @return the type of the message 
+	 */
+	public String getType() {
+		return type;
+	}
 
 	/**
 	 * @return the client
@@ -116,17 +136,25 @@ public class Message {
 	}
 	
 	/**
-	 * @return boolean telling if the message is a PING message
-	 */
-	public boolean isPing() {
-		return type.equals("PING");
-	}
-	
-	/**
 	 * @return chat message version of this object
 	 */
 	public ChatMessage getChatMessage() {
 		return new ChatMessage(this);
 	}
+	
+	/**
+	 * Returning a certain part of the message out from a index
+	 * @param index the index of the part
+	 * @return the part at the given index
+	 */
+	public int intPart(int index) {
+		String[] parts = getMessage().split(":");
+    	return Integer.parseInt(parts[index]);
+	}
+	public String stringPart(int index) {
+		String[] parts = getMessage().split(":");
+    	return parts[index];
+	}
+	
 
 }
