@@ -55,4 +55,19 @@ public class GameMessage extends Message {
 		return gameMessageType;
 	}
 	
+	/**
+	 * @return if it is a request to the server for a player list
+	 */
+	public boolean isPlayerListRequest() {
+		return gameMessageType.equals("PLAYER_LIST");
+
+	}
+	
+	/**
+	 * @return if it is a response from the server with the player list
+	 */
+	public boolean isPlayerListResponse() {
+		return gameMessageType.equals("PLAYER_LIST_RESPONSE");
+	}
+	
 }
