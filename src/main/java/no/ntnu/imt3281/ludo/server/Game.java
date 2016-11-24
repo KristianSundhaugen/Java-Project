@@ -95,6 +95,40 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
     }
 	
 	/**
+	 * Adding the client as a chatter if the client is not already in the chat
+	 * @param client
+	 */
+	public void addChatter(ServerClient client) {
+		if (!inChat(client))
+			chatters.add(client);
+	}
+	
+	/**
+	 * 
+	 */
+	public void clientLeave(ServerClient client) {
+		this.status = "STARTED";
+		ludoGame.removePlayer(client.getUsername());
+		players.remove(client);
+		chatters.remove(client);
+	}
+	
+	/**
+	 * Telling if the client is a chatter or a player in the game
+	 * @param client the client to test
+	 * @return boolean telling the result
+	 */
+	private boolean inChat(ServerClient client) {
+		for (ServerClient chatter : chatters)
+			if(chatter.equals(client))
+				return true;
+		for (ServerClient player : players)
+			if(player.equals(client))
+				return true;
+		return false;
+	}
+	
+	/**
 	 * @return the id of the current game
 	 */
 	public String getId(){
@@ -117,9 +151,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 * @param cmsg the chat message received
 	 */
 	public void runChatMessage(ChatMessage cmsg) {
-		sendChatMessage(cmsg.getUsername() + ":" + cmsg.getMessageContent(), cmsg.getClient());
-		chatMessages.add(cmsg.getUsername() + ":" + cmsg.getMessageContent());
-		logChat(cmsg.getUsername(), cmsg.getMessageContent());
+		sendChatMessage(cmsg.getClient().getUsername() + ":" + cmsg.getMessageContent());
+		chatMessages.add(cmsg.getClient().getUsername() + ":" + cmsg.getMessageContent());
+		logChat(cmsg.getClient().getUsername(), cmsg.getMessageContent());
 	}
 	/**
 	 * Logging a chat message to the database
@@ -143,8 +177,8 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 				ludoGame.throwDice();
 			break;
 		case "PIECE_CLICK":
-        	int piece = gmsg.part(1);
-			int player = gmsg.part(2);
+        	int piece = gmsg.intPart(1);
+			int player = gmsg.intPart(2);
 			if (ludoGame.activePlayer() == player) {
 				int from = ludoGame.getPosition(player, piece);
 				int to = ludoGame.getPosition(player, piece) + ludoGame.getDice();
@@ -178,9 +212,8 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	/**
 	 * Sending a chat message to everyone in the game, or only in the chat, except for the 
 	 * @param message the message to send to the chat
-	 * @param client the client that should not receive the message
 	 */
-	public void sendChatMessage(String message, ServerClient client) {
+	public void sendChatMessage(String message) {
 		for (ServerClient chatter : chatters)
 			chatter.sendMessage(new Message(message, "CHAT", this.id).toString());
 		for (ServerClient player : players)
@@ -207,6 +240,13 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	public void startGame() {
     	sendMessage("START_GAME:" + 0);
     	this.status = "STARTED";
+	}
+	
+	/**
+	 * @return number of chatters in the game
+	 */
+	public int getChatterNumber() {
+		return players.size() + chatters.size();
 	}
 
 	/**
