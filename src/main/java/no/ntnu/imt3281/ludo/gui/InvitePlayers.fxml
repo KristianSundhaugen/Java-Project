@@ -13,8 +13,9 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="32.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="800.0" minHeight="10.0" prefHeight="550.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="32.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="534.0" minHeight="10.0" prefHeight="534.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="800.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Click on the players you want to invite ( max 3)" GridPane.hgrow="ALWAYS">
@@ -25,6 +26,11 @@
                   <Insets left="5.0" />
                </padding></Label>
             <ListView fx:id="list" onMouseClicked="#invitePlayer" prefHeight="500.0" prefWidth="200.0" GridPane.rowIndex="1" />
+            <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+               <children>
+                  <Button layoutX="64.0" layoutY="7.0" mnemonicParsing="false" onAction="#createGameButton" prefHeight="27.0" prefWidth="273.0" text="Create new game" />
+               </children>
+            </Pane>
          </children>
       </GridPane>
    </children>
