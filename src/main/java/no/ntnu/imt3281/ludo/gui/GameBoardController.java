@@ -13,6 +13,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -30,6 +31,8 @@ import no.ntnu.imt3281.ludo.client.Globals;
  *
  */
 public class GameBoardController {
+	@FXML
+	private GridPane playersGrid;
 	
 	@FXML
 	private ImageView boardBackground;
@@ -534,5 +537,6 @@ public class GameBoardController {
 		player3Name.setVisible(false);
 		player4Name.setVisible(false);
 		diceThrown.setVisible(false);
+		playersGrid.setVisible(false);
 	}
 }
