@@ -12,41 +12,33 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.ludo.client.Connection;
 
 public class PlayerRegister {
 
 	@FXML
-	private JButton registerButton;
+	private Button registerButton;
 	
 	@FXML
-	private JTextField playerName;
+	private TextField username;
 	
 	@FXML
-	private JPasswordField playerPassword;
+	private PasswordField password;
 	
 	@FXML
-	private JLabel registerMessage;
+	private Label registerMessage;
 	
 	/**
-	 * Checks if both username and password has been filled out
-	 * If username does not exist in database, put them in and go to login screen
-	 * @param event
+	 * 
 	 */
 	@FXML
-	public void handleRegisterButton(ActionEvent event){
-		//check if username is already in database
-		if(!playerName.getText().equals("") && !playerPassword.getPassword().equals("")){
-			registerMessage.setText("User is registered");
-			try {
-				Parent parent = FXMLLoader.load(getClass().getResource("Login.fxml"));
-				Stage stage = new Stage();
-				Scene scene = new Scene(parent);
-				stage.setScene(scene);
-				stage.show();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+	public void handleRegisterButton(){
+		
+		
 	}
 }
