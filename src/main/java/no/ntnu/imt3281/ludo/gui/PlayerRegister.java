@@ -39,6 +39,6 @@ public class PlayerRegister {
 	@FXML
 	public void handleRegisterButton(){
 		
-		
+		Connection.sendMessage(username.getText(), "REGISTER_REQUEST", "-1");
 	}
 }
