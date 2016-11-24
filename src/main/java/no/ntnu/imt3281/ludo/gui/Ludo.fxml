@@ -20,7 +20,7 @@
                 <Menu mnemonicParsing="false" text="Game">
                   <items>
                     <MenuItem fx:id="random" mnemonicParsing="false" onAction="#joinRandomGame" text="Random game" />
-                        <MenuItem mnemonicParsing="false" text="Challenge players" />
+                        <MenuItem mnemonicParsing="false" onAction="#challengePlayers" text="Challenge players" />
                   </items>
                 </Menu>
                   <Menu mnemonicParsing="false" text="Chat">
