@@ -149,24 +149,15 @@ public class LudoController {
      * @param gmsg the message received
      */
     public void createNewGameMessage(GameMessage gmsg) {
-    	Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
-            }
-		});
+    	createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
     }
+    
     /**
      * The client have received information about a new game to join
      * @param gmsg the message received
      */
     public void createNewChatMessage(String chatId, String name) {
-    	Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	createNewChatTab(chatId, name);
-            }
-		});
+    	createNewChatTab(chatId, name);
     }
     
     /**
