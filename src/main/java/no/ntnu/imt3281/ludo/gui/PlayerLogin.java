@@ -1,20 +1,11 @@
 package no.ntnu.imt3281.ludo.gui;
 
-import java.io.IOException;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
-import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
@@ -26,65 +17,38 @@ import no.ntnu.imt3281.ludo.server.UserMessage;
 public class PlayerLogin {
 	
 	@FXML
-	private JButton loginButton;
+	private Button loginButton;
 	
 	@FXML
-	private JTextField username;
+	private TextField username;
 	
 	@FXML
-	private JPasswordField password;
+	private PasswordField password;
 	
 	@FXML
-	private JLabel loginMessage;
+	private Label loginMessage;
 	
-	private LudoController ludoController;
-	private Tab tab;
+	LudoController ludoController;
+	Tab tab;
 	
 	public PlayerLogin(){
 		
 	}
 	
 	private void playerLoggedIn(){
-		Connection.newLoginRequest(this, username.getText(), password.getPassword().toString());
+		Connection.newLoginRequest(this, username.getText(), password.getText());
 	}
-	
-	/**
-	 * This will load the login scene and check if username and password is correct
-	 * @param event
-	 */
+	 
 	@FXML
-	public void handleLoginButton(ActionEvent event) {
+	public void handleLoginButton() {
 
-		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
-		
-		
-		try {
-			((Node)(event.getSource())).getScene().getWindow().hide(); //used to hide login screen
-			Parent parent = FXMLLoader.load(getClass().getResource("GameBoard.fxml"));
-			Stage stage = new Stage();
-			Scene scene = new Scene(parent);
-			stage.setScene(scene);
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Connection.sendMessage(username.getText() + ":" + password.getText(), "LOGIN_REQUEST", "-1");
 	}
-	/**
-	 * This will take the user to the register scene
-	 * @param event
-	 */
+
 	@FXML 
-	public void handleRegisterButton(ActionEvent event){
-		try {
-			((Node)(event.getSource())).getScene().getWindow().hide();
-			Parent parent = FXMLLoader.load(getClass().getResource("RegisterUser.fxml"));
-			Stage registerStage = new Stage();
-			Scene registerScene = new Scene(parent);
-			registerStage.setScene(registerScene);
-			registerStage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void handleRegisterButton(){
+		
+		ludoController.registerDisplay();
 	}
 	
 	public void setLudoController(LudoController ludoController, Tab tab) {
@@ -99,6 +63,13 @@ public class PlayerLogin {
 			Connection.getConnection().loggedIn();
 			ludoController.removeTab(tab);
 		}
-		
+	}
+	
+	public void registerResponse(UserMessage userMessage){
+		if(userMessage.intPart(1) == 0){
+			loginMessage.setText("Invalid username");
+		} else {
+			
+		}
 	}
 }
