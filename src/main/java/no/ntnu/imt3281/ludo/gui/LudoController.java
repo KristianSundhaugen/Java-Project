@@ -7,12 +7,12 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import no.ntnu.imt3281.ludo.client.Connection;
+import no.ntnu.imt3281.ludo.server.ChatMessage;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 
 /**
@@ -42,25 +42,27 @@ public class LudoController {
     @FXML
     public void listChatRooms() {
     	try {
-
-    	//FXMLLoader loader = new FXMLLoader(getClass().getResource("ListRooms.fxml"));
-    	//loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
-    	AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("ListRooms.fxml"));
-		//Scene scene = new Scene(root);
-//
-  //  		AnchorPane gameBoard = loader.load();
-    		
-    		//GameBoardController controller = loader.getController();
-    		
-    		//controller.setPane(gameBoard);
-        	Tab tab = new Tab("Game ");
-    		tab.setContent(root);
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("ListRooms.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		AnchorPane listRooms = loader.load();
+    		ListRoomsController controller = loader.getController();
+        	Tab tab = new Tab("Chat List");
+    		controller.setLudoController(this, tab);
+    		tab.setContent(listRooms);
         	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
     	} catch (IOException e1) {
 			e1.printStackTrace();
 		}
     }
     
+    /**
+     * Removing a tab from the TabPane
+     * @param tab the tab to remove
+     */
+    public void removeTab(Tab tab) {
+    	tabbedPane.getTabs().remove(tab);
+    }
     
     /**
      * Telling the server that the user wants to join a new random game
@@ -105,8 +107,28 @@ public class LudoController {
         	Tab tab = new Tab("Game " + gameId);
     		tab.setContent(gameBoard);
         	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
     	} catch (IOException e1) {
 			e1.printStackTrace();
 		}
     }
+
+	public void createNewChatTab(String id) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("GameBoard.fxml"));
+    	loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    	try {
+    		AnchorPane gameBoard = loader.load();
+    		GameBoardController controller = loader.getController();
+    		
+    		controller.setChat();
+    		controller.setId(id);
+    		controller.setPane(gameBoard);
+        	Tab tab = new Tab("Chat " + id);
+    		tab.setContent(gameBoard);
+        	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
 }
