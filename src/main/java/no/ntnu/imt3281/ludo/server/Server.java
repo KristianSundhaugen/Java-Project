@@ -75,7 +75,11 @@ public class Server {
 	 */
 	public void parseMessage(Message msg) {
 		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
-			joinNewGame(msg.getGameMessage());
+			joinNewRandomGame(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
+			joinNewRandomGame(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isPlayerListRequest())
+			sendPlayerList(msg.getGameMessage());
 		else if (msg.isChat() && msg.getChatMessage().isListRequest())
 			sendChatList(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChatJoin())
@@ -123,12 +127,23 @@ public class Server {
 		}
 		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg, "CHAT", "-1").toString());	
 	}
+	
+	/**
+	 * @param cmsg sending list over chats the user can join
+	 */
+	private void sendPlayerList(GameMessage cmsg) {
+		String msg = "";
+		for (ServerClient client : clients)
+			if (!cmsg.getClient().equals(client))
+				msg += ":" + client.getUsername();
+		cmsg.getClient().sendMessage(new Message("PLAYER_LIST_RESPONSE" + msg, "GAME", "-1").toString());	
+	}
 
 	/**
 	 * Adding player to a new game, creating a new one if there is none to join
 	 * @param gmsg the game message received from the client
 	 */
-	private void joinNewGame(GameMessage gmsg) {
+	private void joinNewRandomGame(GameMessage gmsg) {
 		boolean gameFound = false;
 		for (Game game : games) {
 			if (game.isJoinableByClient(gmsg.getClient())) {
