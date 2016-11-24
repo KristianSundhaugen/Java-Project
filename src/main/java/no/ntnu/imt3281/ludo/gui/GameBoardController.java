@@ -77,11 +77,13 @@ public class GameBoardController {
     private Button sendTextButton;
     
 	private Ludo ludo;
+	
 
     private double[][] piecePos = Globals.getPiecePossitions();
 	private int playerNumber;
 	private AnchorPane gameBoard;
     private Rectangle[][] pieces;
+    private String type = "Ludo";
     
 	/**
 	 * Constructor for the controller, making local Ludo object and sending it to the connection
@@ -106,6 +108,8 @@ public class GameBoardController {
 			playersActive[i].setVisible(false);
 		}
 		throwTheDice.setDisable(true);
+		if (type.equals("Chat"))
+			hideGame();
     }
 
 	/**
@@ -177,8 +181,8 @@ public class GameBoardController {
 	 * @param msg the message containing the  event
 	 */
 	private void runPlayerEvent(GameMessage msg) {
-		int player = msg.part(2);
-		switch (msg.part(1)) {
+		int player = msg.intPart(2);
+		switch (msg.intPart(1)) {
 			case PlayerEvent.LEFTGAME: 
 				ludo.removePlayer(ludo.getPlayerName(player));
 				updatePlayerNames();
@@ -198,8 +202,8 @@ public class GameBoardController {
 	 * @param msg the message containing the event
 	 */
 	private void runPieceEvent(GameMessage msg) {
-		int player = msg.part(4);
-		ludo.movePiece(player, msg.part(1), msg.part(2));
+		int player = msg.intPart(4);
+		ludo.movePiece(player, msg.intPart(1), msg.intPart(2));
 		if (ludo.activePlayer() == player) 
 			waitForNextThrow(player);
 	}
@@ -210,7 +214,7 @@ public class GameBoardController {
 	 * @param msg the message containing the event
 	 */
 	private void runDiceEvent(GameMessage msg) {
-		throwDice(msg.part(1), msg.part(2));
+		throwDice(msg.intPart(1), msg.intPart(2));
 	}
 	
 	/**
@@ -248,11 +252,11 @@ public class GameBoardController {
 	 * Hiding the board and all pieces
 	 */
 	private void hideImages() {
-		for(int player = 0; player < 4; player++){
-			for(int piece = 0; piece < 4; piece++){
-				pieces[player][piece].setVisible(false);
-			}
-		}
+		try {
+			for(int player = 0; player < 4; player++)
+				for(int piece = 0; piece < 4; piece++)
+					pieces[player][piece].setVisible(false);	
+		} catch (Exception e) {}
 		boardBackground.setVisible(false);
 	}
 
@@ -302,22 +306,24 @@ public class GameBoardController {
 	 * Running when a player is joining the game, adding the player to the ludo game and updating the GUI with the user name
 	 */
 	private void updatePlayerNames() {
-		for (int i = 0; i < ludo.nrOfPlayers(); i++)
+		for (int i = 0; i < 4; i++){
 			updatePlayerName(i);
+		}
 	}
 	
 	/**
 	 * Updating the player name in the GUI for a specific player
 	 * @param playerNum the player to update the name for
 	 */
-	private void updatePlayerName(int playerNum){
+	private void updatePlayerName(int playerNum) {
 		Label player = player1Name;
-		switch (ludo.nrOfPlayers()) {
-			case 1:player = player1Name;break;
-			case 2:player = player2Name;break;
-			case 3:player = player3Name;break;
-			case 4:player = player4Name;break;
+		switch (playerNum) {
+			case 0:player = player1Name;break;
+			case 1:player = player2Name;break;
+			case 2:player = player3Name;break;
+			case 3:player = player4Name;break;
 		}
+		
 		player.setText(ludo.getPlayerName(playerNum));
 		if (this.playerNumber == playerNum)
 			player.setUnderline(true);
@@ -380,8 +386,8 @@ public class GameBoardController {
 		pieceImages[2] = new Image(getClass().getResourceAsStream("/images/yellowPiece.png"));
 		pieceImages[3] = new Image(getClass().getResourceAsStream("/images/greenPiece.png"));
 		
-		for(int player = 0; player < 4; player++){
-			for(int piece = 0; piece < 4; piece++){
+		for (int player = 0; player < 4; player++) {
+			for (int piece = 0; piece < 4; piece++) {
 				pieces[player][piece] = new Rectangle(36, 36);
 				pieces[player][piece].setFill(new ImagePattern(pieceImages[player]));
 				gameBoard.getChildren().add(pieces[player][piece]);
@@ -394,15 +400,14 @@ public class GameBoardController {
 	 * Updating the positions of the players pieces out from the positions in the ludo game
 	 */
 	public void updatePiecePositions() {
-		for(int player = 0; player < 4; player++){
-			for(int piece = 0; piece < 4; piece++){
+		for (int player = 0; player < 4; player++) {
+			for (int piece = 0; piece < 4; piece++) {
 				int playerPos = ludo.getPosition(player, piece);
 				int piecesAtPos = ludo.piecesAtPosition(player, playerPos);
 				if (playerPos == 0)
 					piecesAtPos = 1;
 				
 				int position = ludo.getPieceBoardPos(player, piece);
-				
 				if (piecesAtPos == 1)
 					pieces[player][piece].setX(getXPosition(position));
 				else
@@ -434,12 +439,12 @@ public class GameBoardController {
 	}
 	
 	/**
-	 * Adding a shaddow to a image, used to mark the piece that can be moved
-	 * @param image the image to add a shaddow to
+	 * Adding a shadow to a image, used to mark the piece that can be moved
+	 * @param image the image to add a shadow to
 	 */
 	public void addShaddow(Rectangle image){
 		DropShadow dropShadow = new DropShadow();
-		dropShadow.setRadius(7.0);
+		dropShadow.setRadius(8.0);
 		dropShadow.setOffsetX(3.0);
 		dropShadow.setOffsetY(3.0);
 		dropShadow.setColor(Color.color(0, 0, 0));
@@ -473,7 +478,7 @@ public class GameBoardController {
 	/**
 	 * Returning the Y position on the board out from a game position
 	 * @param pos the position in the game
-	 * @return the Y collumn on the board
+	 * @return the Y column on the board
 	 */
 	public double getYPosition(int pos){
 		return piecePos[pos][1] * 48 + 6;
@@ -504,7 +509,30 @@ public class GameBoardController {
 	 */
 	public void setPane(AnchorPane gameBoard) {
 		this.gameBoard = gameBoard;
-		setUpPieces();
-		throwTheDice.setText("Waiting for players");
+		if (this.type.equals("Ludo")) {
+			setUpPieces();
+			throwTheDice.setText("Waiting for players");
+		}
+	}
+	
+	/**
+	 * Setting the type of the game to the chat, then hiding the game
+	 */
+	public void setChat() {
+		this.type = "Chat";
+		hideGame();
+	}
+	
+	/**
+	 * Hiding all game images
+	 */
+	public void hideGame() {
+		hideImages();
+		throwTheDice.setVisible(false);
+		player1Name.setVisible(false);
+		player2Name.setVisible(false);
+		player3Name.setVisible(false);
+		player4Name.setVisible(false);
+		diceThrown.setVisible(false);
 	}
 }
