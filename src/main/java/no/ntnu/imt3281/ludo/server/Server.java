@@ -78,10 +78,12 @@ public class Server {
 	public void parseMessage(Message msg) {
 		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
 			joinNewRandomGame(msg.getGameMessage());
-		else if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
-			joinNewRandomGame(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isPrivateGameRequest())
+			createPrivateGame(msg.getGameMessage());
 		else if (msg.isGame() && msg.getGameMessage().isPlayerListRequest())
 			sendPlayerList(msg.getGameMessage());
+		else if (msg.isGame() && msg.getGameMessage().isAcceptInvite())
+			acceptInvite(msg.getGameMessage());
 		else if (msg.isChat() && msg.getChatMessage().isListRequest())
 			sendChatList(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChatJoin())
@@ -162,7 +164,36 @@ public class Server {
 			games.add(game);
 		}
 	}
+	/**
+	 * Adding the player that accepted the game invite to the game
+	 * @param gmsg the game message received from the client
+	 */
+	private void acceptInvite(GameMessage gmsg) {
+		for (Game game : games) {
+			if (game.isJoinableByClient(gmsg.getClient()) && game.getId().equals(gmsg.getId())) {
+				game.addPlayer(gmsg.getClient());
+				if (game.isFull()) {
+					game.startGame();
+				}
+			}
+		}
+	}
 
+	/**
+	 * Creating a new private game, and inviting users
+	 * @param gmsg the game message received from the client
+	 */
+	private void createPrivateGame(GameMessage gmsg) {
+		Game game = new Game("CLOSED");
+		game.addPlayer(gmsg.getClient());
+
+		for (String player : gmsg.getMessage().split(":")) {
+			if (getClient(player) != null)
+				game.invitePlayer(getClient(player), gmsg.getClient());
+		}
+		games.add(game);
+	}
+	
 	/**
 	 * Username and password is checked in the database
 	 * If they are found and are correct the user will be logged in
@@ -203,6 +234,14 @@ public class Server {
 	 */
 	public Vector<ServerClient> getClients() {
 		return clients;
+	}
+	
+	private ServerClient getClient(String username) {
+		for (ServerClient serverClient : clients) {
+			if (serverClient.getUsername().equals(username))
+				return serverClient;
+		}
+		return null;
 	}
 
 }
