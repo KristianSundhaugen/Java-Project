@@ -62,6 +62,9 @@ public class Server {
 	 * @param client the client to remove
 	 */
 	public void removeClient(ServerClient client) {
+		for (Game game : games) {
+			game.clientLeave(client);
+		}
 		clients.remove(client);
 	}
 	
@@ -72,12 +75,39 @@ public class Server {
 	public void parseMessage(Message msg) {
 		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
 			joinNewGame(msg.getGameMessage());
+		else if (msg.isChat() && msg.getChatMessage().isListRequest())
+			sendChatList(msg.getChatMessage());
+		else if (msg.isChat() && msg.getChatMessage().isNewChat())
+			joinNewChat(msg.getChatMessage());
 		else
 			for (Game game : games)
 				if (game.getId().equals(msg.getGameMessage().getId()))
 					game.runMessage(msg);	
 	}
 	
+	/**
+	 * @param cmsg adding the client to the requested chat
+	 */
+	private void joinNewChat(ChatMessage cmsg) {
+		for (Game game : games) {
+			if (game.getId().equals(cmsg.getId())) {
+				game.addChatter(cmsg.getClient());
+			}
+		}		
+	}
+	
+	/**
+	 * @param cmsg sending list over chats the user can join
+	 */
+	private void sendChatList(ChatMessage cmsg) {
+		String msg = "";
+		for (Game game : games) {
+			if (game.isOpen())
+				msg += ":" + game.getId() + "-" + game.getChatterNumber();
+		}
+		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg, "CHAT", "-1").toString());	
+	}
+
 	/**
 	 * Adding player to a new game, creating a new one if there is none to join
 	 * @param gmsg the game message received from the client
