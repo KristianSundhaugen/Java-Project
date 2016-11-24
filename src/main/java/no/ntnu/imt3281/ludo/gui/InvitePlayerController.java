@@ -40,7 +40,12 @@ public class InvitePlayerController {
 	 */
 	@FXML
 	public void createGameButton() {
-		System.out.println("Create game");
+		String inviteString = "";
+		for (String invite : invites) {
+			inviteString += ":" + invite;
+		}
+		Connection.sendMessage("PRIVATE_GAME_REQUEST" + inviteString, "GAME", "-1");
+		ludoController.removeTab(tab);
 	}
 	
 	/**
