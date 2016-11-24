@@ -21,7 +21,7 @@ public class Connection {
     	static Connection instance = new Connection();
     	static LudoController ludoController = null;
     	static ListRoomsController listRoomsController = null;
-		public static InvitePlayerController invitePlayerController;
+		public static InvitePlayerController invitePlayerController = null;
     }
 	
     private Socket socket;
@@ -88,6 +88,10 @@ public class Connection {
 		if (msg.isGame() && msg.getGameMessage().isNewGame()) {
 			if (SynchronizedHolder.ludoController != null)
 	        	SynchronizedHolder.ludoController.createNewGameMessage(msg.getGameMessage());
+		} else if (msg.isGame() && msg.getGameMessage().isPlayerListResponse()) {
+			if (SynchronizedHolder.invitePlayerController != null)
+				SynchronizedHolder.invitePlayerController.playerListResponse(msg.getGameMessage());
+			SynchronizedHolder.invitePlayerController = null;
 		} else if (msg.isChat() && msg.getChatMessage().isListResponse()) {
 			if (SynchronizedHolder.listRoomsController != null)
 	        	SynchronizedHolder.listRoomsController.listResponse(msg.getChatMessage());
@@ -145,7 +149,11 @@ public class Connection {
 	public static void stopConnection() {
 		getConnection().reader.stop();
 	}
-
+	
+	/**
+	 * request to get a player list from the server
+	 * @param invitePlayerController the controller that should receive the player list
+	 */
 	public static void newPlayerListRequest(InvitePlayerController invitePlayerController) {
 		SynchronizedHolder.invitePlayerController = invitePlayerController;
 		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
