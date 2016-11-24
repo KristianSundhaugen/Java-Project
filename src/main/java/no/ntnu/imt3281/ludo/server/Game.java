@@ -303,5 +303,10 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	public boolean isChat() {
 		return type.equals("CHAT");
 	}
+
+	public void invitePlayer(ServerClient client, ServerClient inviter) {
+		sendMessageToClient("GAME_INVITE:" + inviter.getUsername() , client);
+		invitedPlayers.add(client);
+	}
 	
 }
