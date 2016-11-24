@@ -30,7 +30,7 @@ public class PlayerEvent {
 		this.state = state;	
 	}
 	/**
-	 * Checking that current playerevent object is equals/true
+	 * Checking that current player event object is equals/true
 	 */
 	@Override
 	public boolean equals(Object obj){
