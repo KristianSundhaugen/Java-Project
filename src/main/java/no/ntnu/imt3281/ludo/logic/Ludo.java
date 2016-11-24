@@ -119,7 +119,7 @@ public class Ludo {
 		try {
 			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			return null;
+			return "";
 		}
 	}
 	
@@ -153,15 +153,17 @@ public class Ludo {
 	 */
 	public void removePlayer(String playerName) {
 		int index = players.indexOf(playerName);
-		players.remove(index);
-		players.add(index, "Inactive: " + playerName);
-		PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
-		for (int i = 0; i < playerListenerers.size(); i++) {
-			playerListenerers.get(i).playerStateChanged(playerChange);
+		if(index > -1) {
+			players.remove(index);
+			players.add(index, "Inactive: " + playerName);
+			PlayerEvent playerChange = new PlayerEvent(this, activePlayer(), PlayerEvent.LEFTGAME);
+			for (int i = 0; i < playerListenerers.size(); i++) {
+				playerListenerers.get(i).playerStateChanged(playerChange);
+			}
 		}
-		
 		if( activePlayer() == index)
 			nextPlayer();
+		
 	}
 	
 	/**
