@@ -95,6 +95,13 @@ public class Connection {
 			if (SynchronizedHolder.invitePlayerController != null)
 				SynchronizedHolder.invitePlayerController.playerListResponse(msg.getGameMessage());
 			SynchronizedHolder.invitePlayerController = null;
+		} else if (msg.isGame() && msg.getGameMessage().isPrivateGameResponse()) {
+			if (SynchronizedHolder.invitePlayerController != null)
+				SynchronizedHolder.invitePlayerController.playerListResponse(msg.getGameMessage());
+			SynchronizedHolder.invitePlayerController = null;
+		} else if (msg.isGame() && msg.getGameMessage().isGameInvite()) {
+			if (SynchronizedHolder.ludoController != null)
+				SynchronizedHolder.ludoController.showInviteDialog(msg.getGameMessage());
 		} else if (msg.isChat() && msg.getChatMessage().isListResponse()) {
 			if (SynchronizedHolder.listRoomsController != null)
 	        	SynchronizedHolder.listRoomsController.listResponse(msg.getChatMessage());
@@ -163,6 +170,10 @@ public class Connection {
 	public static void newPlayerListRequest(InvitePlayerController invitePlayerController) {
 		SynchronizedHolder.invitePlayerController = invitePlayerController;
 		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
+	}
+	public static void newPrivateGameRequest(InvitePlayerController invitePlayerController) {
+		SynchronizedHolder.invitePlayerController = invitePlayerController;
+		Connection.sendMessage("PRIVATE_GAME_REQUEST", "GAME", "-1");	
 	}
 	
 	public static void newLoginRequest(PlayerLogin loginController, String username, String password) {
