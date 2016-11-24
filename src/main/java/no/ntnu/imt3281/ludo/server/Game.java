@@ -20,12 +20,14 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	private String type = "OPEN";
 	private String id;
 	private Ludo ludoGame;
+	private String name = null;
 	
 	/**
 	 * Creating a new game with the default type open
 	 */
     public Game() {
     	this.id = String.valueOf(idCounter++);
+    	this.name = "Game " + id;
     	ludoGame = new Ludo();
     	ludoGame.addDiceListener(this);
     	ludoGame.addPlayerListener(this);
@@ -39,6 +41,18 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
     public Game(String type) {
     	this.type = type;
     	this.id = String.valueOf(idCounter++);
+    	this.name = "Game " + id;
+    	ludoGame = new Ludo();
+    }
+    
+    /**
+     * Creating a new game where the type is sent with as a parameter
+     * @param type the type of the game
+     */
+    public Game(String type, String chatName) {
+    	this.type = type;
+    	this.id = String.valueOf(idCounter++);
+    	this.name = chatName;
     	ludoGame = new Ludo();
     }
     
@@ -248,6 +262,10 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	public int getChatterNumber() {
 		return players.size() + chatters.size();
 	}
+	
+	public String getName() {
+		return this.name;
+	}
 
 	/**
 	 * Called when a dice is thrown,
@@ -281,4 +299,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 				+ ":" + event.getPiece()
 				+ ":" + event.getPlayer());
 	}
+
+	public boolean isChat() {
+		return type.equals("CHAT");
+	}
+	
 }
