@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
+import no.ntnu.imt3281.ludo.gui.ListRoomsController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
 import no.ntnu.imt3281.ludo.server.Message;
 
@@ -18,7 +19,7 @@ public class Connection {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
     	static LudoController waitingNewGame = null;
-    	static LudoController startNewChat = null;
+    	static ListRoomsController chatListRequest = null;
     }
 	
     private Socket socket;
@@ -85,7 +86,11 @@ public class Connection {
 		if (msg.isGame() && msg.getGameMessage().isNewGame()) {
 			if (SynchronizedHolder.waitingNewGame != null)
 	        	SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
-			SynchronizedHolder.waitingNewGame = null;		
+			SynchronizedHolder.waitingNewGame = null;
+		} else if (msg.isChat() && msg.getChatMessage().isListResponse()) {
+			if (SynchronizedHolder.chatListRequest != null)
+	        	SynchronizedHolder.chatListRequest.listResponse(msg.getChatMessage());
+			SynchronizedHolder.chatListRequest = null;
 		} else
 			parseGameMessage(msg);	
 	}
@@ -119,9 +124,9 @@ public class Connection {
 	 * Sending request to the server to join a new chat
 	 * @param ludoController the controller to respond to when the server sends and answer
 	 */
-	public static void newChat(LudoController ludoController) {
-		SynchronizedHolder.startNewChat = ludoController;
-		sendMessage("NEW_CHAT_REQUEST", "CHAT", "-1");
+	public static void newChatListRequest(ListRoomsController listController) {
+		SynchronizedHolder.chatListRequest = listController;
+		Connection.sendMessage("LIST", "CHAT", "-1");
 	}
 	
 	/**
