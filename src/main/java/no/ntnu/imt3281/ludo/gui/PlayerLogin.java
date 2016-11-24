@@ -1,4 +1,4 @@
-spackage no.ntnu.imt3281.ludo.gui;
+package no.ntnu.imt3281.ludo.gui;
 
 import java.io.IOException;
 
@@ -51,6 +51,8 @@ public class PlayerLogin {
 	public void handleLoginButton(ActionEvent event) {
 
 		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN", "-1");
+		
+		
 		try {
 			((Node)(event.getSource())).getScene().getWindow().hide(); //used to hide login screen
 			Parent parent = FXMLLoader.load(getClass().getResource("GameBoard.fxml"));

@@ -79,6 +79,8 @@ public class Server {
 			sendChatList(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChat())
 			joinNewChat(msg.getChatMessage());
+		else if(msg.isLogin() && msg.getLoginMessage().isLoginRequest())
+			userLogin(msg.getLoginMessage());
 		else
 			for (Game game : games)
 				if (game.getId().equals(msg.getGameMessage().getId()))
@@ -128,6 +130,14 @@ public class Server {
 			game.addPlayer(gmsg.getClient());
 			games.add(game);
 		}
+	}
+
+	/**
+	 * Player gets logged in
+	 * @param lmessage, message recived from client
+	 */
+	private void userLogin(UserMessage lmessage){
+		
 	}
 	
 	/**
