@@ -44,6 +44,7 @@ public class Database {
 				sqle.printStackTrace();
 		}
 	}
+	
 	/** 
 	 * Adds a new user to the database
 	 * @param username
@@ -60,8 +61,9 @@ public class Database {
 				Connection conn = DriverManager.getConnection(dbURL);
 				PreparedStatement stmt = conn.prepareStatement(query);
 				stmt.setString(1, username);
-				password = hash(password, getNextSalt());
-				stmt.setString(2, password);
+				char[] charPas = password.toCharArray();
+				String hashPas = Password.hash(charPas).toString();
+				stmt.setString(2, hashPas);
 				
 				stmt.executeUpdate();
 				stmt.close();
@@ -109,11 +111,15 @@ public class Database {
 		String checkUser = rsu.getString(1);
 		
 		if (checkUser.equals(uname)){
+			char[] charPas = pword.toCharArray();
+			String hashPas = Password.hash(charPas).toString();
 			query = "SELECT * FROM players WHERE hashpassword="+
-			"\""+pword+"\""+";";
+			"\""+hashPas+"\""+";";
 			ResultSet rsp = stmt.executeQuery(query);
-			String checkPassword = rsp.getString(2);
-			if(checkPassword.equals(pword))
+			String hashDBpwd = rsp.getString(2);
+			byte[] hashDBpwdByte = hashDBpwd.getBytes();
+			charPas = hashPas.toCharArray();
+			if(Password.isExpectedPassword(charPas, hashDBpwdByte) == true)
 				return true;
 			else
 				return false;

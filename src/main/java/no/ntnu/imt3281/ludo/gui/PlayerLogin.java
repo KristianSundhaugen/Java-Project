@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
@@ -30,8 +31,8 @@ public class PlayerLogin {
 	@FXML
 	private JLabel loginMessage;
 	
-	private LudoController ludoController;
-	private Tab tab;
+	LudoController ludoController;
+	Tab tab;
 	
 	public PlayerLogin(){
 		
@@ -40,24 +41,19 @@ public class PlayerLogin {
 	private void playerLoggedIn(){
 		Connection.newLoginRequest(this, username.getText(), password.getPassword().toString());
 	}
-	
-	/**
-	 * Sends a message to the server where the username and password is checked against the database
-	 */
+	 
 	@FXML
 	public void handleLoginButton() {
 
+
 		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
 	}
-	/**
-	 * Sends a message to the server where the username is checked againts the database
-	 */
+
 	@FXML 
 	public void handleRegisterButton(){
 		
 		Connection.sendMessage(username.getText(), "REGISTER_REQUEST", "-1");
 	}
-	
 	public void setLudoController(LudoController ludoController, Tab tab) {
 		this.ludoController = ludoController;
 		this.tab = tab;
