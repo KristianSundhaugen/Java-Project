@@ -60,7 +60,7 @@ public class Database {
 				Connection conn = DriverManager.getConnection(dbURL);
 				PreparedStatement stmt = conn.prepareStatement(query);
 				stmt.setString(1, username);
-				password = hash(password, getNextSalt());
+				//password = hash(password, getNextSalt());
 				stmt.setString(2, password);
 				
 				stmt.executeUpdate();
