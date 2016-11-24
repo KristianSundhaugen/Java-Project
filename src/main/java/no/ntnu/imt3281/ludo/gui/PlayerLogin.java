@@ -50,7 +50,7 @@ public class PlayerLogin {
 	@FXML
 	public void handleLoginButton(ActionEvent event) {
 
-		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN", "-1");
+		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
 		
 		
 		try {

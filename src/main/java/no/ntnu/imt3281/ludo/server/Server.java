@@ -16,7 +16,8 @@ public class Server {
     private ServerMessageReader reader;
 	private boolean stop = false;
     private static Server server;
-    private Database userDatabase;
+    private Database database;
+    private boolean isLoggedIn;
     
     /**
      * Main function to start the program
@@ -164,7 +165,11 @@ public class Server {
 	 * @param rmessage, message recived from client
 	 */
 	private void userRegister(UserMessage rmessage){
-		
+		//NO : IN USERNAME
+		UserMessage um = new UserMessage(rmessage);
+		if(um.stringPart(1).contains(":")){
+			//Change to bool for return false?
+		}
 	}
 	
 	/**
