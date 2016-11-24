@@ -1,14 +1,11 @@
 package no.ntnu.imt3281.ludo.gui;
 
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
@@ -20,16 +17,16 @@ import no.ntnu.imt3281.ludo.server.UserMessage;
 public class PlayerLogin {
 	
 	@FXML
-	private JButton loginButton;
+	private Button loginButton;
 	
 	@FXML
-	private JTextField username;
+	private TextField username;
 	
 	@FXML
-	private JPasswordField password;
+	private PasswordField password;
 	
 	@FXML
-	private JLabel loginMessage;
+	private Label loginMessage;
 	
 	LudoController ludoController;
 	Tab tab;
@@ -39,14 +36,13 @@ public class PlayerLogin {
 	}
 	
 	private void playerLoggedIn(){
-		Connection.newLoginRequest(this, username.getText(), password.getPassword().toString());
+		Connection.newLoginRequest(this, username.getText(), password.getText());
 	}
 	 
 	@FXML
 	public void handleLoginButton() {
 
-
-		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
+		Connection.sendMessage(username.getText() + ":" + password.getText(), "LOGIN_REQUEST", "-1");
 	}
 
 	@FXML 
@@ -54,6 +50,7 @@ public class PlayerLogin {
 		
 		Connection.sendMessage(username.getText(), "REGISTER_REQUEST", "-1");
 	}
+	
 	public void setLudoController(LudoController ludoController, Tab tab) {
 		this.ludoController = ludoController;
 		this.tab = tab;
