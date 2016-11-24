@@ -9,6 +9,7 @@ import no.ntnu.imt3281.ludo.gui.GameBoardController;
 import no.ntnu.imt3281.ludo.gui.InvitePlayerController;
 import no.ntnu.imt3281.ludo.gui.ListRoomsController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
+import no.ntnu.imt3281.ludo.gui.PlayerLogin;
 import no.ntnu.imt3281.ludo.server.Message;
 
 /**
@@ -21,7 +22,9 @@ public class Connection {
     	static Connection instance = new Connection();
     	static LudoController ludoController = null;
     	static ListRoomsController listRoomsController = null;
-		public static InvitePlayerController invitePlayerController = null;
+		static InvitePlayerController invitePlayerController = null;
+		static PlayerLogin loginController = null;
+		static boolean loggedIn = false;
     }
 	
     private Socket socket;
@@ -99,6 +102,9 @@ public class Connection {
 		} else if (msg.isChat() && msg.getChatMessage().isChatJoin()) {
 			if (SynchronizedHolder.ludoController != null)
 	        	SynchronizedHolder.ludoController.createNewChatMessage(msg.getId(), msg.stringPart(1));
+		}else if(msg.isUser() && msg.getUserMessage().isLoginRespons()){
+			if (SynchronizedHolder.loginController != null)
+				SynchronizedHolder.loginController.loginResponse(msg.getUserMessage());
 		} else
 			parseGameMessage(msg);	
 	}
@@ -157,6 +163,15 @@ public class Connection {
 	public static void newPlayerListRequest(InvitePlayerController invitePlayerController) {
 		SynchronizedHolder.invitePlayerController = invitePlayerController;
 		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
+	}
+	
+	public static void newLoginRequest(PlayerLogin loginController, String username, String password) {
+		SynchronizedHolder.loginController  = loginController;
+		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
+	}
+
+	public void loggedIn() {
+		SynchronizedHolder.loggedIn = true;	
 	}
 
 
