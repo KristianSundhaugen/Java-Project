@@ -11,8 +11,9 @@ public class Database {
 	private final static String dbURL = "jdbc:derby:prosjektDB;create=true";
 	/**
 	 * Connects to the created derby database
+	 * @return 
 	 */
-	public Database(){
+	public void DatabaseConnect(){
 			try {
 			
 				//connect to embedded driver in memory
@@ -35,7 +36,7 @@ public class Database {
 				Statement stmt = conn.createStatement();
 				stmt.execute("CREATE TABLE players ("
 						+ "username varchar(128) NOT NULL, "
-			            + "password varchar(128) NOT NULL, "
+			            + "hashpassword varchar(128) NOT NULL, "
 			            + "PRIMARY KEY  (username))");
 				conn.close();
 				System.out.println("Table 'players' created");
@@ -52,13 +53,14 @@ public class Database {
 			throws SQLException
 			{
 				String query = "INSERT INTO players "
-						       +"(username, password)"
+						       +"(username, hashpassword)"
 						       +"VALUES(?, ?)";
 			
 			try{
 				Connection conn = DriverManager.getConnection(dbURL);
 				PreparedStatement stmt = conn.prepareStatement(query);
 				stmt.setString(1, username);
+				password = hash(password, getNextSalt());
 				stmt.setString(2, password);
 				
 				stmt.executeUpdate();
@@ -90,6 +92,38 @@ public class Database {
 	}catch(SQLException e){
 		e.printStackTrace();
 	}
+	}
+	/**
+	 * Checks if username and password exists in database
+	 * @param uname
+	 * @param pword
+	 */
+	public boolean checkLogin(String uname, String pword){
+	try{
+		Connection conn = DriverManager.getConnection(dbURL);
+		Statement stmt = conn.createStatement();
+		String query = "SELECT * FROM players WHERE username="+
+		"\""+uname+"\""+";";
+		ResultSet rsu = stmt.executeQuery(query);
+		String checkUser = rsu.getString(1);
+		
+		if (checkUser.equals(uname)){
+			query = "SELECT * FROM players WHERE hashpassword="+
+			"\""+pword+"\""+";";
+			ResultSet rsp = stmt.executeQuery(query);
+			String checkPassword = rsp.getString(2);
+			if(checkPassword.equals(pword))
+				return true;
+			else
+				return false;
+		}
+		else 
+			return false;
+		
+	} catch(SQLException e){
+			e.printStackTrace();
+			}
+	return false;
 	}
 }
 
