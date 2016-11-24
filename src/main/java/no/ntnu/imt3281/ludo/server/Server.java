@@ -88,7 +88,7 @@ public class Server {
 			userRegister(msg.getUserMessage());
 		else 
 			for (Game game : games)
-				if (game.getId().equals(msg.getGameMessage().getId()))
+				if (game.getId().equals(msg.getId()))
 					game.runMessage(msg);	
 	}
 	
