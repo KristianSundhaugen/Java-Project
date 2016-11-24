@@ -13,7 +13,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.ludo.client.Connection;
 /**
  * 
  * @author Simen
@@ -34,37 +36,34 @@ public class PlayerLogin {
 	@FXML
 	private JLabel loginMessage;
 	
+	private LudoController ludoController;
+	private Tab tab;
+	
 	public PlayerLogin(){
 		
 	}
 	
 	/**
-	 * This will load the login scene and if both username and password is filled out
-	 * the user will be taken to the GameBoard scene and can start a new game.
+	 * This will load the login scene and check if username and password is correct
 	 * @param event
 	 */
 	@FXML
 	public void handleLoginButton(ActionEvent event) {
-		
-		//change to check for username and password in database
-		if(username.getText().equals("") && password.getPassword().equals("")){
-			try {
-				//((Node)(event.getSource())).getScene().getWindow().hide(); //used to hide login screen
-				Parent parent = FXMLLoader.load(getClass().getResource("GameBoard.fxml"));
-				Stage stage = new Stage();
-				Scene scene = new Scene(parent);
-				stage.setScene(scene);
-				stage.show();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else {
-			loginMessage.setText("Username or password is invalid");			
+
+		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN", "-1");
+		try {
+			((Node)(event.getSource())).getScene().getWindow().hide(); //used to hide login screen
+			Parent parent = FXMLLoader.load(getClass().getResource("GameBoard.fxml"));
+			Stage stage = new Stage();
+			Scene scene = new Scene(parent);
+			stage.setScene(scene);
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
 	}
 	/**
-	 * 
+	 * This will take the user to the register scene
 	 * @param event
 	 */
 	@FXML 
@@ -79,5 +78,10 @@ public class PlayerLogin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setLudoController(LudoController ludoController, Tab tab) {
+		this.ludoController = ludoController;
+		this.tab = tab;
 	}
 }
