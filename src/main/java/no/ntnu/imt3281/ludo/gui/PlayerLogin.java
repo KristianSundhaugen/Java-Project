@@ -48,7 +48,7 @@ public class PlayerLogin {
 	@FXML 
 	public void handleRegisterButton(){
 		
-		Connection.sendMessage(username.getText(), "REGISTER_REQUEST", "-1");
+		ludoController.registerDisplay();
 	}
 	
 	public void setLudoController(LudoController ludoController, Tab tab) {

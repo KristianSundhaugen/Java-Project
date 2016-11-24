@@ -112,12 +112,10 @@ public class LudoController {
     @FXML
     public void registerDisplay(){
     	try{
-    		FXMLLoader loader = new FXMLLoader(getClass().getResource("Register.fxml"));
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("RegisterUser.fxml"));
     		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
     		Pane register = loader.load();
-    		PlayerLogin controller = loader.getController();
     		Tab tab = new Tab("Register user");
-    		controller.setLudoController(this, tab);
     		tab.setContent(register);
     		tabbedPane.getTabs().add(tab);
     		tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
