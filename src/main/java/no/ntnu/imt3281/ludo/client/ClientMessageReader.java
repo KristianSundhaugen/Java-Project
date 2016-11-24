@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import javafx.application.Platform;
 import no.ntnu.imt3281.ludo.server.Message;
 
 public class ClientMessageReader implements Runnable {
@@ -26,9 +27,15 @@ public class ClientMessageReader implements Runnable {
 	public void run() {
 		while (!stop) {
 			Message msg = getMessage();
-			if (msg != null && !msg.isPing())
-				connection.messageParser(msg);
-			try {Thread.sleep(100);} catch (InterruptedException e) {}
+			if (msg != null && !msg.isPing()) {
+				Platform.runLater(new Runnable() {
+		            @Override
+		            public void run() {
+		            	connection.messageParser(msg);
+		            }
+				});
+			}
+			try {Thread.sleep(10);} catch (InterruptedException e) {}
 		}    	
 	}
 

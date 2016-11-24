@@ -38,15 +38,28 @@ public class UserMessage extends Message{
 		return this.loginValue;
 	}
 
+	/**
+	 * @return boolean, if it is a login request
+	 */
 	public boolean isLoginRequest(){
 		return loginType.equals("LOGIN_REQUEST");
 	}
-	
+	/**
+	 * @return boolean, if it is a register request
+	 */
 	public boolean isRegisterRequest(){
 		return loginType.equals("REGISTER_REQUEST");
 	}
-
+	/**
+	 * @return boolean, if it is a login response
+	 */
 	public boolean isLoginRespons() {
 		return loginType.equals("LOGIN_RESPONSE");
+	}
+	/**
+	 * @return boolean, if it is a register request
+	 */
+	public boolean isRegisterResponse(){
+		return loginType.equals("REGISTER_RESPONSE");
 	}
 }

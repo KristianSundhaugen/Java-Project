@@ -101,6 +101,9 @@ public class Message {
 		return type.equals("USER");
 	}
 	
+	/**
+	 * @return boolean if the message is REGISTER message
+	 */
 	public boolean isRegister(){
 		return type.equals("REGISTER");
 	}
@@ -153,6 +156,9 @@ public class Message {
 		return new ChatMessage(this);
 	}
 	
+	/**
+	 * @return user message 
+	 */
 	public UserMessage getUserMessage(){
 		return new UserMessage(this);
 	}

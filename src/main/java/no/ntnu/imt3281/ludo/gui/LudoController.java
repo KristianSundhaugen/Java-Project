@@ -13,7 +13,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import no.ntnu.imt3281.ludo.client.Connection;
-import no.ntnu.imt3281.ludo.server.ChatMessage;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 
 /**
@@ -29,6 +28,10 @@ public class LudoController {
     @FXML
     private TabPane tabbedPane;
     
+    
+    public LudoController() {
+    	Connection.getConnection().setLudoController(this);
+    }
     /**
      * Response to user clicking join chat room button
      */
@@ -109,6 +112,21 @@ public class LudoController {
     	}
     }
     
+    @FXML
+    public void registerDisplay(){
+    	try{
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("RegisterUser.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		Pane register = loader.load();
+    		Tab tab = new Tab("Register user");
+    		tab.setContent(register);
+    		tabbedPane.getTabs().add(tab);
+    		tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
     /**
      * Removing a tab from the TabPane
      * @param tab the tab to remove
@@ -123,9 +141,7 @@ public class LudoController {
      */
     @FXML
     public void joinRandomGame(ActionEvent e) { 
-    	LudoController controller = this;
-       	Connection.getConnection().setLudoController(controller);
-		Connection.sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
+    	Connection.sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
     }
     
     /**
@@ -196,6 +212,22 @@ public class LudoController {
     		controller.setPane(gameBoard);
         	Tab tab = new Tab(name);
     		tab.setContent(gameBoard);
+        	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	public void showInviteDialog(GameMessage gameMessage) {
+		try {
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("Invite.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		AnchorPane invitePane = loader.load();
+    		InviteController controller = loader.getController();
+        	Tab tab = new Tab("New Invite");
+    		controller.setLudoController(this, tab);
+    		controller.setInviteInfo(gameMessage);
+    		tab.setContent(invitePane);
         	tabbedPane.getTabs().add(tab);
         	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
     	} catch (IOException e1) {

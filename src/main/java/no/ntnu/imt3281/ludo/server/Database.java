@@ -106,7 +106,6 @@ public class Database {
 				char[] charPas = password.toCharArray();
 				String hashPas = Password.hash(charPas).toString();
 				stmt.setString(2, hashPas);
-				
 				stmt.executeUpdate();
 				stmt.close();
 				conn.close();
@@ -121,22 +120,23 @@ public class Database {
 	 * Checks if username exists in database
 	 * @param username
 	 */
-	public void checkUsername(String uname){
-	try{
-		Connection conn = DriverManager.getConnection(dbURL);
-		Statement stmt = conn.createStatement();
-		String query = "SELECT * FROM players WHERE username="+
-		"\""+uname+"\""+";";
-		ResultSet rs = stmt.executeQuery(query);
-		String checkUser = rs.getString(1);
-		if(checkUser.equals(uname)){
-			System.out.println("User already exists");
-			}
-		else
-			System.out.println("Username is free");
-	}catch(SQLException e){
-		e.printStackTrace();
-	}
+	public boolean checkUsername(String uname){
+		try{
+			Connection conn = DriverManager.getConnection(dbURL);
+			Statement stmt = conn.createStatement();
+			String query = "SELECT * FROM players WHERE username="+
+			"\""+uname+"\""+";";
+			ResultSet rs = stmt.executeQuery(query);
+			String checkUser = rs.getString(1);
+			if(checkUser.equals(uname)){
+					return false;
+				}
+			else
+				return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 	/**
 	 * Checks if username and password exists in database

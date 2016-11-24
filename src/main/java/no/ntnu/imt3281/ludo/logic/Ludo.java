@@ -119,7 +119,7 @@ public class Ludo {
 		try {
 			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			return "";
+			return null;
 		}
 	}
 	
