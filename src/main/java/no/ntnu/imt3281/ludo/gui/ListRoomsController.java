@@ -39,10 +39,12 @@ public class ListRoomsController {
 	@FXML
 	private void selectChannel() {
 		String[] parts = list.getSelectionModel().getSelectedItem().split("\t\t");
-		String id = parts[0].replaceAll("Game nr: ", "");
+		String id = parts[0].replaceAll("Id: ", "");
+		String name = parts[1].replaceAll("Name: ", "");
+		
 		Connection.sendMessage("NEW_CHAT_JOIN", "CHAT", id);
 		ludoController.removeTab(tab);
-		ludoController.createNewChatTab(id);
+		ludoController.createNewChatTab(id, name);
 	}
 	
 	/**
@@ -50,11 +52,12 @@ public class ListRoomsController {
 	 * @param chatMessage the chat message containing the list of chats
 	 */
 	public void listResponse(ChatMessage chatMessage) {
-		ObservableList<String> items =FXCollections.observableArrayList ();
+		ObservableList<String> items = FXCollections.observableArrayList ();
 		for (String room : chatMessage.getMessage().split(":")) {
 			if (!room.equals("LIST_ROOMS_RESPONSE")) {
 				String[] parts = room.split("-");
-				items.add("Game nr: " + parts[0] + "\t\tChatters: " + parts[1]);
+				String name = room.substring(parts[0].length() + parts[1].length() + 2);
+				items.add("Id: " + parts[0] + "\t\tName: " + name + "\t\tChatters: " + parts[1]);
 			}
 		}
 		list.setItems(items);

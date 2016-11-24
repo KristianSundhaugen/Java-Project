@@ -23,6 +23,7 @@ public class Server {
      */
 	public static void main(String[] args) {
         try {
+        	System.out.println("Server Starting");
 			server = new Server();
 		} catch (IOException e) {System.out.println(e);}
         Runtime.getRuntime().addShutdownHook(new Thread() {            
@@ -77,11 +78,17 @@ public class Server {
 			joinNewGame(msg.getGameMessage());
 		else if (msg.isChat() && msg.getChatMessage().isListRequest())
 			sendChatList(msg.getChatMessage());
-		else if (msg.isChat() && msg.getChatMessage().isNewChat())
+		else if (msg.isChat() && msg.getChatMessage().isNewChatJoin())
 			joinNewChat(msg.getChatMessage());
-		else
+		else if (msg.isChat() && msg.getChatMessage().isNewChat())
+			createNewChat(msg.getChatMessage());
+		else if(msg.isLogin() && msg.getUserMessage().isLoginRequest())
+			userLogin(msg.getUserMessage());
+		else if(msg.isRegister() && msg.getUserMessage().isRegisterRequest())
+			userRegister(msg.getUserMessage());
+		else 
 			for (Game game : games)
-				if (game.getId().equals(msg.getGameMessage().getId()))
+				if (game.getId().equals(msg.getId()))
 					game.runMessage(msg);	
 	}
 	
@@ -95,6 +102,15 @@ public class Server {
 			}
 		}		
 	}
+	/**
+	 * @param cmsg adding the client to the requested chat
+	 */
+	private void createNewChat(ChatMessage cmsg) {
+		Game game = new Game("CHAT", cmsg.stringPart(1));
+		game.addChatter(cmsg.getClient());
+		games.add(game);
+		cmsg.getClient().sendMessage(new ChatMessage("CHAT_JOINED:" + cmsg.stringPart(1), game.getId()).toString());
+	}
 	
 	/**
 	 * @param cmsg sending list over chats the user can join
@@ -102,8 +118,8 @@ public class Server {
 	private void sendChatList(ChatMessage cmsg) {
 		String msg = "";
 		for (Game game : games) {
-			if (game.isOpen())
-				msg += ":" + game.getId() + "-" + game.getChatterNumber();
+			if (game.isOpen() || game.isChat())
+				msg += ":" + game.getId() + "-" + game.getChatterNumber() + "-" + game.getName();
 		}
 		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg, "CHAT", "-1").toString());	
 	}
@@ -128,6 +144,18 @@ public class Server {
 			game.addPlayer(gmsg.getClient());
 			games.add(game);
 		}
+	}
+
+	/**
+	 * Player gets logged in
+	 * @param lmessage, message recived from client
+	 */
+	private void userLogin(UserMessage lmessage){
+		
+	}
+	
+	private void userRegister(UserMessage rmessage){
+		
 	}
 	
 	/**

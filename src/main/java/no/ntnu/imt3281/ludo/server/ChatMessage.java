@@ -16,6 +16,13 @@ public class ChatMessage extends Message {
 		} catch (Exception e) {}
 		
 	}
+	public ChatMessage(String msg, String id) {
+		super(msg, "CHAT", id);
+		this.username = stringPart(0);
+		try {
+			this.messageContent = stringPart(1);
+		} catch (Exception e) {}
+	}
 
 	/** 
 	 * @return the id of the game sent from the server
@@ -48,8 +55,20 @@ public class ChatMessage extends Message {
 	/**
 	 * @return if it is a request to join a new chat
 	 */
-	public boolean isNewChat() {
+	public boolean isNewChatJoin() {
 		return (stringPart(0).equals("NEW_CHAT_JOIN"));
 	}
 	
+	/**
+	 * @return if it is a request to create a new chat
+	 */
+	public boolean isNewChat() {
+		return (stringPart(0).equals("CREATE"));
+	}
+	/**
+	 * @return if it is a request to create a new chat
+	 */
+	public boolean isChatJoin() {
+		return (stringPart(0).equals("CHAT_JOINED"));
+	}	
 }

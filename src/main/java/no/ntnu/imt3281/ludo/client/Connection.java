@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 import no.ntnu.imt3281.ludo.gui.GameBoardController;
+import no.ntnu.imt3281.ludo.gui.InvitePlayerController;
 import no.ntnu.imt3281.ludo.gui.ListRoomsController;
 import no.ntnu.imt3281.ludo.gui.LudoController;
 import no.ntnu.imt3281.ludo.server.Message;
@@ -18,8 +19,9 @@ import no.ntnu.imt3281.ludo.server.Message;
 public class Connection {
     private static class SynchronizedHolder {
     	static Connection instance = new Connection();
-    	static LudoController waitingNewGame = null;
-    	static ListRoomsController chatListRequest = null;
+    	static LudoController ludoController = null;
+    	static ListRoomsController listRoomsController = null;
+		public static InvitePlayerController invitePlayerController;
     }
 	
     private Socket socket;
@@ -84,13 +86,15 @@ public class Connection {
 	 */
 	public void messageParser(Message msg) {
 		if (msg.isGame() && msg.getGameMessage().isNewGame()) {
-			if (SynchronizedHolder.waitingNewGame != null)
-	        	SynchronizedHolder.waitingNewGame.createNewGameMessage(msg.getGameMessage());
-			SynchronizedHolder.waitingNewGame = null;
+			if (SynchronizedHolder.ludoController != null)
+	        	SynchronizedHolder.ludoController.createNewGameMessage(msg.getGameMessage());
 		} else if (msg.isChat() && msg.getChatMessage().isListResponse()) {
-			if (SynchronizedHolder.chatListRequest != null)
-	        	SynchronizedHolder.chatListRequest.listResponse(msg.getChatMessage());
-			SynchronizedHolder.chatListRequest = null;
+			if (SynchronizedHolder.listRoomsController != null)
+	        	SynchronizedHolder.listRoomsController.listResponse(msg.getChatMessage());
+			SynchronizedHolder.listRoomsController = null;
+		} else if (msg.isChat() && msg.getChatMessage().isChatJoin()) {
+			if (SynchronizedHolder.ludoController != null)
+	        	SynchronizedHolder.ludoController.createNewChatMessage(msg.getId(), msg.stringPart(1));
 		} else
 			parseGameMessage(msg);	
 	}
@@ -110,14 +114,20 @@ public class Connection {
 			}
 		}
 	}
-	
+	/**
+	 * Setting the ludo controller for the user
+	 * @param controller
+	 */
+	public void setLudoController(LudoController controller) {
+		SynchronizedHolder.ludoController = controller;
+
+	}
 	/**
 	 * Requesting server to create a new game from this controller
 	 * @param ludoControllern the controller
 	 */
-	public static void newGame(LudoController ludoController) {
-		SynchronizedHolder.waitingNewGame = ludoController;
-		sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
+	public static void newGamea(LudoController ludoController) {
+		SynchronizedHolder.ludoController = ludoController;
 	}
 	
 	/**
@@ -125,7 +135,7 @@ public class Connection {
 	 * @param ludoController the controller to respond to when the server sends and answer
 	 */
 	public static void newChatListRequest(ListRoomsController listController) {
-		SynchronizedHolder.chatListRequest = listController;
+		SynchronizedHolder.listRoomsController = listController;
 		Connection.sendMessage("LIST", "CHAT", "-1");
 	}
 	
@@ -134,6 +144,11 @@ public class Connection {
 	 */
 	public static void stopConnection() {
 		getConnection().reader.stop();
+	}
+
+	public static void newPlayerListRequest(InvitePlayerController invitePlayerController) {
+		SynchronizedHolder.invitePlayerController = invitePlayerController;
+		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
 	}
 
 

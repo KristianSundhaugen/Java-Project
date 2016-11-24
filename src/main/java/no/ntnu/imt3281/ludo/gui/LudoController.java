@@ -11,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.ChatMessage;
 import no.ntnu.imt3281.ludo.server.GameMessage;
@@ -33,7 +34,19 @@ public class LudoController {
      */
     @FXML
     public void joinChatRoom() {
-    	
+    	try {
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("NewChat.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		AnchorPane newChat = loader.load();
+    		NewChatController controller = loader.getController();
+        	Tab tab = new Tab("Create New Chat");
+    		controller.setLudoController(this, tab);
+    		tab.setContent(newChat);
+        	tabbedPane.getTabs().add(tab);
+        	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	} catch (IOException e1) {
+			e1.printStackTrace();
+		}
     }
     
     /**
@@ -57,6 +70,26 @@ public class LudoController {
     }
     
     /**
+     * When user clicks on connect, the login screen will be displayed
+     */
+    @FXML
+    public void loginDisplay(){
+    	try{
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		Pane login = loader.load();
+    		PlayerLogin controller = loader.getController();
+    		Tab tab = new Tab("User login");
+    		controller.setLudoController(this, tab);
+    		tab.setContent(login);
+    		tabbedPane.getTabs().add(tab);
+    		tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    /**
      * Removing a tab from the TabPane
      * @param tab the tab to remove
      */
@@ -71,7 +104,8 @@ public class LudoController {
     @FXML
     public void joinRandomGame(ActionEvent e) { 
     	LudoController controller = this;
-       	Connection.newGame(controller);
+       	Connection.getConnection().setLudoController(controller);
+		Connection.sendMessage("NEW_RANDOM_GAME_REQUEST", "GAME", "-1");
     }
     
     /**
@@ -83,6 +117,18 @@ public class LudoController {
             @Override
             public void run() {
             	createNewGame(gmsg.getId(), Integer.parseInt(gmsg.getMessageValue()));
+            }
+		});
+    }
+    /**
+     * The client have received information about a new game to join
+     * @param gmsg the message received
+     */
+    public void createNewChatMessage(String chatId, String name) {
+    	Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+            	createNewChatTab(chatId, name);
             }
 		});
     }
@@ -112,8 +158,13 @@ public class LudoController {
 			e1.printStackTrace();
 		}
     }
-
-	public void createNewChatTab(String id) {
+    
+    /**
+     * Creating a new tab with only chat content
+     * @param id the id of the game containing the chat
+     * @param name the name for the chat
+     */
+	public void createNewChatTab(String id, String name) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("GameBoard.fxml"));
     	loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
     	try {
@@ -123,7 +174,7 @@ public class LudoController {
     		controller.setChat();
     		controller.setId(id);
     		controller.setPane(gameBoard);
-        	Tab tab = new Tab("Chat " + id);
+        	Tab tab = new Tab(name);
     		tab.setContent(gameBoard);
         	tabbedPane.getTabs().add(tab);
         	tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
@@ -131,4 +182,5 @@ public class LudoController {
 			e1.printStackTrace();
 		}
 	}
+
 }

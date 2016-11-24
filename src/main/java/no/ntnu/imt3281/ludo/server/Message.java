@@ -95,6 +95,17 @@ public class Message {
 	}
 
 	/**
+	 * @return boolean if the message is LOGIN message
+	 */
+	public boolean isLogin(){
+		return type.equals("LOGIN");
+	}
+	
+	public boolean isRegister(){
+		return type.equals("REGISTER");
+	}
+	
+	/**
 	 * @return the type and message as a string
 	 */
 	public String toString() {
@@ -140,6 +151,10 @@ public class Message {
 	 */
 	public ChatMessage getChatMessage() {
 		return new ChatMessage(this);
+	}
+	
+	public UserMessage getUserMessage(){
+		return new UserMessage(this);
 	}
 	
 	/**
