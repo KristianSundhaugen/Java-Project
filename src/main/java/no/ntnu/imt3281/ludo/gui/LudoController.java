@@ -89,6 +89,23 @@ public class LudoController {
     	}
     }
     
+    @FXML
+    public void registerDisplay(){
+    	try{
+    		FXMLLoader loader = new FXMLLoader(getClass().getResource("Register.fxml"));
+    		loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+    		Pane register = loader.load();
+    		PlayerLogin controller = loader.getController();
+    		Tab tab = new Tab("User login");
+    		controller.setLudoController(this, tab);
+    		tab.setContent(register);
+    		tabbedPane.getTabs().add(tab);
+    		tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
     /**
      * Removing a tab from the TabPane
      * @param tab the tab to remove

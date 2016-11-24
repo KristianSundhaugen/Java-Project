@@ -1,20 +1,13 @@
 package no.ntnu.imt3281.ludo.gui;
 
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Tab;
-import javafx.stage.Stage;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
@@ -49,42 +42,20 @@ public class PlayerLogin {
 	}
 	
 	/**
-	 * This will load the login scene and check if username and password is correct
-	 * @param event
+	 * Sends a message to the server where the username and password is checked against the database
 	 */
 	@FXML
-	public void handleLoginButton(ActionEvent event) {
+	public void handleLoginButton() {
 
 		Connection.sendMessage(username.getText() + ":" + password.getPassword().toString(), "LOGIN_REQUEST", "-1");
-		
-		
-		try {
-			((Node)(event.getSource())).getScene().getWindow().hide(); //used to hide login screen
-			Parent parent = FXMLLoader.load(getClass().getResource("GameBoard.fxml"));
-			Stage stage = new Stage();
-			Scene scene = new Scene(parent);
-			stage.setScene(scene);
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	/**
-	 * This will take the user to the register scene
-	 * @param event
+	 * Sends a message to the server where the username is checked againts the database
 	 */
 	@FXML 
-	public void handleRegisterButton(ActionEvent event){
-		try {
-			((Node)(event.getSource())).getScene().getWindow().hide();
-			Parent parent = FXMLLoader.load(getClass().getResource("RegisterUser.fxml"));
-			Stage registerStage = new Stage();
-			Scene registerScene = new Scene(parent);
-			registerStage.setScene(registerScene);
-			registerStage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void handleRegisterButton(){
+		
+		Connection.sendMessage(username.getText(), "REGISTER_REQUEST", "-1");
 	}
 	
 	public void setLudoController(LudoController ludoController, Tab tab) {
@@ -99,6 +70,13 @@ public class PlayerLogin {
 			Connection.getConnection().loggedIn();
 			ludoController.removeTab(tab);
 		}
-		
+	}
+	
+	public void registerResponse(UserMessage userMessage){
+		if(userMessage.intPart(1) == 0){
+			loginMessage.setText("Invalid username");
+		} else {
+			
+		}
 	}
 }

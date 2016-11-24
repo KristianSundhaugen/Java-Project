@@ -157,9 +157,9 @@ public class Server {
 	private void userLogin(UserMessage lmessage){
 		UserMessage um = new UserMessage(lmessage);
 		if(database.checkLogin(um.stringPart(1), um.stringPart(2))){
-			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:1", "USER", "-1").toString());
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONSE:1", "USER", "-1").toString());
 		} else {
-			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:0", "USER", "-1").toString());
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONSE:0", "USER", "-1").toString());
 		}
 	}
 	
@@ -170,8 +170,17 @@ public class Server {
 	 * @param rmessage, message recived from client
 	 */
 	private void userRegister(UserMessage rmessage){
-		//NO : IN USERNAME
-		
+		UserMessage um = new UserMessage(rmessage);
+		if(!um.stringPart(1).startsWith("****") || !um.stringPart(1).contains(":")){
+			if(!database.checkUsername(um.stringPart(1))){
+				rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:1", "USER", "-1").toString());
+			} else {
+				rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());
+			}
+		} else {
+			//say that the username contains invalid letters
+			//rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());
+		}
 	}
 	
 	/**

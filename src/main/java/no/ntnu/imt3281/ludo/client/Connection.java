@@ -101,6 +101,9 @@ public class Connection {
 		}else if(msg.isUser() && msg.getUserMessage().isLoginRespons()){
 			if (SynchronizedHolder.loginController != null)
 				SynchronizedHolder.loginController.loginResponse(msg.getUserMessage());
+		}else if(msg.isRegister() && msg.getUserMessage().isRegisterResponse()){
+			if(SynchronizedHolder.loginController != null)
+				SynchronizedHolder.loginController.registerResponse(msg.getUserMessage());
 		} else
 			parseGameMessage(msg);	
 	}
@@ -157,9 +160,20 @@ public class Connection {
 		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
 	}
 	
+	/**
+	 * Sending request to server to check the username and password
+	 * @param loginController controller for login
+	 * @param username player username
+	 * @param password player password
+	 */
 	public static void newLoginRequest(PlayerLogin loginController, String username, String password) {
 		SynchronizedHolder.loginController  = loginController;
-		Connection.sendMessage("PLAYER_LIST", "GAME", "-1");	
+		Connection.sendMessage("LOGIN_REQUEST", "LOGIN", "-1");	
+	}
+	
+	public static void newRegisterRequest(PlayerLogin loginController, String username) {
+		SynchronizedHolder.loginController  = loginController;
+		Connection.sendMessage("REGISTER_REQUEST", "REGISTER", "-1");	
 	}
 
 	public void loggedIn() {
