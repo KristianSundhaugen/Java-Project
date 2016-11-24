@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.stage.Stage;
 import no.ntnu.imt3281.ludo.client.Connection;
+import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
  * 
  * @author Simen
@@ -41,6 +42,10 @@ public class PlayerLogin {
 	
 	public PlayerLogin(){
 		
+	}
+	
+	private void playerLoggedIn(){
+		Connection.newLoginRequest(this, username.getText(), password.getPassword().toString());
 	}
 	
 	/**
@@ -85,5 +90,15 @@ public class PlayerLogin {
 	public void setLudoController(LudoController ludoController, Tab tab) {
 		this.ludoController = ludoController;
 		this.tab = tab;
+	}
+
+	public void loginResponse(UserMessage userMessage) {
+		if(userMessage.intPart(1) == 0){
+			loginMessage.setText("Wrong username or password");
+		} else {
+			Connection.getConnection().loggedIn();
+			ludoController.removeTab(tab);
+		}
+		
 	}
 }

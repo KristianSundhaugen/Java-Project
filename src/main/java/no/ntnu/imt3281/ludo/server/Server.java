@@ -84,7 +84,7 @@ public class Server {
 			joinNewChat(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChat())
 			createNewChat(msg.getChatMessage());
-		else if(msg.isLogin() && msg.getUserMessage().isLoginRequest())
+		else if(msg.isUser() && msg.getUserMessage().isLoginRequest())
 			userLogin(msg.getUserMessage());
 		else if(msg.isRegister() && msg.getUserMessage().isRegisterRequest())
 			userRegister(msg.getUserMessage());
@@ -155,7 +155,12 @@ public class Server {
 	 * @param lmessage, message recived from client
 	 */
 	private void userLogin(UserMessage lmessage){
-		
+		UserMessage um = new UserMessage(lmessage);
+		if(database.checkLogin(um.stringPart(1), um.stringPart(2))){
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:1", "USER", "-1").toString());
+		} else {
+			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONS:0", "USER", "-1").toString());
+		}
 	}
 	
 	/**
@@ -166,10 +171,7 @@ public class Server {
 	 */
 	private void userRegister(UserMessage rmessage){
 		//NO : IN USERNAME
-		UserMessage um = new UserMessage(rmessage);
-		if(um.stringPart(1).contains(":")){
-			//Change to bool for return false?
-		}
+		
 	}
 	
 	/**

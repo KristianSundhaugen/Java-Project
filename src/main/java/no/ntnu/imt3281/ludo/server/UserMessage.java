@@ -45,4 +45,8 @@ public class UserMessage extends Message{
 	public boolean isRegisterRequest(){
 		return loginType.equals("REGISTER_REQUEST");
 	}
+
+	public boolean isLoginRespons() {
+		return loginType.equals("LOGIN_RESPONSE");
+	}
 }
