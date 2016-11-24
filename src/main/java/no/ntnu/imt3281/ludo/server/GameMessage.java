@@ -5,8 +5,7 @@ package no.ntnu.imt3281.ludo.server;
  * @author Lasse Sviland
  *
  */
-public class GameMessage {
-	private Message msg;
+public class GameMessage extends Message {
 	private String gameMessageType;
 	private String gameMessageValue;
 	
@@ -15,19 +14,14 @@ public class GameMessage {
 	 * @param msg the message that contains the game message
 	 */
 	public GameMessage(Message msg) {
-		this.msg = msg;
-		String[] messageParts = msg.getMessage().split(":");
-		this.gameMessageType = messageParts[0];
-		if(messageParts.length > 1)
-			this.gameMessageValue = messageParts[1];
+		super(msg);
+		this.gameMessageType = stringPart(0);
+		try {
+			this.gameMessageValue = stringPart(1);
+		} catch (Exception e) {}
+			
 	}
 	
-	/** 
-	 * @return the id of the game sent from the server
-	 */
-	public String getId() {
-		return msg.getId();
-	}
 	/** 
 	 * @return the id of the game sent from the server
 	 */
@@ -35,12 +29,6 @@ public class GameMessage {
 		return gameMessageValue;
 	}
 	
-	/** 
-	 * @return the client that sent the message
-	 */
-	public ServerClient getClient() {
-		return msg.getClient();
-	}
 	
 	/**
 	 * @return boolean telling if it is a new game message
@@ -59,29 +47,12 @@ public class GameMessage {
 	public boolean isNewGameRequest() {
 		return gameMessageType.equals("NEW_RANDOM_GAME_REQUEST");
 	}
-	/**
-	 * @return the content of the message
-	 */
-	public String getMessage(){
-		return this.msg.getMessage();
-	}
 
 	/**
-	 * 
 	 * @return the message type
 	 */
 	public String getType() {
 		return gameMessageType;
-	}
-	
-	/**
-	 * Returning a certain part of the message out from a index
-	 * @param index the index of the part
-	 * @return the part at the given index
-	 */
-	public int part(int index) {
-		String[] parts = getMessage().split(":");
-    	return Integer.parseInt(parts[index]);
 	}
 	
 }
