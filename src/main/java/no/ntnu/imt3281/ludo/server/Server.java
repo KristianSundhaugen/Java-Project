@@ -79,9 +79,11 @@ public class Server {
 			sendChatList(msg.getChatMessage());
 		else if (msg.isChat() && msg.getChatMessage().isNewChat())
 			joinNewChat(msg.getChatMessage());
-		else if(msg.isLogin() && msg.getLoginMessage().isLoginRequest())
-			userLogin(msg.getLoginMessage());
-		else
+		else if(msg.isLogin() && msg.getUserMessage().isLoginRequest())
+			userLogin(msg.getUserMessage());
+		else if(msg.isRegister() && msg.getUserMessage().isRegisterRequest())
+			userRegister(msg.getUserMessage());
+		else 
 			for (Game game : games)
 				if (game.getId().equals(msg.getGameMessage().getId()))
 					game.runMessage(msg);	
@@ -137,6 +139,10 @@ public class Server {
 	 * @param lmessage, message recived from client
 	 */
 	private void userLogin(UserMessage lmessage){
+		
+	}
+	
+	private void userRegister(UserMessage rmessage){
 		
 	}
 	

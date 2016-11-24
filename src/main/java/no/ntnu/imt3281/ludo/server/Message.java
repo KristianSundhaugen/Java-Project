@@ -153,7 +153,7 @@ public class Message {
 		return new ChatMessage(this);
 	}
 	
-	public UserMessage getLoginMessage(){
+	public UserMessage getUserMessage(){
 		return new UserMessage(this);
 	}
 	
