@@ -34,7 +34,7 @@ public class Database {
 				Connection conn = DriverManager.getConnection(dbURL);
 				//create a statement
 				Statement stmt = conn.createStatement();
-				stmt.execute("CREATE TABLE players ("
+				stmt.execute("CREATE TABLE IF NOT EXISTS players ("
 						+ "username varchar(128) NOT NULL, "
 			            + "hashpassword varchar(128) NOT NULL, "
 			            + "PRIMARY KEY  (username))");
@@ -44,15 +44,57 @@ public class Database {
 				sqle.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Creates Chat Table in database, has username as primary key
+	 */
+	public void CreateChatTable(){
+		try{
+			Connection conn = DriverManager.getConnection(dbURL);
+			//create a statement
+			Statement stmt = conn.createStatement();
+			stmt.execute("CREATE TABLE IF NOT EXISTS chat ("
+					+ "id INT NOT NULL AUTO_INCREMENT,"
+					+ "username varchar(128) NOT NULL, "
+		            + "message TEXT NOT NULL, "
+		            + "PRIMARY KEY  (id))");
+			conn.close();
+			System.out.println("Table 'chat' created");
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+	}
+}
+	/**
+	 * Adding a username and chatmessage to chat table 
+	 * @param username
+	 */
+	public void addUserChatTable(String username, String message){
+
+					String query = "INSERT INTO chat "
+							       +"(username, message)"
+							       +"VALUE(?,?)";
+				
+				try{
+					Connection conn = DriverManager.getConnection(dbURL);
+					PreparedStatement stmt = conn.prepareStatement(query);
+					stmt.setString(1, username);
+					stmt.setString(2, message);
+					stmt.executeUpdate();
+					stmt.close();
+					conn.close();
+				}
+				catch(SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
 	/** 
 	 * Adds a new user to the database
 	 * @param username
 	 * @param password
 	 */
-	public void addUser(String username, String password)
-			throws SQLException
-			{
+	public void addUser(String username, String password){
+			
 				String query = "INSERT INTO players "
 						       +"(username, hashpassword)"
 						       +"VALUES(?, ?)";
@@ -74,6 +116,7 @@ public class Database {
 				e.printStackTrace();
 			}
 		}
+
 	/**
 	 * Checks if username exists in database
 	 * @param username
