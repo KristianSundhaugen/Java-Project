@@ -44,6 +44,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
     	this.id = String.valueOf(idCounter++);
     	this.name = I18N.getBundle().getString("ludo.game") + " " + id;
     	ludoGame = new Ludo();
+    	ludoGame.addDiceListener(this);
+    	ludoGame.addPlayerListener(this);
+    	ludoGame.addPieceListener(this);
     }
     
     /**
@@ -55,6 +58,9 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
     	this.id = String.valueOf(idCounter++);
     	this.name = chatName;
     	ludoGame = new Ludo();
+    	ludoGame.addDiceListener(this);
+    	ludoGame.addPlayerListener(this);
+    	ludoGame.addPieceListener(this);
     }
     
     /**
