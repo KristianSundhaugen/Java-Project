@@ -2,8 +2,8 @@
 
 package no.ntnu.imt3281.ludo.logic;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import no.ntnu.imt3281.ludo.client.Globals;
@@ -22,7 +22,7 @@ public class Ludo {
 	
 	private String id = "-1";
 	
-	private Vector<String> players;
+	private ArrayList<String> players;
 	private int activePlayer = 0;
 	private int dice;
 	private int diceThrows = 0;
@@ -31,9 +31,9 @@ public class Ludo {
 	public int[][] playerPieces;
 	private int[][] userGridToPlayerGrid;
 	
-	private Vector<DiceListener> diceListenerers = new Vector<>();
-	private Vector<PieceListener> pieceListenerers = new Vector<>();
-	private Vector<PlayerListener> playerListenerers = new Vector<>();
+	private ArrayList<DiceListener> diceListenerers = new ArrayList<>();
+	private ArrayList<PieceListener> pieceListenerers = new ArrayList<>();
+	private ArrayList<PlayerListener> playerListenerers = new ArrayList<>();
 
 	/**
 	 * Constructor creating new game with players
@@ -66,7 +66,7 @@ public class Ludo {
 	 * Setting up the game, creating players vector, setting up pieces to be in the start positions
 	 */
 	public void setupGame() {
-		players = new Vector<>();
+		players = new ArrayList<>();
 		playerPieces = new int[4][4];
 		userGridToPlayerGrid = new int[4][92];
 		for ( int player = 0; player < 4; player++){

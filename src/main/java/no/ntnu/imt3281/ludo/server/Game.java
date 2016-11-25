@@ -1,6 +1,6 @@
 package no.ntnu.imt3281.ludo.server;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.logic.DiceEvent;
@@ -13,10 +13,10 @@ import no.ntnu.imt3281.ludo.logic.PlayerListener;
 
 public class Game implements PlayerListener, DiceListener, PieceListener {
 	private static int idCounter = 0;
-	private Vector<ServerClient> players = new Vector<>(4);
-	private Vector<ServerClient> chatters = new Vector<>();
-	private Vector<ServerClient> invitedPlayers = new Vector<>(3);
-	private Vector<String> chatMessages = new Vector<>();
+	private ArrayList<ServerClient> players = new ArrayList<>(4);
+	private ArrayList<ServerClient> chatters = new ArrayList<>();
+	private ArrayList<ServerClient> invitedPlayers = new ArrayList<>(3);
+	private ArrayList<String> chatMessages = new ArrayList<>();
 	private String status = "WAITING";
 	private String type = "OPEN";
 	private String id;

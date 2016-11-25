@@ -7,6 +7,8 @@ package no.ntnu.imt3281.ludo.logic;
  */
 
 public class NoSuchPlayerException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Takes a String message which it sets as
 	 * a specific runtime exception for no such player 
