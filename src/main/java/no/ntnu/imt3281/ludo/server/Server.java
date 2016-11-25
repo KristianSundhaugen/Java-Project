@@ -83,13 +83,10 @@ public class Server {
 	 * @param message the message object to send
 	 */
 	public void parseMessage(Message msg) {
-			System.out.println(1);
 		boolean messageParsed = false;
 		if (msg.isUser()){
-			System.out.println(2);
 			parseUserMessage(msg.getUserMessage());
 		} else if (msg.getClient().isLoggedIn()){
-			System.out.println(3);
 			if (msg.isChat())
 				messageParsed = parseChatMessage(msg.getChatMessage());
 			else if (msg.isGame())
@@ -105,7 +102,6 @@ public class Server {
 	 * @return boolean telling if the message was parsed
 	 */
 	private boolean parseGameMessage(GameMessage msg) {
-		System.out.println(4);
 		if (msg.isNewGameRequest())
 			joinNewRandomGame(msg);
 		else if (msg.isPrivateGameRequest())
@@ -125,7 +121,6 @@ public class Server {
 	 * @return boolean telling if the message was parsed
 	 */
 	private boolean parseChatMessage(ChatMessage msg) {
-		System.out.println(5);
 		if (msg.isListRequest())
 			sendChatList(msg);
 		else if (msg.isNewChatJoin())
@@ -143,7 +138,6 @@ public class Server {
 	 * @return boolean telling if the message was parsed
 	 */
 	private boolean parseUserMessage(UserMessage msg) {
-		System.out.println(6);
 		if(msg.isLoginRequest())
 			userLogin(msg);
 		else if(msg.isRegisterRequest())
@@ -158,7 +152,6 @@ public class Server {
 	 * @param msg the message to run
 	 */
 	private void parseSpecifficGameMessage(Message msg) {
-		System.out.println(7);
 		for (Game game : games)
 			if (game.getId().equals(msg.getId()))
 				game.runMessage(msg);
@@ -281,7 +274,6 @@ public class Server {
 	 * @param rmessage, message recived from client
 	 */
 	private void userRegister(UserMessage umsg){
-		System.out.println(9);
 		if(!umsg.stringPart(1).startsWith("****")){
 			if(!database.isUsernameTaken(umsg.stringPart(1))) {
 				umsg.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());

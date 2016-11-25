@@ -122,7 +122,7 @@ public class Ludo {
 	public String getPlayerName(int player) {
 		try {
 			return players.get(player);
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			logger.throwing(this.getClass().getName(), "getPlayerName", e);
 			return null;
 		}
