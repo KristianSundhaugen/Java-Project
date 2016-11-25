@@ -118,7 +118,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	}
 	
 	/**
-	 * 
+	 * When a client leaves a game, he/she will be set to inactive and removed
 	 */
 	public void clientLeave(ServerClient client) {
 		this.status = "STARTED";
@@ -300,10 +300,18 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 				+ ":" + event.getPlayer());
 	}
 
+	/**
+	 * @return if the request is CHAT
+	 */
 	public boolean isChat() {
 		return type.equals("CHAT");
 	}
 
+	/**
+	 * A player invites another one to a game
+	 * @param client to invite
+	 * @param inviter how invites
+	 */
 	public void invitePlayer(ServerClient client, ServerClient inviter) {
 		sendMessageToClient("GAME_INVITE:" + inviter.getUsername() , client);
 		invitedPlayers.add(client);

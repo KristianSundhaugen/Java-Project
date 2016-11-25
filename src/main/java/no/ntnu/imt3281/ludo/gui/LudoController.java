@@ -1,7 +1,6 @@
 package no.ntnu.imt3281.ludo.gui;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 

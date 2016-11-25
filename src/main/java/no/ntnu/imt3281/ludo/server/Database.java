@@ -1,6 +1,5 @@
 package no.ntnu.imt3281.ludo.server;
 
-import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

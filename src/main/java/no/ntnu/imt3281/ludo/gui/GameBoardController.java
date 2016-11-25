@@ -116,10 +116,14 @@ public class GameBoardController {
 	}
 
 	/**
-	 * Throwing a dice
+	 * If the game is not won by anyone the dice can be thrown
 	 */
 	public void throwDiceButton() {
-		if (ludo.getStatus().equals("Created"))
+		if (ludo.getStatus().equals("WON")) {
+			hideImages();
+			throwTheDice.setVisible(false);
+		}
+		else if (ludo.getStatus().equals("Created"))
 			Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
 		else {
 			throwTheDice.setDisable(true);

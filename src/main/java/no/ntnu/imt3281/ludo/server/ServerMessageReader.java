@@ -1,11 +1,15 @@
 package no.ntnu.imt3281.ludo.server;
 
-import java.lang.invoke.MethodHandles;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import no.ntnu.imt3281.ludo.client.Globals;
 
+/**
+ * Used to read messages sent to the server from the clients
+ * @author Lasse
+ */
 public class ServerMessageReader implements Runnable {
 	private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
     private Server server;

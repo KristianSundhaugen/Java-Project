@@ -70,16 +70,27 @@ public class GameMessage extends Message {
 		return gameMessageType.equals("PLAYER_LIST_RESPONSE");
 	}
 	
+	/**
+	 * @return if it is a request for a private game
+	 */
 	public boolean isPrivateGameRequest() {
 		return gameMessageType.equals("PRIVATE_GAME_REQUEST");
 	}
+	/**
+	 * @return if it is a response for a private game
+	 */
 	public boolean isPrivateGameResponse() {
 		return gameMessageType.equals("PRIVATE_GAME_RESPONSE");
 	}
+	/**
+	 * @return if it is game invite
+	 */
 	public boolean isGameInvite() {
 		return gameMessageType.equals("GAME_INVITE");
 	}
-
+	/**
+	 * @return if game invite is accepted
+	 */
 	public boolean isAcceptInvite() {
 		return gameMessageType.equals("INVITE_ACCEPT");
 

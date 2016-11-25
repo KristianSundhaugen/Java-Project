@@ -2,7 +2,6 @@ package no.ntnu.imt3281.ludo.client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Logger;

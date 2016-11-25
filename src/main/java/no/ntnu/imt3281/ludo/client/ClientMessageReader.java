@@ -3,7 +3,6 @@ package no.ntnu.imt3281.ludo.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.invoke.MethodHandles;
 import java.net.Socket;
 import java.util.logging.Logger;
 
