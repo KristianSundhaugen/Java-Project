@@ -1,11 +1,17 @@
 package no.ntnu.imt3281.ludo.server;
 
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
+
 /**
  * Class holding a game message that is used to get the game content when messages is passed between client and server
  * @author Lasse Sviland
  *
  */
 public class GameMessage extends Message {
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
+
 	private String gameMessageType;
 	private String gameMessageValue;
 	
@@ -18,7 +24,9 @@ public class GameMessage extends Message {
 		this.gameMessageType = stringPart(0);
 		try {
 			this.gameMessageValue = stringPart(1);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "GameMessage", e);
+		}
 			
 	}
 	
@@ -60,7 +68,6 @@ public class GameMessage extends Message {
 	 */
 	public boolean isPlayerListRequest() {
 		return gameMessageType.equals("PLAYER_LIST");
-
 	}
 	
 	/**
