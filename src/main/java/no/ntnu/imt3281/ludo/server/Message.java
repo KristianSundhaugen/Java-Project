@@ -1,10 +1,15 @@
 package no.ntnu.imt3281.ludo.server;
 
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
+
 /**
  * Message object for parsing a message passed between the server and client
  * @author Lasse Sviland
  */
 public class Message {
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
 	private String message;
 	private ServerClient client;
 	private String type;
@@ -42,6 +47,7 @@ public class Message {
 			this.id = fullMessage.split(":")[1];
 			this.message = fullMessage.substring(type.length() + id.length() + 2);
 		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "Message", e);
 			this.message = fullMessage.substring(type.length() + 1);
 		}
 	}
