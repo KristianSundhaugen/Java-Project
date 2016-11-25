@@ -18,7 +18,7 @@
           <RowConstraints maxHeight="800.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Click on the players you want to invite ( max 3)" GridPane.hgrow="ALWAYS">
+            <Label text="%inviteplayers.info" GridPane.hgrow="ALWAYS">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -28,7 +28,7 @@
             <ListView fx:id="list" onMouseClicked="#invitePlayer" prefHeight="500.0" prefWidth="200.0" GridPane.rowIndex="1" />
             <Pane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                <children>
-                  <Button layoutX="64.0" layoutY="7.0" mnemonicParsing="false" onAction="#createGameButton" prefHeight="27.0" prefWidth="273.0" text="Create new game" />
+                  <Button layoutX="64.0" layoutY="7.0" mnemonicParsing="false" onAction="#createGameButton" prefHeight="27.0" prefWidth="273.0" text="%iviteplayers.new" />
                </children>
             </Pane>
          </children>

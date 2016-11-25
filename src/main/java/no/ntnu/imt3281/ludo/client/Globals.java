@@ -29,12 +29,12 @@ public class Globals {
 	 */
 	public static double[][] getPiecePossitions() {
 	    double[][] piecePos = new double[92][2];
-		//Red start positions
+		// Red start positions
 		piecePos[0] = new double[]{11.5,1.5};
 		piecePos[1] = new double[]{12.5,2.5};
 		piecePos[2] = new double[]{11.5,3.5};
 		piecePos[3] = new double[]{10.5,2.5};
-		//Blue start positions
+		// Blue start positions
 		piecePos[4] = new double[]{11.5,10.5};
 		piecePos[5] = new double[]{12.5,11.5};
 		piecePos[6] = new double[]{11.5,12.5};
@@ -44,12 +44,12 @@ public class Globals {
 		piecePos[9] = new double[]{3.5,11.5};
 		piecePos[10] = new double[]{2.5,12.5};
 		piecePos[11] = new double[]{1.5,11.5};
-		//Green start positions
+		// Green start positions
 		piecePos[12] = new double[]{2.5,1.5};
 		piecePos[13] = new double[]{3.5,2.5};
 		piecePos[14] = new double[]{2.5,3.5};
 		piecePos[15] = new double[]{1.5,2.5};
-		//Rest of the board positions
+		// Rest of the board positions
 		piecePos[16] = new double[]{8,1};
 		piecePos[17] = new double[]{8,2};
 		piecePos[18] = new double[]{8,3};

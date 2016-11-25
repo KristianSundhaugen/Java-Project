@@ -10,9 +10,9 @@
    <children>
       <Pane prefHeight="600.0" prefWidth="400.0">
          <children>
-            <Button layoutX="38.0" layoutY="264.0" mnemonicParsing="false" onAction="#denyInvite" prefHeight="40.0" prefWidth="140.0" text="Deny" />
-            <Button layoutX="212.0" layoutY="264.0" mnemonicParsing="false" onAction="#acceptInvite" prefHeight="40.0" prefWidth="150.0" text="Accept" />
-            <Label fx:id="inviteLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="38.0" layoutY="29.0" prefHeight="97.0" prefWidth="324.0" text="You got a new gane invite from XYZØÆÅ" textAlignment="CENTER" wrapText="true">
+            <Button layoutX="38.0" layoutY="264.0" mnemonicParsing="false" onAction="#denyInvite" prefHeight="40.0" prefWidth="140.0" text="%invite.deny" />
+            <Button layoutX="212.0" layoutY="264.0" mnemonicParsing="false" onAction="#acceptInvite" prefHeight="40.0" prefWidth="150.0" text="%invite.accept" />
+            <Label fx:id="inviteLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="38.0" layoutY="29.0" prefHeight="97.0" prefWidth="324.0" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="24.0" />
                </font>

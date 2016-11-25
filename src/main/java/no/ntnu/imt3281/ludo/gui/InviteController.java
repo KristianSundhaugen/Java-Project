@@ -3,6 +3,7 @@ package no.ntnu.imt3281.ludo.gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 
@@ -21,7 +22,7 @@ public class InviteController {
 	 */
 	@FXML
 	protected void initialize() {
-		inviteLabel.setText("You have been invited to a game by " + inviter);
+		inviteLabel.setText(I18N.getBundle().getString("invite.message") + inviter);
 	}
 
 	/**
@@ -46,7 +47,7 @@ public class InviteController {
 	public void setInviteInfo(GameMessage gameMessage) {
 		this.inviter = gameMessage.stringPart(1);
 		this.gameId = gameMessage.getId();
-		inviteLabel.setText("You have been invited to a game by " + inviter);
+		inviteLabel.setText(I18N.getBundle().getString("invite.message") + inviter);
 	}
 
 	/**

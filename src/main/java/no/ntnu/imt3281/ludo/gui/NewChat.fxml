@@ -11,8 +11,8 @@
       <Pane layoutX="0" layoutY="0" prefHeight="600.0" prefWidth="400.0" style="-fx-background-color: #FFFFFF;">
          <children>
             <TextField fx:id="nameInput" layoutX="86.0" layoutY="208.0" prefHeight="27.0" prefWidth="229.0" />
-            <Button layoutX="107.0" layoutY="329.0" mnemonicParsing="false" onAction="#createGame" prefHeight="27.0" prefWidth="187.0" text="Create New Chat" />
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="13.0" layoutY="125.0" prefHeight="36.0" prefWidth="375.0" text="Name of new Chat" textAlignment="CENTER" textOverrun="WORD_ELLIPSIS">
+            <Button layoutX="107.0" layoutY="329.0" mnemonicParsing="false" onAction="#createGame" prefHeight="27.0" prefWidth="187.0" text="%newchat.create" />
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="13.0" layoutY="125.0" prefHeight="36.0" prefWidth="375.0" text="%newchat.info" textAlignment="CENTER" textOverrun="WORD_ELLIPSIS">
                <font>
                   <Font size="18.0" />
                </font></Label>

@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.ChatMessage;
 
@@ -57,7 +58,11 @@ public class ListRoomsController {
 			if (!room.equals("LIST_ROOMS_RESPONSE")) {
 				String[] parts = room.split("-");
 				String name = room.substring(parts[0].length() + parts[1].length() + 2);
-				items.add("Id: " + parts[0] + "\t\tName: " + name + "\t\tChatters: " + parts[1]);
+				String idStr = I18N.getBundle().getString("chatlist.id");
+				String nameStr = I18N.getBundle().getString("chatlist.name");
+				String chattersStr = I18N.getBundle().getString("chatlist.chatters");
+
+				items.add(idStr + ": " + parts[0] + "\t\t" + nameStr + ": " + name + "\t\t" + chattersStr + ": " + parts[1]);
 			}
 		}
 		list.setItems(items);

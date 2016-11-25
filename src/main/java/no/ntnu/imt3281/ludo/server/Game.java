@@ -2,6 +2,7 @@ package no.ntnu.imt3281.ludo.server;
 
 import java.util.Vector;
 
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.logic.DiceEvent;
 import no.ntnu.imt3281.ludo.logic.DiceListener;
 import no.ntnu.imt3281.ludo.logic.Ludo;
@@ -27,7 +28,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 */
     public Game() {
     	this.id = String.valueOf(idCounter++);
-    	this.name = "Game " + id;
+    	this.name = I18N.getBundle().getString("ludo.game") + " " + id;
     	ludoGame = new Ludo();
     	ludoGame.addDiceListener(this);
     	ludoGame.addPlayerListener(this);
@@ -41,7 +42,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
     public Game(String type) {
     	this.type = type;
     	this.id = String.valueOf(idCounter++);
-    	this.name = "Game " + id;
+    	this.name = I18N.getBundle().getString("ludo.game") + " " + id;
     	ludoGame = new Ludo();
     }
     

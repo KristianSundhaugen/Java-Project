@@ -22,6 +22,7 @@ import no.ntnu.imt3281.ludo.logic.PlayerEvent;
 import no.ntnu.imt3281.ludo.server.ChatMessage;
 import no.ntnu.imt3281.ludo.server.GameMessage;
 import no.ntnu.imt3281.ludo.server.Message;
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.client.Globals;
 
@@ -166,7 +167,7 @@ public class GameBoardController {
 			case "PIECE_EVENT":  runPieceEvent(msg); 	break;
 			case "DICE_EVENT": 	 runDiceEvent(msg); 	break;
 			case "PLAYER_JOINED":runPlayerJoined(msg); 	break;
-			case "START_GAME":   throwTheDice.setText("Throw the dice"); waitForNextThrow(0); break;
+			case "START_GAME":   throwTheDice.setText(I18N.getBundle().getString("ludogameboard.throwDiceButton")); waitForNextThrow(0); break;
 		}
 	}
 
@@ -229,7 +230,7 @@ public class GameBoardController {
 		ludo.addPlayer(msg.getMessageValue());
 		updatePlayerNames();
 		if (ludo.nrOfPlayers() > 1) {
-			throwTheDice.setText("Start Game");
+			throwTheDice.setText(I18N.getBundle().getString("ludogameboard.startgame"));
 			throwTheDice.setDisable(false);
 		}
 	}
@@ -245,7 +246,7 @@ public class GameBoardController {
 			case 2:	wonLabel.setStyle("-fx-text-fill: YELLOW;");break;
 			case 3:	wonLabel.setStyle("-fx-text-fill: GREEN;");	break;
 		}
-		wonLabel.setText(ludo.getPlayerName(playerNum) + " won!");
+		wonLabel.setText(ludo.getPlayerName(playerNum) + I18N.getBundle().getString("ludogameboard.won"));
 		wonLabel.setVisible(true);
 		throwTheDice.setDisable(true);
 		hideImages();
@@ -514,7 +515,7 @@ public class GameBoardController {
 		this.gameBoard = gameBoard;
 		if (this.type.equals("Ludo")) {
 			setUpPieces();
-			throwTheDice.setText("Waiting for players");
+			throwTheDice.setText(I18N.getBundle().getString("ludogameboard.waiting"));
 		}
 	}
 	
