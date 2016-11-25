@@ -1,11 +1,16 @@
 package no.ntnu.imt3281.ludo.server;
 
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
 
 /**
  * @author Simen
  * A class for sending login messages to the server
  */
 public class UserMessage extends Message {
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
+
 	
 	private String loginType;
 	private String loginValue;
@@ -20,7 +25,9 @@ public class UserMessage extends Message {
 		this.loginType = stringPart(0);
 		try {
 			this.loginValue = stringPart(1);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "UserMessage", e);
+		}
 	}
 	
 	/**
