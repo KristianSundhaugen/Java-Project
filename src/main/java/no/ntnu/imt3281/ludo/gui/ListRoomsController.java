@@ -28,9 +28,9 @@ public class ListRoomsController {
 	 * Doing a request to the server asking for a list of available chats
 	 */
 	@FXML
-    protected void initialize() {
+	protected void initialize() {
 		Connection.newChatListRequest(this);
-    }
+	}
 	
 	/**
 	 * Triggered when a user select a chat channel to join, this tab is closed and 

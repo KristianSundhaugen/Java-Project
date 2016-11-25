@@ -14,13 +14,11 @@ public class NewChatController {
 	@FXML
 	public void createGame() {
 		if ( nameInput.getText().length() > 0) {
-			Connection.getConnection().setLudoController(ludoController);
+			Connection.setLudoController(ludoController);
 			Connection.sendMessage("CREATE:" + nameInput.getText(), "CHAT", "-1");
 			ludoController.removeTab(tab);
 		}
  	}
-	
-	
 	
 	/**
 	 * Setting the ludo controller with the tab bar as well as the tab this controller belongs to

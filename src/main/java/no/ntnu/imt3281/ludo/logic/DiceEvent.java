@@ -1,5 +1,8 @@
 package no.ntnu.imt3281.ludo.logic;
-	/**
+
+import java.util.Objects;
+
+/**
 	 * Dice Event contains a reference to Ludo game, what players are active
 	 * and the value on dice. Listening to this event on the server makes it
 	 * possible the get the dice value and send it to alle the players.
@@ -31,10 +34,19 @@ public class DiceEvent {
 	 */
 	@Override
 	public boolean equals(Object obj){
+		if (obj == null)
+		    return false;
+
+		if (this.getClass() != obj.getClass())
+		    return false;
 		DiceEvent event = (DiceEvent)obj;
 		return (event.getPlayer() == this.player && 
 				event.getDice() == this.dice);
 	}
+    @Override
+    public int hashCode() {
+    	return Objects.hash(player, dice);
+    }
 	
 	/**
 	 * @return the player from the event

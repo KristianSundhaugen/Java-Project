@@ -1,10 +1,32 @@
 package no.ntnu.imt3281.ludo.client;
 
+/**
+ * Holding global variables for the ludo game
+ * @author Lasse Sviland
+ *
+ */
 public class Globals {
 
-	public static int serverPort = 9090;
-	public static String serverAddress = "localhost";
+	/**
+	 * The port to use for the server
+	 */
+	public static final int SERVER_PORT = 9090;
+	
+	/**
+	 * The server address
+	 */
+	public static final String SERVER_ADDRESS = "localhost";
 
+	public static final String LOG_NAME = "LudoLog";
+	
+	/**
+	 * Private constructor to prevent instances of this class
+	 */
+	private Globals() {}
+	
+	/**
+	 * @return Array containing all piece positions
+	 */
 	public static double[][] getPiecePossitions() {
 	    double[][] piecePos = new double[92][2];
 		//Red start positions

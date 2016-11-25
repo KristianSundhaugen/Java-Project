@@ -1,5 +1,7 @@
 package no.ntnu.imt3281.ludo.client;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +20,8 @@ import javafx.stage.Stage;
  *
  */
 public class Client extends Application {
-	
+    private static Logger logger = Logger.getLogger("LogTest");
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -26,8 +29,8 @@ public class Client extends Application {
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.show();
-		} catch(Exception e) {
-			e.printStackTrace();
+		} catch(Exception e) { 
+			logger.log(Level.INFO,"Missing Resource", e);
 		}
 	}
 	
@@ -39,7 +42,11 @@ public class Client extends Application {
 	public void stop() {
 		Connection.stopConnection();
 	}
-
+	
+	/**
+	 * Main program that is starting the client
+	 * @param args the arguments used to start the program
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

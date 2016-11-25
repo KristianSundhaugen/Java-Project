@@ -11,10 +11,10 @@ import java.util.Vector;
  */
 public class Ludo {
 
-	public static int RED = 0;
-	public static int BLUE = 1;
-	public static int YELLOW = 2;
-	public static int GREEN = 3;
+	public static final int RED = 0;
+	public static final int BLUE = 1;
+	public static final int YELLOW = 2;
+	public static final int GREEN = 3;
 	
 	private String id = "-1";
 	

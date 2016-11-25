@@ -1,4 +1,7 @@
 package no.ntnu.imt3281.ludo.logic;
+
+import java.util.Objects;
+
 /**
  * Player event will check what state the current active player is in, 
  * has he won by having all pieces at the finish, is he still at home with all pieces
@@ -34,9 +37,20 @@ public class PlayerEvent {
 	 */
 	@Override
 	public boolean equals(Object obj){
+		if (obj == null)
+		    return false;
+
+		if (this.getClass() != obj.getClass())
+		    return false;
 		PlayerEvent event = (PlayerEvent)obj;
 		return (event.getPlayer().equals(this.getPlayer()) && event.getState() == this.getState());
 	}
+	
+    @Override
+    public int hashCode() {
+    	return Objects.hash(player, state);
+    }
+    
 	/**
 	 * get player string
 	 * @return player

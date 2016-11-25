@@ -6,3 +6,6 @@ bin/
 .settings/
 *.class
 prosjektDB/
+derby.log
+sonar-project.properties
+.sonar/

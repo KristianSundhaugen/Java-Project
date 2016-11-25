@@ -102,13 +102,6 @@ public class Message {
 	}
 	
 	/**
-	 * @return boolean if the message is REGISTER message
-	 */
-	public boolean isRegister(){
-		return type.equals("REGISTER");
-	}
-	
-	/**
 	 * @return the type and message as a string
 	 */
 	public String toString() {

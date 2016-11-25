@@ -37,71 +37,71 @@ public class GameBoardController {
 	@FXML
 	private ImageView boardBackground;
 	
-    @FXML
-    private Label player1Name;
+	@FXML
+	private Label player1Name;
 
-    @FXML
-    private ImageView player1Active;
+	@FXML
+	private ImageView player1Active;
 
-    @FXML
-    private Label player2Name;
+	@FXML
+	private Label player2Name;
 
-    @FXML
-    private ImageView player2Active;
+	@FXML
+	private ImageView player2Active;
 
-    @FXML
-    private Label player3Name;
-    
-    @FXML
-    private ImageView player3Active;
+	@FXML
+	private Label player3Name;
+	
+	@FXML
+	private ImageView player3Active;
 
-    @FXML
-    private Label player4Name;
+	@FXML
+	private Label player4Name;
 
-    @FXML
-    private ImageView player4Active;
-    
-    @FXML
-    private ImageView diceThrown;
-    
-    @FXML
-    private Button throwTheDice;
+	@FXML
+	private ImageView player4Active;
+	
+	@FXML
+	private ImageView diceThrown;
+	
+	@FXML
+	private Button throwTheDice;
 
-    @FXML
-    private TextArea chatArea;
+	@FXML
+	private TextArea chatArea;
 
-    @FXML
-    private TextField textToSay;
-    
-    @FXML
-    private Label wonLabel;
+	@FXML
+	private TextField textToSay;
+	
+	@FXML
+	private Label wonLabel;
 
-    @FXML
-    private Button sendTextButton;
-    
+	@FXML
+	private Button sendTextButton;
+	
 	private Ludo ludo;
 	
 
-    private double[][] piecePos = Globals.getPiecePossitions();
+	private double[][] piecePos = Globals.getPiecePossitions();
 	private int playerNumber;
 	private AnchorPane gameBoard;
-    private Rectangle[][] pieces;
-    private String type = "Ludo";
-    
+	private Rectangle[][] pieces;
+	private String type = "Ludo";
+	
 	/**
 	 * Constructor for the controller, making local Ludo object and sending it to the connection
 	 */
-    public GameBoardController(){
-    	ludo = new Ludo();
-    	Connection.addGame(this);
+	public GameBoardController(){
+		ludo = new Ludo();
+		Connection.addGame(this);
 		pieces = new Rectangle[4][4];
-    }
-    
-    /**
-     * Running when FXML have finished loading
-     */
-    @FXML
-    protected void initialize() {
+	}
+	
+	/**
+	 * Running when FXML have finished loading
+	 */
+	@FXML
+	protected void initialize() {
 		ImageView[] playersActive = new ImageView[]{
 				player1Active,
 				player2Active,
@@ -113,32 +113,32 @@ public class GameBoardController {
 		throwTheDice.setDisable(true);
 		if (type.equals("Chat"))
 			hideGame();
-    }
+	}
 
 	/**
 	 * Throwing a dice
 	 */
-    public void throwDiceButton() {
-    	if (ludo.getStatus().equals("Created"))
-        	Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
-    	else {
-    		throwTheDice.setDisable(true);
-    		Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
-    		setDiceImage(0);
-    	}
-    }
-    
-    /**
-     * Triggered when the say button is clicked under the chat
-     * sending a message to the server about the the chat message
-     */
-    public void sendMessageButton() {
-    	if (textToSay.getText().length() > 0) {
-    		String player = ludo.getPlayerName(playerNumber);
-    		Connection.sendMessage(player + ":" + textToSay.getText().replaceAll(":","%colon%"), "CHAT", ludo.getId());
-    		textToSay.setText("");
-    	}
-    }
+	public void throwDiceButton() {
+		if (ludo.getStatus().equals("Created"))
+			Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
+		else {
+			throwTheDice.setDisable(true);
+			Connection.sendMessage("DICE_THROW", "GAME", ludo.getId());
+			setDiceImage(0);
+		}
+	}
+	
+	/**
+	 * Triggered when the say button is clicked under the chat
+	 * sending a message to the server about the the chat message
+	 */
+	public void sendMessageButton() {
+		if (textToSay.getText().length() > 0) {
+			String player = ludo.getPlayerName(playerNumber);
+			Connection.sendMessage(player + ":" + textToSay.getText().replaceAll(":","%colon%"), "CHAT", ludo.getId());
+			textToSay.setText("");
+		}
+	}
 	
 	/**
 	 * Getting a new message sent from the server to this game
@@ -146,13 +146,13 @@ public class GameBoardController {
 	 */
 	public void messageParser(Message msg) {
 		Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	if (msg.isChat())
-            		chatMessageParser(msg.getChatMessage());
-            	else if (msg.isGame())
-            		gameMessageParser(msg.getGameMessage());
-            }
+			@Override
+			public void run() {
+				if (msg.isChat())
+					chatMessageParser(msg.getChatMessage());
+				else if (msg.isGame())
+					gameMessageParser(msg.getGameMessage());
+			}
 		});
 	}
 	
@@ -244,7 +244,7 @@ public class GameBoardController {
 			case 1:	wonLabel.setStyle("-fx-text-fill: BLUE;");	break;
 			case 2:	wonLabel.setStyle("-fx-text-fill: YELLOW;");break;
 			case 3:	wonLabel.setStyle("-fx-text-fill: GREEN;");	break;
-		}			
+		}
 		wonLabel.setText(ludo.getPlayerName(playerNum) + " won!");
 		wonLabel.setVisible(true);
 		throwTheDice.setDisable(true);
@@ -365,8 +365,8 @@ public class GameBoardController {
 	}
 
 	/**
-     * @return the id of the game
-     */
+	 * @return the id of the game
+	 */
 	public String getId() {
 		return ludo.getId();
 	}
@@ -376,9 +376,9 @@ public class GameBoardController {
 	 * @param gameId the id of the game
 	 */
 	public void setId(String gameId) {
-    	ludo.setId(gameId);
+		ludo.setId(gameId);
 	}
-    
+	
 	/**
 	 * Adding the pieces to the board, 4 for each player
 	 */

@@ -24,9 +24,14 @@ public class InvitePlayerController {
 	 * Doing a request to the server asking for a list of available chats
 	 */
 	@FXML
-    protected void initialize() {
+	protected void initialize() {
 		Connection.newPlayerListRequest(this);
-    }
+	}
+
+	/**
+	 * Adding the clicked player to the invite list, removing the player from the gui
+	 * starting game if there is 3 invites
+	 */
 	@FXML
 	public void invitePlayer() {
 		invites.add(list.getSelectionModel().getSelectedItem());

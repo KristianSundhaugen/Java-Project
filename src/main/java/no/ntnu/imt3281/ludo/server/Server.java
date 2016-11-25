@@ -1,9 +1,13 @@
 package no.ntnu.imt3281.ludo.server;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
 
 /**
  * Class for holding the server, letting clients send messages, and pass messages to the clients
@@ -11,13 +15,30 @@ import java.util.Vector;
  *
  */
 public class Server {
-	private Vector<ServerClient> clients  = new Vector<>();
-	private Vector<Game> games = new Vector<>();
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
+	private ArrayList<ServerClient> clients  = new ArrayList<>();
+	private ArrayList<Game> games = new ArrayList<>();
     private ServerMessageReader reader;
 	private boolean stop = false;
     private static Server server;
     private Database database;
-    private boolean isLoggedIn;
+    
+	/**
+     * Constructor for the server, Creating a socket and accepting new clients
+     * @throws IOException
+     */
+    public Server() throws IOException {
+    	this.database = Database.getInstance();
+    	this.reader = new ServerMessageReader(this);
+        new Thread(reader).start();
+
+		ServerSocket listener = new ServerSocket(Globals.SERVER_PORT);
+        while(!stop) {
+        	Socket socket = listener.accept();
+        	clients.add(new ServerClient(socket));
+        }
+        listener.close();
+    }
     
     /**
      * Main function to start the program
@@ -25,10 +46,13 @@ public class Server {
      */
 	public static void main(String[] args) {
         try {
-        	System.out.println("Server Starting");
+        	logger.info("Server Starting");
 			server = new Server();
-		} catch (IOException e) {System.out.println(e);}
+		} catch (IOException e) {
+			logger.throwing(Server.class.getClass().getName(), "main", e);
+		}
         Runtime.getRuntime().addShutdownHook(new Thread() {            
+        	@Override
         	public void run() { 
         		server.stop();
         	}        
@@ -43,22 +67,6 @@ public class Server {
 			reader.stop();
 		this.stop = true;
 	}
-
-	/**
-     * Constructor for the server, Creating a socket and accepting new clients
-     * @throws IOException
-     */
-    public Server() throws IOException {
-    	this.reader = new ServerMessageReader(this);
-        new Thread(reader).start();
-
-    	@SuppressWarnings("resource")
-		ServerSocket listener = new ServerSocket(9090);
-        while(!stop) {
-        	Socket socket = listener.accept();
-        	clients.add(new ServerClient(socket));
-        }
-    }
 
 	/**
 	 * Removing a client that have disconnected
@@ -76,28 +84,85 @@ public class Server {
 	 * @param message the message object to send
 	 */
 	public void parseMessage(Message msg) {
-		if (msg.isGame() && msg.getGameMessage().isNewGameRequest())
-			joinNewRandomGame(msg.getGameMessage());
-		else if (msg.isGame() && msg.getGameMessage().isPrivateGameRequest())
-			createPrivateGame(msg.getGameMessage());
-		else if (msg.isGame() && msg.getGameMessage().isPlayerListRequest())
-			sendPlayerList(msg.getGameMessage());
-		else if (msg.isGame() && msg.getGameMessage().isAcceptInvite())
-			acceptInvite(msg.getGameMessage());
-		else if (msg.isChat() && msg.getChatMessage().isListRequest())
-			sendChatList(msg.getChatMessage());
-		else if (msg.isChat() && msg.getChatMessage().isNewChatJoin())
-			joinNewChat(msg.getChatMessage());
-		else if (msg.isChat() && msg.getChatMessage().isNewChat())
-			createNewChat(msg.getChatMessage());
-		else if(msg.isUser() && msg.getUserMessage().isLoginRequest())
-			userLogin(msg.getUserMessage());
-		else if(msg.isRegister() && msg.getUserMessage().isRegisterRequest())
-			userRegister(msg.getUserMessage());
-		else 
-			for (Game game : games)
-				if (game.getId().equals(msg.getId()))
-					game.runMessage(msg);	
+			System.out.println(1);
+		boolean messageParsed = false;
+		if (msg.isUser()){
+			System.out.println(2);
+			parseUserMessage(msg.getUserMessage());
+		} else if (msg.getClient().isLoggedIn()){
+			System.out.println(3);
+			if (msg.isChat())
+				messageParsed = parseChatMessage(msg.getChatMessage());
+			else if (msg.isGame())
+				messageParsed = parseGameMessage(msg.getGameMessage());
+			if (!messageParsed)
+				parseSpecifficGameMessage(msg);
+		}
+	}
+	
+	/**
+	 * Parsing cases for a game message
+	 * @param msg the game message to parse
+	 * @return boolean telling if the message was parsed
+	 */
+	private boolean parseGameMessage(GameMessage msg) {
+		System.out.println(4);
+		if (msg.isNewGameRequest())
+			joinNewRandomGame(msg);
+		else if (msg.isPrivateGameRequest())
+			createPrivateGame(msg);
+		else if (msg.isPlayerListRequest())
+			sendPlayerList(msg);
+		else if (msg.isAcceptInvite())
+			acceptInvite(msg);
+		else
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Parsing cases for a chat message
+	 * @param msg the chat message to parse
+	 * @return boolean telling if the message was parsed
+	 */
+	private boolean parseChatMessage(ChatMessage msg) {
+		System.out.println(5);
+		if (msg.isListRequest())
+			sendChatList(msg);
+		else if (msg.isNewChatJoin())
+			joinNewChat(msg);
+		else if (msg.isNewChat())
+			createNewChat(msg);
+		else
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Parsing cases for a user message
+	 * @param msg the user message to parse
+	 * @return boolean telling if the message was parsed
+	 */
+	private boolean parseUserMessage(UserMessage msg) {
+		System.out.println(6);
+		if(msg.isLoginRequest())
+			userLogin(msg);
+		else if(msg.isRegisterRequest())
+			userRegister(msg);
+		else
+			return false;
+		return true;
+	}
+	
+	/**
+	 * running a message for a specific game
+	 * @param msg the message to run
+	 */
+	private void parseSpecifficGameMessage(Message msg) {
+		System.out.println(7);
+		for (Game game : games)
+			if (game.getId().equals(msg.getId()))
+				game.runMessage(msg);
 	}
 	
 	/**
@@ -124,23 +189,23 @@ public class Server {
 	 * @param cmsg sending list over chats the user can join
 	 */
 	private void sendChatList(ChatMessage cmsg) {
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		for (Game game : games) {
 			if (game.isOpen() || game.isChat())
-				msg += ":" + game.getId() + "-" + game.getChatterNumber() + "-" + game.getName();
+				msg.append(":" + game.getId() + "-" + game.getChatterNumber() + "-" + game.getName());
 		}
-		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg, "CHAT", "-1").toString());	
+		cmsg.getClient().sendMessage(new Message("LIST_ROOMS_RESPONSE" + msg.toString(), "CHAT", "-1").toString());	
 	}
 	
 	/**
 	 * @param cmsg sending list over chats the user can join
 	 */
 	private void sendPlayerList(GameMessage cmsg) {
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		for (ServerClient client : clients)
 			if (!cmsg.getClient().equals(client))
-				msg += ":" + client.getUsername();
-		cmsg.getClient().sendMessage(new Message("PLAYER_LIST_RESPONSE" + msg, "GAME", "-1").toString());	
+				msg.append(":" + client.getUsername());
+		cmsg.getClient().sendMessage(new Message("PLAYER_LIST_RESPONSE" + msg.toString(), "GAME", "-1").toString());	
 	}
 
 	/**
@@ -164,6 +229,7 @@ public class Server {
 			games.add(game);
 		}
 	}
+	
 	/**
 	 * Adding the player that accepted the game invite to the game
 	 * @param gmsg the game message received from the client
@@ -200,12 +266,12 @@ public class Server {
 	 * If not the user will get a notification
 	 * @param lmessage, message recived from client
 	 */
-	private void userLogin(UserMessage lmessage){
-		UserMessage um = new UserMessage(lmessage);
-		if(database.checkLogin(um.stringPart(1), um.stringPart(2))){
-			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONSE:1", "USER", "-1").toString());
+	private void userLogin(UserMessage umsg){
+		if(database.isCorrectLogin(umsg.stringPart(1), umsg.stringPart(2))) {
+			umsg.getClient().sendMessage(new Message("LOGIN_RESPONSE:0", "USER", "-1").toString());
+			umsg.getClient().setLoggedIn(umsg.stringPart(1));
 		} else {
-			lmessage.getClient().sendMessage(new Message("LOGGIN_RESPONSE:0", "USER", "-1").toString());
+			umsg.getClient().sendMessage(new Message("LOGIN_RESPONSE:1", "USER", "-1").toString());
 		}
 	}
 	
@@ -215,27 +281,33 @@ public class Server {
 	 * If not the user will get a notification
 	 * @param rmessage, message recived from client
 	 */
-	private void userRegister(UserMessage rmessage){
-		UserMessage um = new UserMessage(rmessage);
-		if(!um.stringPart(1).startsWith("****") || !um.stringPart(1).contains(":")){
-			if(!database.checkUsername(um.stringPart(1))){
-				rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:1", "USER", "-1").toString());
+	private void userRegister(UserMessage umsg){
+		System.out.println(9);
+		if(!umsg.stringPart(1).startsWith("****")){
+			if(!database.isUsernameTaken(umsg.stringPart(1))) {
+				umsg.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());
+				database.addUser(umsg.stringPart(1), umsg.stringPart(2));
+				umsg.getClient().setLoggedIn(umsg.stringPart(1));
 			} else {
-				rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());
+				umsg.getClient().sendMessage(new Message("REGISTER_RESPONSE:1", "USER", "-1").toString());
 			}
 		} else {
-			//say that the username contains invalid letters
-			//rmessage.getClient().sendMessage(new Message("REGISTER_RESPONSE:0", "USER", "-1").toString());
+			umsg.getClient().sendMessage(new Message("REGISTER_RESPONSE:2", "USER", "-1").toString());
 		}
 	}
 	
 	/**
 	 * @return a vector with all connected clients
 	 */
-	public Vector<ServerClient> getClients() {
+	public ArrayList<ServerClient> getClients() {
 		return clients;
 	}
 	
+	/**
+	 * Returns a client based on the clients username
+	 * @param username the username we are looking for
+	 * @return the client with the username
+	 */
 	private ServerClient getClient(String username) {
 		for (ServerClient serverClient : clients) {
 			if (serverClient.getUsername().equals(username))

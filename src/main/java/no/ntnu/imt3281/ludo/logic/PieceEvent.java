@@ -1,4 +1,7 @@
 package no.ntnu.imt3281.ludo.logic;
+
+import java.util.Objects;
+
 /**
  * If a piece can be moved a pieceEvent will be generated. It tell what player
  * that can move, which piece of that player and where it is moved from and to.
@@ -34,12 +37,23 @@ public class PieceEvent {
 	 */
 	@Override
 	public boolean equals(Object obj){
+		if (obj == null)
+		    return false;
+
+		if (this.getClass() != obj.getClass())
+		    return false;
 		PieceEvent event = (PieceEvent)obj;
 		return (event.getPlayer() == this.player && 
 				event.getFrom() == this.from && 
 				event.getTo() == this.to && 
 				event.getPiece() == this.piece);
 	}
+	
+    @Override
+    public int hashCode() {
+    	return Objects.hash(player, piece, from, to);
+    }
+    
 	/**
 	 * gets player int
 	 * @return player

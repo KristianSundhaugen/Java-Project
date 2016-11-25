@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -13,8 +15,8 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                        <MenuItem mnemonicParsing="false" onAction="#loginDisplay" text="Connect" />
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                        <MenuItem fx:id="connectButton" mnemonicParsing="false" onAction="#displayLogin" text="Connect" />
+                    <MenuItem mnemonicParsing="false" onAction="#closeButton" text="Close" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Game">
@@ -41,5 +43,13 @@
             <TabPane fx:id="tabbedPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
+      <Label fx:id="loggedInMessage" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="1000.0" prefHeight="30.0" prefWidth="390.0">
+         <font>
+            <Font size="20.0" />
+         </font>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </Label>
    </children>
 </AnchorPane>

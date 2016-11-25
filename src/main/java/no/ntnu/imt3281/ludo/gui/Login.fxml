@@ -5,9 +5,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.ludo.gui.PlayerLogin">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.ludo.gui.LoginController">
    <children>
-      <Button fx:id="loginButton" layoutX="316.0" layoutY="320.0" mnemonicParsing="false" onAction="#handleLoginButton" text="Login">
+      <Button fx:id="loginButton" layoutX="316.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="50.0" prefWidth="200.0" text="Login">
          <font>
             <Font size="24.0" />
          </font>
@@ -37,10 +37,15 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button layoutX="95.0" layoutY="320.0" mnemonicParsing="false" onAction="#handleRegisterButton" text="Register">
+      <Button layoutX="83.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="50.0" prefWidth="200.0" text="Register">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
+      <Label fx:id="infoLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="85.0" layoutY="252.0" prefHeight="59.0" prefWidth="431.0" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

@@ -175,7 +175,7 @@ public class Game implements PlayerListener, DiceListener, PieceListener {
 	 * @param messageContent the content of the message
 	 */
 	private void logChat(String username, String messageContent) {
-		// TODO log chat
+		Database.getInstance().logChat(username, messageContent);
 	}
 
 	/**
