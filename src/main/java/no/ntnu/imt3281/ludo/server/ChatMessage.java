@@ -1,11 +1,17 @@
 package no.ntnu.imt3281.ludo.server;
 
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
+
 /**
  * Class holding a chat message that is used to get the chat content when messages is passed between client and server
  * @author Lasse Sviland
  *
  */
 public class ChatMessage extends Message {
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
+
 	private String username;
 	private String messageContent;
 	public ChatMessage(Message msg) {
@@ -13,7 +19,9 @@ public class ChatMessage extends Message {
 		this.username = stringPart(0);
 		try {
 			this.messageContent = stringPart(1);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "ChatMessage", e);
+		}
 		
 	}
 	public ChatMessage(String msg, String id) {
@@ -21,7 +29,9 @@ public class ChatMessage extends Message {
 		this.username = stringPart(0);
 		try {
 			this.messageContent = stringPart(1);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "ChatMessage", e);
+		}
 	}
 
 	/** 
