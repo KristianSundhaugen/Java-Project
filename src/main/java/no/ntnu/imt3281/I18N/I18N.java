@@ -3,12 +3,6 @@ package no.ntnu.imt3281.I18N;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import no.ntnu.imt3281.ludo.client.Connection;
-import no.ntnu.imt3281.ludo.gui.InvitePlayerController;
-import no.ntnu.imt3281.ludo.gui.ListRoomsController;
-import no.ntnu.imt3281.ludo.gui.LoginController;
-import no.ntnu.imt3281.ludo.gui.LudoController;
-
 /**
  * This class will handle the i18n
  * @author oivindk, copied from your i18n, small changes for our program
@@ -17,6 +11,10 @@ import no.ntnu.imt3281.ludo.gui.LudoController;
 
 public class I18N {
 	private static class SynchronizedHolder {
+		/**
+		 * The unused variable i18n is used to store the instance to prevent it from being deleted when there is no reference to it
+		 */
+		@SuppressWarnings("unused")
 		static I18N i18n = new I18N();
 		static ResourceBundle bundle;
 	}
