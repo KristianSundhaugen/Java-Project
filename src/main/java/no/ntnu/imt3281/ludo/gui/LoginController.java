@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.server.UserMessage;
 /**
@@ -49,7 +50,7 @@ public class LoginController {
 			Connection.setLoginController(this);
 			Connection.sendMessage("LOGIN_REQUEST:" + username.getText() + ":" + password.getText(), "USER", "-1");
 		} else {
-			infoLabel.setText("Username/Password is too short");
+			infoLabel.setText(I18N.getBundle().getString("login.error.short"));
 		}
 	}
 
@@ -63,7 +64,7 @@ public class LoginController {
 			Connection.setLoginController(this);
 			Connection.sendMessage("REGISTER_REQUEST:" + username.getText() + ":" + password.getText(), "USER", "-1");
 		} else {
-			infoLabel.setText("Username/Password is too short");
+			infoLabel.setText(I18N.getBundle().getString("login.error.short"));
 		}
 	}
 	
@@ -73,7 +74,7 @@ public class LoginController {
 	 */
 	public void loginResponse(UserMessage umsg) {
 		if(umsg.intPart(1) == 1)
-			infoLabel.setText("Wrong username or password");
+			infoLabel.setText(I18N.getBundle().getString("login.error.wrong"));
 		else {
 			Connection.loggedIn(username.getText());
 			ludoController.removeTab(tab);
@@ -85,9 +86,9 @@ public class LoginController {
 	 */
 	public void registerResponse(UserMessage umsg){
 		if(umsg.intPart(1) == 1)
-			infoLabel.setText("Username is taken!");
+			infoLabel.setText(I18N.getBundle().getString("login.error.taken"));
 		else if (umsg.intPart(1) == 2)
-			infoLabel.setText("Invalid username!");
+			infoLabel.setText(I18N.getBundle().getString("login.error.invalid"));
 		else {
 			Connection.loggedIn(username.getText());
 			ludoController.removeTab(tab);

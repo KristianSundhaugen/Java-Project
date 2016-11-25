@@ -13,6 +13,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.I18N.I18N;
 import no.ntnu.imt3281.ludo.client.Connection;
 import no.ntnu.imt3281.ludo.client.Globals;
 import no.ntnu.imt3281.ludo.server.GameMessage;
@@ -58,7 +59,7 @@ public class LudoController {
 			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 			AnchorPane newChat = loader.load();
 			NewChatController controller = loader.getController();
-			Tab tab = new Tab("Create New Chat");
+			Tab tab = new Tab(I18N.getBundle().getString("newchat.create"));
 			controller.setLudoController(this, tab);
 			tab.setContent(newChat);
 			tabbedPane.getTabs().add(tab);
@@ -82,7 +83,7 @@ public class LudoController {
 			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 			AnchorPane listRooms = loader.load();
 			ListRoomsController controller = loader.getController();
-			Tab tab = new Tab("Chat List");
+			Tab tab = new Tab(I18N.getBundle().getString("chatlist"));
 			controller.setLudoController(this, tab);
 			tab.setContent(listRooms);
 			tabbedPane.getTabs().add(tab);
@@ -106,7 +107,7 @@ public class LudoController {
 			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 			AnchorPane listRooms = loader.load();
 			InvitePlayerController controller = loader.getController();
-			Tab tab = new Tab("Invite Players");
+			Tab tab = new Tab(I18N.getBundle().getString("iviteplayers"));
 			controller.setLudoController(this, tab);
 			tab.setContent(listRooms);
 			tabbedPane.getTabs().add(tab);
@@ -126,7 +127,7 @@ public class LudoController {
 			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 			Pane login = loader.load();
 			LoginController controller = loader.getController();
-			Tab tab = new Tab("User login");
+			Tab tab = new Tab(I18N.getBundle().getString("login"));
 			controller.setLudoController(this, tab);
 			tab.setContent(login);
 			tabbedPane.getTabs().add(tab);
@@ -176,7 +177,7 @@ public class LudoController {
 			controller.setId(gameId);
 			controller.setPlayerNumber(playerNumber);
 			controller.setPane(gameBoard);
-			Tab tab = new Tab("Game " + gameId);
+			Tab tab = new Tab(I18N.getBundle().getString("ludo.game") + " " + gameId);
 			tab.setContent(gameBoard);
 			tabbedPane.getTabs().add(tab);
 			tabbedPane.getSelectionModel().select(tabbedPane.getTabs().indexOf(tab));
@@ -219,7 +220,7 @@ public class LudoController {
 			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
 			AnchorPane invitePane = loader.load();
 			InviteController controller = loader.getController();
-			Tab tab = new Tab("New Invite");
+			Tab tab = new Tab(I18N.getBundle().getString("invite"));
 			controller.setLudoController(this, tab);
 			controller.setInviteInfo(gameMessage);
 			tab.setContent(invitePane);
@@ -235,11 +236,11 @@ public class LudoController {
 	 * @param username the username to have in the message
 	 */
 	public void setLoginMessage(String username) {
-		this.loggedInMessage.setText("Logged in as " + username);
+		this.loggedInMessage.setText(I18N.getBundle().getString("ludo.loggedin") + " " + username);
 	}
 
 	/**
-	 * When the user hitts the close button in the menu and the application should close
+	 * When the user hits the close button in the menu and the application should close
 	 * when the javafx thread is closed it will trigger close functions for the connection
 	 */
 	@FXML

@@ -1,5 +1,6 @@
 package no.ntnu.imt3281.ludo.client;
 
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,17 +21,21 @@ import javafx.stage.Stage;
  *
  */
 public class Client extends Application {
-    private static Logger logger = Logger.getLogger("LogTest");
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
 
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("../gui/Ludo.fxml"));
+			//AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("../gui/Ludo.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("../gui/Ludo.fxml"));
+			loader.setResources(ResourceBundle.getBundle("no.ntnu.imt3281.I18N.i18n"));
+			AnchorPane root = loader.load();
+
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch(Exception e) { 
-			logger.log(Level.INFO,"Missing Resource", e);
+			logger.log(Level.INFO,"start", e);
 		}
 	}
 	

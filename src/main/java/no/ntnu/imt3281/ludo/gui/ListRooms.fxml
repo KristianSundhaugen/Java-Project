@@ -17,7 +17,7 @@
           <RowConstraints maxHeight="800.0" minHeight="10.0" prefHeight="550.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Available Chat Channels" GridPane.hgrow="ALWAYS">
+            <Label text="%chatlist.info" GridPane.hgrow="ALWAYS">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>

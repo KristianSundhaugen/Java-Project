@@ -178,7 +178,7 @@ public class Connection {
 	}
 
 	/**
-	 * @param invitePlayerController the cotroller to respond to when there is a response from the server
+	 * @param invitePlayerController the controller to respond to when there is a response from the server
 	 */
 	public static void newPrivateGameRequest(InvitePlayerController invitePlayerController) {
 		SynchronizedHolder.invitePlayerController = invitePlayerController;

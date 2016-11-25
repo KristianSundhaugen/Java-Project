@@ -7,27 +7,27 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.ludo.gui.LoginController">
    <children>
-      <Button fx:id="loginButton" layoutX="316.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="50.0" prefWidth="200.0" text="Login">
+      <Button fx:id="loginButton" layoutX="316.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleLoginButton" prefHeight="50.0" prefWidth="200.0" text="%login.login">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Label fx:id="user" layoutX="42.0" layoutY="103.0" text="Username">
+      <Label fx:id="user" layoutX="42.0" layoutY="103.0" text="%login.username">
          <font>
             <Font size="32.0" />
          </font>
       </Label>
-      <Label fx:id="pass" layoutX="47.0" layoutY="190.0" text="Password">
+      <Label fx:id="pass" layoutX="47.0" layoutY="190.0" text="%login.password">
          <font>
             <Font size="32.0" />
          </font>
       </Label>
-      <TextField fx:id="username" layoutX="214.0" layoutY="101.0" promptText="Enter username">
+      <TextField fx:id="username" layoutX="214.0" layoutY="101.0" promptText="%login.placeholder.useranme">
          <font>
             <Font size="24.0" />
          </font>
       </TextField>
-      <PasswordField fx:id="password" layoutX="213.0" layoutY="188.0" promptText="Password">
+      <PasswordField fx:id="password" layoutX="213.0" layoutY="188.0" promptText="%login.placeholder.password">
          <font>
             <Font size="24.0" />
          </font>
@@ -37,7 +37,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button layoutX="83.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="50.0" prefWidth="200.0" text="Register">
+      <Button layoutX="83.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleRegisterButton" prefHeight="50.0" prefWidth="200.0" text="%login.register">
          <font>
             <Font size="24.0" />
          </font>

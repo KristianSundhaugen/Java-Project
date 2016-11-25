@@ -13,27 +13,27 @@
          <top>
             <MenuBar BorderPane.alignment="CENTER">
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%ludo.file">
                   <items>
-                        <MenuItem fx:id="connectButton" mnemonicParsing="false" onAction="#displayLogin" text="Connect" />
-                    <MenuItem mnemonicParsing="false" onAction="#closeButton" text="Close" />
+                        <MenuItem fx:id="connectButton" mnemonicParsing="false" onAction="#displayLogin" text="%ludo.file.connect" />
+                    <MenuItem mnemonicParsing="false" onAction="#closeButton" text="%ludo.file.quit" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Game">
+                <Menu mnemonicParsing="false" text="%ludo.game">
                   <items>
-                    <MenuItem fx:id="random" mnemonicParsing="false" onAction="#joinRandomGame" text="Random game" />
-                        <MenuItem mnemonicParsing="false" onAction="#challengePlayers" text="Challenge players" />
+                    <MenuItem fx:id="random" mnemonicParsing="false" onAction="#joinRandomGame" text="%ludo.game.random" />
+                        <MenuItem mnemonicParsing="false" onAction="#challengePlayers" text="%ludo.game.invite" />
                   </items>
                 </Menu>
-                  <Menu mnemonicParsing="false" text="Chat">
+                  <Menu mnemonicParsing="false" text="%ludo.chat">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#joinChatRoom" text="Join room" />
-                        <MenuItem mnemonicParsing="false" onAction="#listChatRooms" text="List rooms" />
+                      <MenuItem mnemonicParsing="false" onAction="#joinChatRoom" text="%ludo.chat.join" />
+                        <MenuItem mnemonicParsing="false" onAction="#listChatRooms" text="%ludo.chat.list" />
                     </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="%ludo.help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
+                    <MenuItem mnemonicParsing="false" text="%ludo.help.about" />
                   </items>
                 </Menu>
               </menus>
