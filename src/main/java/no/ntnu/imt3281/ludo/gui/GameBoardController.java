@@ -3,6 +3,8 @@ package no.ntnu.imt3281.ludo.gui;
 
 
 
+import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,6 +34,8 @@ import no.ntnu.imt3281.ludo.client.Globals;
  *
  */
 public class GameBoardController {
+	private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
+
 	@FXML
 	private GridPane playersGrid;
 	
@@ -264,7 +268,9 @@ public class GameBoardController {
 			for(int player = 0; player < 4; player++)
 				for(int piece = 0; piece < 4; piece++)
 					pieces[player][piece].setVisible(false);	
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "hideImages", e);
+		}
 		boardBackground.setVisible(false);
 	}
 
