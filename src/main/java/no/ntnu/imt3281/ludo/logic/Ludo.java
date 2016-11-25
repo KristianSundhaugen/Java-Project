@@ -4,12 +4,16 @@ package no.ntnu.imt3281.ludo.logic;
 
 import java.util.Random;
 import java.util.Vector;
+import java.util.logging.Logger;
+
+import no.ntnu.imt3281.ludo.client.Globals;
 /**
  * Ludo represent a game. Each game has an unique id. With four constants RED, BLUE, 
  * YELLOW and GREEN, represented by integers 0 to 3 and indicates each of the individual players. 
  * Each player has an name, represented by a string saved in a vector. 
  */
 public class Ludo {
+    private static Logger logger = Logger.getLogger(Globals.LOG_NAME);
 
 	public static final int RED = 0;
 	public static final int BLUE = 1;
@@ -119,6 +123,7 @@ public class Ludo {
 		try {
 			return players.get(player);
 		} catch (ArrayIndexOutOfBoundsException e) {
+			logger.throwing(this.getClass().getName(), "getPlayerName", e);
 			return null;
 		}
 	}
@@ -669,6 +674,7 @@ public class Ludo {
     	try {
     		playerName = players.get(player);
 		} catch (Exception e) {
+			logger.throwing(this.getClass().getName(), "isActive", e);
     		return false;
 		}
 
